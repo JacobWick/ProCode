@@ -2,10 +2,14 @@
 
 namespace Domain.Entities;
 
-public class User : IdentityUser
+public class User : IdentityUser<Guid>
 {
-    public string Nickname { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    
+    [PersonalData]
+    public string Username { get; set; }
+    [PersonalData]
+    public string Name { get; set; }
+    [PersonalData]
+    public string Surname { get; set; }
+    [PersonalData]
+    public List<Progress> Progresses { get; set; }
 }
