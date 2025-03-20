@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities;
 
-public class User
+public class User: IdentityUser<Guid>
 {
-    public Guid Id { get; set; }
-
     [Required]
     public string? Username { get; set; }
     [Required]

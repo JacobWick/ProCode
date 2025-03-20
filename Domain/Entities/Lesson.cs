@@ -3,11 +3,9 @@
 public class Lesson
 {
     public Guid Id { get; set; }
-
-    public Guid? ProgressId { get; set; }
+    
     public Progress? Progress { get; set; }
-
-    public Guid CourseId { get; set; }
+    
     public Course Course { get; set; } = null!;
 
     public ICollection<Exercise> Exercises { get; set; } = new List<Exercise>();

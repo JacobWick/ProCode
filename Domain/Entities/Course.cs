@@ -9,8 +9,7 @@ public class Course
     public ICollection<Progress> Progresses { get; set; } = new List<Progress>();
 
     public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
-
-    public Guid UserId { get; set; }
+    
     public User User { get; set; } = null!;
 
     public string? Title { get; set; }
