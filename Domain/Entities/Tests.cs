@@ -3,8 +3,7 @@
 public class Tests
 {
     public Guid Id { get; set; }
-
-    public Guid ExerciseId { get; set; } 
+    
     public Exercise Exercise { get; set; } = null!;
 
     public List<string> InputData { get; set; }
