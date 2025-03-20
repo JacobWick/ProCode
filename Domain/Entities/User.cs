@@ -1,15 +1,21 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities;
 
-public class User : IdentityUser<Guid>
+public class User
 {
-    [PersonalData]
-    public string Username { get; set; }
-    [PersonalData]
-    public string Name { get; set; }
-    [PersonalData]
-    public string Surname { get; set; }
-    [PersonalData]
-    public List<Progress> Progresses { get; set; }
+    public Guid Id { get; set; }
+
+    [Required]
+    public string? Username { get; set; }
+    [Required]
+    public string? Name { get; set; }
+    [Required]
+    public string? Surname { get; set; }
+
+
+    public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+    public ICollection<Course> Courses { get; set; } = new List<Course>();
+    public ICollection<Progress> Progresses { get; set; } = new List<Progress>();
 }
