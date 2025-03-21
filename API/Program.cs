@@ -1,8 +1,6 @@
 using Application;
 using Domain.Entities;
 using Infrastructure;
-using Infrastructure.Data;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
