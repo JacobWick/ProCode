@@ -3,6 +3,7 @@ using Domain.Entities;
 using Infrastructure;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,14 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCode API", Version = "v1" });
+});
 builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
 
 builder.Services.AddAuthorization();
-builder.Services.AddIdentity<User, IdentityRole<Guid>>()
-    .AddEntityFrameworkStores<PostgresDbContext>();
+builder.Services
+    .AddIdentityApiEndpoints<User>();
 
 var app = builder.Build();
 
@@ -30,6 +34,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+
+app.MapIdentityApi<User>();
 app.MapControllers();
 
 app.Run();

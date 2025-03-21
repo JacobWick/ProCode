@@ -1,4 +1,6 @@
-﻿using Infrastructure.Data;
+﻿using Domain.Entities;
+using Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +13,11 @@ public static class DependencyInjection
     {
         services.AddDbContext<PostgresDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        services
+            .AddIdentityCore<User>()
+            .AddRoles<IdentityRole<Guid>>()
+            .AddEntityFrameworkStores<PostgresDbContext>();
 
         return services;
     }
