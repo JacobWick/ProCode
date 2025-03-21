@@ -13,7 +13,7 @@ namespace Infrastructure.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Progress> Progresses { get; set; }
         public DbSet<SolutionExample> SolutionExamples { get; set; }
-        public DbSet<Tests> Tests { get; set; }
+        public DbSet<Test> Tests { get; set; }
         public DbSet<ValidationMethod> ValidationMethods { get; set; }
 
 

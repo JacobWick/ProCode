@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class Tests
+public class Test
 {
     public Guid Id { get; set; }
     

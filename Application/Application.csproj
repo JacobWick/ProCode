@@ -16,4 +16,43 @@
       <PackageReference Include="MediatR" Version="12.4.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Courses\CommandHandlers\" />
+      <Folder Include="Courses\Commands\" />
+      <Folder Include="Courses\QueriesHandlers\" />
+      <Folder Include="Courses\Queries\" />
+      <Folder Include="Exercises\CommandHandlers\" />
+      <Folder Include="Exercises\Commands\" />
+      <Folder Include="Exercises\Queries\" />
+      <Folder Include="Exercises\QueryHandlers\" />
+      <Folder Include="Lessons\CommandHandlers\" />
+      <Folder Include="Lessons\Commands\" />
+      <Folder Include="Lessons\Queries\" />
+      <Folder Include="Lessons\QueryHandlers\" />
+      <Folder Include="Notifications\CommandHandlers\" />
+      <Folder Include="Notifications\Commands\" />
+      <Folder Include="Notifications\Queries\" />
+      <Folder Include="Notifications\QueryHandlers\" />
+      <Folder Include="Progresses\CommandHandlers\" />
+      <Folder Include="Progresses\Commands\" />
+      <Folder Include="Progresses\Queries\" />
+      <Folder Include="Progresses\QueryHandlers\" />
+      <Folder Include="SolutionExamples\CommandHandlers\" />
+      <Folder Include="SolutionExamples\Commands\" />
+      <Folder Include="SolutionExamples\Queries\" />
+      <Folder Include="SolutionExamples\QueryHandlers\" />
+      <Folder Include="Tests\CommandHandlers\" />
+      <Folder Include="Tests\Commands\" />
+      <Folder Include="Tests\Queries\" />
+      <Folder Include="Tests\QueryHandlers\" />
+      <Folder Include="Users\CommandHandlers\" />
+      <Folder Include="Users\Commands\" />
+      <Folder Include="Users\Queries\" />
+      <Folder Include="Users\QueryHandlers\" />
+      <Folder Include="ValidationMethods\CommandHandlers\" />
+      <Folder Include="ValidationMethods\Commands\" />
+      <Folder Include="ValidationMethods\Queries\" />
+      <Folder Include="ValidationMethods\QueryHandlers\" />
+    </ItemGroup>
+
 </Project>

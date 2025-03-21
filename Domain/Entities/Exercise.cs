@@ -8,7 +8,7 @@ public class Exercise
     
     public Lesson Lesson { get; set; } = null!;
 
-    public ICollection<Tests> Tests = new List<Tests>();
+    public ICollection<Test> Tests = new List<Test>();
 
     public ICollection<ValidationMethod> ValidationMethods { get; set; } = new List<ValidationMethod>();
 
