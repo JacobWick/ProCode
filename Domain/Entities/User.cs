@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities;
 
-public class User: IdentityUser<Guid>
+public class User: IdentityUser<Guid>, IEntity
 {
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     public ICollection<Course> Courses { get; set; } = new List<Course>();

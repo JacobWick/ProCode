@@ -1,6 +1,8 @@
-﻿namespace Domain.Entities;
+﻿using Domain.Interfaces;
 
-public class Lesson
+namespace Domain.Entities;
+
+public class Lesson  : IEntity
 {
     public Guid Id { get; set; }
     

@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Domain.Enums;
+using Domain.Interfaces;
 
 namespace Domain.Entities
 {
-    public class Notification
+    public class Notification : IEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         
         public User User { get; set; } = null!;
 

@@ -1,6 +1,8 @@
-﻿namespace Domain.Entities;
+﻿using Domain.Interfaces;
 
-public class Progress
+namespace Domain.Entities;
+
+public class Progress : IEntity
 {
     public Guid Id { get; set; }
     
