@@ -45,10 +45,6 @@
       <Folder Include="Tests\Commands\" />
       <Folder Include="Tests\Queries\" />
       <Folder Include="Tests\QueryHandlers\" />
-      <Folder Include="Users\CommandHandlers\" />
-      <Folder Include="Users\Commands\" />
-      <Folder Include="Users\Queries\" />
-      <Folder Include="Users\QueryHandlers\" />
       <Folder Include="ValidationMethods\CommandHandlers\" />
       <Folder Include="ValidationMethods\Commands\" />
       <Folder Include="ValidationMethods\Queries\" />

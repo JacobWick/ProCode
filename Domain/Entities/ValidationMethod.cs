@@ -5,6 +5,7 @@ namespace Domain.Entities;
 
 public class ValidationMethod : IEntity
 {
+    [Key]
     public Guid Id { get; set; }
     public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
     [Required]

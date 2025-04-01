@@ -1,9 +1,11 @@
-﻿using Domain.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+using Domain.Interfaces;
 
 namespace Domain.Entities;
 
 public class Progress : IEntity
 {
+    [Key]
     public Guid Id { get; set; }
     
     public User User { get; set; } = null!;
