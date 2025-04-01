@@ -15,9 +15,7 @@ namespace Infrastructure.Data
         public DbSet<SolutionExample> SolutionExamples { get; set; }
         public DbSet<Test> Tests { get; set; }
         public DbSet<ValidationMethod> ValidationMethods { get; set; }
-
-
-
+        
         public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options)
         {
         }
