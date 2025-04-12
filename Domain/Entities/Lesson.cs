@@ -13,7 +13,6 @@ public class Lesson  : IEntity
     public Course Course { get; set; } = null!;
 
     public ICollection<Exercise> Exercises { get; set; } = new List<Exercise>();
-    public ICollection<ValidationMethod> ValidationMethods { get; set; } = new List<ValidationMethod>();
 
     public string? Title { get; set; }
     public Uri? VideoUri { get; set; }

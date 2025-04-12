@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Domain.Enums;
 using Domain.Interfaces;
 
 namespace Domain.Entities;
@@ -14,7 +15,7 @@ public class Exercise : IEntity
 
     public ICollection<Test> Tests = new List<Test>();
 
-    public ICollection<ValidationMethod> ValidationMethods { get; set; } = new List<ValidationMethod>();
+    public ValidationMethod ValidationMethod { get; set; }
 
     public string Description { get; set; } = string.Empty;
     public string InitialContent { get; set; } = string.Empty;
