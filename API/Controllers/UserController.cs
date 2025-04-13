@@ -20,9 +20,9 @@ public class UserController : ControllerBase
     }
     [MapToApiVersion(1)]
     [HttpPost("Create")]
-    public async Task<IActionResult> Create([FromBody] CreateUserCommand request)
+    public async Task<IActionResult> Create([FromBody] CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(request);
+        var result = await _mediator.Send(request, cancellationToken);
         
         if(result.Success)
             return Ok(new {status = 200, message = "User register successfull"});
@@ -31,17 +31,17 @@ public class UserController : ControllerBase
     }
     [MapToApiVersion(1)]
     [HttpGet("GetById/{id}")]
-    public async Task<ActionResult<UserDto?>> GetById(Guid id)
+    public async Task<ActionResult<UserDto?>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var user = await _mediator.Send(new GetUserByIdQuery{ Id = id });
+        var user = await _mediator.Send(new GetUserByIdQuery{ Id = id }, cancellationToken);
         return Ok(user);
     }
 
     [MapToApiVersion(1)]
     [HttpDelete("Delete/{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new DeleteUserCommand { Id = id });
+        var result = await _mediator.Send(new DeleteUserCommand { Id = id }, cancellationToken);
         if (!result)
         {
             return NotFound();
@@ -51,9 +51,9 @@ public class UserController : ControllerBase
 
     [MapToApiVersion(1)]
     [HttpPatch("Update")]
-    public async Task<IActionResult> Update([FromBody] UpdateUserCommand command)
+    public async Task<IActionResult> Update([FromBody] UpdateUserCommand command, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
         if (!result)
         {
             return NotFound();

@@ -25,6 +25,10 @@
       <Folder Include="Lessons\Commands\" />
       <Folder Include="Lessons\Queries\" />
       <Folder Include="Lessons\QueryHandlers\" />
+      <Folder Include="Exercises\CommandHandlers\" />
+      <Folder Include="Exercises\Commands\" />
+      <Folder Include="Exercises\Queries\" />
+      <Folder Include="Exercises\QueryHandlers\" />
       <Folder Include="Notifications\CommandHandlers\" />
       <Folder Include="Notifications\Commands\" />
       <Folder Include="Notifications\Queries\" />
@@ -41,10 +45,6 @@
       <Folder Include="Tests\Commands\" />
       <Folder Include="Tests\Queries\" />
       <Folder Include="Tests\QueryHandlers\" />
-      <Folder Include="ValidationMethods\CommandHandlers\" />
-      <Folder Include="ValidationMethods\Commands\" />
-      <Folder Include="ValidationMethods\Queries\" />
-      <Folder Include="ValidationMethods\QueryHandlers\" />
     </ItemGroup>
 
 </Project>
