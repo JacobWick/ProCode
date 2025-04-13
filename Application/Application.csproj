@@ -21,10 +21,6 @@
       <Folder Include="Courses\Commands\" />
       <Folder Include="Courses\QueriesHandlers\" />
       <Folder Include="Courses\Queries\" />
-      <Folder Include="Exercises\CommandHandlers\" />
-      <Folder Include="Exercises\Commands\" />
-      <Folder Include="Exercises\Queries\" />
-      <Folder Include="Exercises\QueryHandlers\" />
       <Folder Include="Lessons\CommandHandlers\" />
       <Folder Include="Lessons\Commands\" />
       <Folder Include="Lessons\Queries\" />
