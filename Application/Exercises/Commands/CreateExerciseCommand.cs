@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Application.Exercises.Commands
 {
-    class CreateExerciseCommand: IRequest<ExerciseDto>
+    public class CreateExerciseCommand: IRequest<ExerciseDto>
     {
         public string Description { get; set; } = string.Empty;
         public string InitialContent { get; set; } = string.Empty;
