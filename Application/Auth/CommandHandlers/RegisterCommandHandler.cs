@@ -1,6 +1,5 @@
 ﻿using Application.Auth.Commands;
 using Domain.Entities;
-using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
