@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.Interfaces;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -10,7 +11,7 @@ public static class DependencyInjection
         var assembly = typeof(DependencyInjection).Assembly;
         services.AddMediatR(configuration =>
             configuration.RegisterServicesFromAssembly(assembly));
-        
+
         services.AddValidatorsFromAssembly(assembly);
         return services;
     }
