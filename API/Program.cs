@@ -1,10 +1,22 @@
+using System.Text;
 using Application;
 using Asp.Versioning;
 using Domain.Entities;
 using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var string_key = jwtSettings["Key"];
+
+if (string_key is null)
+    throw new InvalidOperationException("JWT key is missing in configuration.");
+
+var key = Encoding.UTF8.GetBytes(string_key);
+
 
 // Add services to the container.
 
@@ -34,13 +46,28 @@ builder.Services.AddApiVersioning(options =>
     });
 
 builder.Services.AddAuthorization();
-builder.Services
-    .AddIdentityApiEndpoints<User>();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+    });
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,9 +77,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapIdentityApi<User>();
 app.MapControllers();
 
 app.Run();
