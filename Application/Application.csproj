@@ -36,14 +36,6 @@
       <Folder Include="Progresses\Commands\" />
       <Folder Include="Progresses\Queries\" />
       <Folder Include="Progresses\QueryHandlers\" />
-      <Folder Include="SolutionExamples\CommandHandlers\" />
-      <Folder Include="SolutionExamples\Commands\" />
-      <Folder Include="SolutionExamples\Queries\" />
-      <Folder Include="SolutionExamples\QueryHandlers\" />
-      <Folder Include="Tests\CommandHandlers\" />
-      <Folder Include="Tests\Commands\" />
-      <Folder Include="Tests\Queries\" />
-      <Folder Include="Tests\QueryHandlers\" />
     </ItemGroup>
 
 </Project>
