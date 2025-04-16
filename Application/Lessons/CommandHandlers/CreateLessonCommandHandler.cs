@@ -1,11 +1,13 @@
-﻿using Application.Lessons.Commands;
+﻿using Application.DTOs;
+using Application.Interfaces;
+using Application.Lessons.Commands;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
 
 namespace Application.Lessons.CommandHandlers;
 
-public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, bool>
+public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, LessonDto>
 {
     private readonly IRepository<Lesson> _lessonRepository;
     private readonly IRepository<Exercise> _exerciseRepository;
@@ -16,7 +18,7 @@ public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, b
         _exerciseRepository = exerciseRepository;
     }
 
-    public async Task<bool> Handle(CreateLessonCommand request, CancellationToken cancellationToken)
+    public async Task<LessonDto> Handle(CreateLessonCommand request, CancellationToken cancellationToken)
     {
         var exercises = await _exerciseRepository.GetAsync(e => request.Exercises.Contains(e.Id), cancellationToken);
 
@@ -29,6 +31,15 @@ public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, b
             Exercises = exercises.ToList()
 
         };
-        return _lessonRepository.CreateAsync(lesson, cancellationToken).IsCompletedSuccessfully;
+        await _lessonRepository.CreateAsync(lesson, cancellationToken);
+        return new LessonDto
+        {
+            Id = lesson.Id,
+            Title = lesson.Title,
+            VideoUri = lesson.VideoUri,
+            TextUri = lesson.TextUri,
+            CreatedAt = lesson.CreatedAt,
+            Exercises = lesson.Exercises.Select(e => e.Id).ToList()
+        };
     }
 }

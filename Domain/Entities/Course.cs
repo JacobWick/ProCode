@@ -17,7 +17,7 @@ public class Course : IEntity
 
     public string? Title { get; set; }
     public string? Description { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedOn { get; set; }
     public DifficultyLevel DifficultyLevel { get; set; }
     public int Rating { get; set; }
 }

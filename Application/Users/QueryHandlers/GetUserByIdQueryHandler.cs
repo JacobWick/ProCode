@@ -1,4 +1,5 @@
 ﻿using Application.DTOs;
+using Application.Interfaces;
 using Application.Users.Queries;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -18,10 +19,13 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto
     public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(request.Id, u => new User 
-                { 
+            { 
                     Id = u.Id, 
-                    UserName = u.UserName 
-                }, 
+                    UserName = u.UserName,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Email = u.Email,
+            }, 
             cancellationToken);
         if (user == null)
         {

@@ -1,7 +1,7 @@
 ﻿using Application.DTOs;
+using Application.Interfaces;
 using Application.Users.Queries;
 using Domain.Entities;
-using Domain.Interfaces;
 using MediatR;
 
 namespace Application.Users.QueryHandlers;

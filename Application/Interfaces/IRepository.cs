@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
+using Domain.Interfaces;
 
-namespace Domain.Interfaces;
+namespace Application.Interfaces;
 
 public interface IRepository<E> where E : class, IEntity
 {

@@ -1,4 +1,5 @@
-﻿using Application.Lessons.Commands;
+﻿using Application.Interfaces;
+using Application.Lessons.Commands;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;

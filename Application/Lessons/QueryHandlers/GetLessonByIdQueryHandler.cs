@@ -6,26 +6,25 @@ using MediatR;
 
 namespace Application.Lessons.QueryHandlers;
 
-public class GetAllLessonsQueryHandler : IRequestHandler<GetAllLessonsQuery, List<LessonDto>>
+public class GetLessonByIdQueryHandler : IRequestHandler<GetLessonByIdQuery, LessonDto>
 {
     private readonly IRepository<Lesson> _lessonRepository;
 
-    public GetAllLessonsQueryHandler(IRepository<Lesson> lessonRepository)
+    public GetLessonByIdQueryHandler(IRepository<Lesson> lessonRepository)
     {
         _lessonRepository = lessonRepository;
     }
 
-    public async Task<List<LessonDto>> Handle(GetAllLessonsQuery request, CancellationToken cancellationToken)
+    public async Task<LessonDto> Handle(GetLessonByIdQuery request, CancellationToken cancellationToken)
     {
-        var lessons = await _lessonRepository.GetAllAsync();
-        return lessons.Select(lesson => new LessonDto
+        var lesson = await _lessonRepository.GetByIdAsync(request.Id);
+        return new LessonDto
         {
             Id = lesson.Id,
-            CreatedAt = lesson.CreatedAt,
             Title = lesson.Title,
             VideoUri = lesson.VideoUri,
             TextUri = lesson.TextUri,
             Exercises = lesson.Exercises.Select(e => e.Id).ToList()
-        }).ToList();
+        };
     }
 }

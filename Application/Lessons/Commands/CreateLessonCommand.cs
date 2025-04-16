@@ -1,9 +1,9 @@
-﻿using Domain.Entities;
+﻿using Application.DTOs;
 using MediatR;
 
 namespace Application.Lessons.Commands;
 
-public class CreateLessonCommand : IRequest<bool>
+public class CreateLessonCommand : IRequest<LessonDto>
 {
     public List<Guid> Exercises { get; set; }
     public string Title { get; set; }

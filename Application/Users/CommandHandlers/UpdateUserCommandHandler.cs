@@ -1,6 +1,6 @@
-﻿using Application.Users.Commands;
+﻿using Application.Interfaces;
+using Application.Users.Commands;
 using Domain.Entities;
-using Domain.Interfaces;
 using MediatR;
 
 namespace Application.Users.CommandHandlers;

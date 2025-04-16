@@ -8,6 +8,6 @@ public class LessonDto
     public string Title { get; set; }
     public Uri? VideoUri { get; set; }
     public Uri? TextUri { get; set; }
-    public ICollection<Exercise> Exercises { get; set; }
+    public List<Guid> Exercises { get; set; }
     public DateTime CreatedAt { get; set; }
 }

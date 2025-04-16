@@ -25,9 +25,9 @@ public class UserController : ControllerBase
         var result = await _mediator.Send(request, cancellationToken);
         
         if(result.Success)
-            return Ok(new {status = 200, message = "User register successfull"});
+            return Ok(new {status = 200, message = "User created successfully"});
             
-        return BadRequest(new { status = 400, message = result.Error ?? "Registration failed." });
+        return BadRequest(new { status = 400, message = result.Error ?? "User creation failed." });
     }
     [MapToApiVersion(1)]
     [HttpGet("GetById/{id}")]

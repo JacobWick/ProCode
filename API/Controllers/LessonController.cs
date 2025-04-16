@@ -32,9 +32,9 @@ public class LessonController : ControllerBase
         var result = await _mediator.Send(new DeleteLessonCommand { Id = id }, cancellationToken);
         if (!result)
         {
-            return NotFound();
+            return NotFound(result);
         }
-        return Ok();
+        return Ok(result);
     }
 
     [MapToApiVersion(1)]
@@ -44,8 +44,8 @@ public class LessonController : ControllerBase
         var result = await _mediator.Send(command, cancellationToken);
         if (!result)
         {
-            return NotFound();
+            return NotFound(result);
         }
-        return Ok();
+        return Ok(result);
     }
 }
