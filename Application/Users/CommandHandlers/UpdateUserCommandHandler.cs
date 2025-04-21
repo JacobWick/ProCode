@@ -38,6 +38,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, bool>
         {
             user.LastName = request.LastName;
         }
-        return _userRepository.UpdateAsync(user, cancellationToken).IsCompletedSuccessfully;
+        await _userRepository.UpdateAsync(user, cancellationToken);
+        return true;
     }
 }

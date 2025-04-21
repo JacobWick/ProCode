@@ -43,7 +43,8 @@ public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, b
             }
         }
 
-        return _courseRepository.UpdateAsync(course).IsCompletedSuccessfully;
+        await _courseRepository.UpdateAsync(course);
+        return true;
 
     }
 }

@@ -24,7 +24,9 @@ public class UpdateSolutionExampleCommandHandler : IRequestHandler<UpdateSolutio
             solutionExample.Code = request.Code;
         if (request.Explanation is not null)
             solutionExample.Explanation = request.Explanation;
-        return _solutionExampleRepository.UpdateAsync(solutionExample, cancellationToken).IsCompletedSuccessfully;
+        
+        await _solutionExampleRepository.UpdateAsync(solutionExample, cancellationToken);
+        return true; 
         
     }
 }
