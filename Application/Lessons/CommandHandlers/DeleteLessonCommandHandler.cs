@@ -18,6 +18,9 @@ public class DeleteLessonCommandHandler : IRequestHandler<DeleteLessonCommand, b
     public async Task<bool> Handle(DeleteLessonCommand request, CancellationToken cancellationToken)
     {
         var lesson = await _lessonRepository.GetByIdAsync(request.Id);
-        return lesson != null && _lessonRepository.DeleteAsync(lesson).IsCompletedSuccessfully;
+        if (lesson== null)
+            return false;
+        await _lessonRepository.DeleteAsync(lesson, cancellationToken);
+        return true;
     }
 }

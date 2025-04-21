@@ -1,11 +1,13 @@
 ﻿using Application.Auth.Commands;
+using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [ApiVersion(1)]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    [Route("api/[controller]")]
     public class AuthController : Controller
     {
         private readonly IMediator _mediator;
@@ -14,20 +16,20 @@ namespace API.Controllers
         {
             _mediator = mediator;
         }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterCommand command)
+        [MapToApiVersion(1)]
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] RegisterCommand command, CancellationToken cancellationToken)
         {
-            var success = await _mediator.Send(command);
+            var success = await _mediator.Send(command, cancellationToken);
             return success ? Ok() : BadRequest("Registration failed");
         }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginCommand command)
+        [MapToApiVersion(1)]
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginCommand command, CancellationToken cancellationToken)
         {
             try
             {
-                var token = await _mediator.Send(command);
+                var token = await _mediator.Send(command, cancellationToken);
                 return Ok(new { Token = token });
             }
             catch

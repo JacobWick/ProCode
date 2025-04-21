@@ -52,6 +52,7 @@ public class UpdateLessonCommandHandler : IRequestHandler<UpdateLessonCommand, b
                 }
             }
         }
-        return _lessonRepository.UpdateAsync(lesson).IsCompletedSuccessfully;
+        await _lessonRepository.UpdateAsync(lesson, cancellationToken);
+        return true;
     }
 }

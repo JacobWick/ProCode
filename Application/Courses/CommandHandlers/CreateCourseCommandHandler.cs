@@ -22,11 +22,12 @@ public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, C
     public async Task<CourseDto> Handle(CreateCourseCommand request, CancellationToken cancellationToken)
     {
         var lessons = await _lessonRepository.GetAsync(l => request.Lessons.Contains(l.Id), cancellationToken);
+        var user = await _userRepository.GetByIdAsync(request.CreatedBy, cancellationToken: cancellationToken);
         var course = new Course
         {
             Title = request.Title,
             Description = request.Description,
-            User = _userRepository.GetByIdAsync(request.CreatedBy).Result,
+            User = user,
             DifficultyLevel = request.DifficultyLevel,
             CreatedOn = DateTime.Now,
             Rating = 0,

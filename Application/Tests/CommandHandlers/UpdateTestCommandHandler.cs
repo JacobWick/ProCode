@@ -28,6 +28,8 @@ public class UpdateTestCommandHandler : IRequestHandler<UpdateTestCommand, bool>
         {
             test.OutputData = request.OutputData;
         }
-        return _testRepository.UpdateAsync(test).IsCompletedSuccessfully;
+
+        await _testRepository.UpdateAsync(test);
+        return true;
     }
 }

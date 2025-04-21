@@ -14,6 +14,7 @@ namespace Infrastructure.Data
         public DbSet<Progress> Progresses { get; set; }
         public DbSet<SolutionExample> SolutionExamples { get; set; }
         public DbSet<Test> Tests { get; set; }
+        public new DbSet<User> Users { get; set; }
         public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options)
         {
         }

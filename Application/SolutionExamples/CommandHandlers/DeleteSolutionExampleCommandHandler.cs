@@ -19,9 +19,8 @@ public class DeleteSolutionExampleCommandHandler : IRequestHandler<DeleteSolutio
         var solutionExample = await _solutionExampleRepository.GetByIdAsync(request.Id, cancellationToken:cancellationToken);
 
         if (solutionExample == null)
-        {
             return false;
-        }
-        return _solutionExampleRepository.DeleteAsync(solutionExample, cancellationToken).IsCompletedSuccessfully;
+        await _solutionExampleRepository.DeleteAsync(solutionExample, cancellationToken);
+        return true;
     }
 }
