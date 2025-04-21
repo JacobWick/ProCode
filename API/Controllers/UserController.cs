@@ -36,7 +36,13 @@ public class UserController : ControllerBase
         var user = await _mediator.Send(new GetUserByIdQuery{ Id = id }, cancellationToken);
         return Ok(user);
     }
-
+    [MapToApiVersion(1)]
+    [HttpGet("GetAll")]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    {
+        var list = await _mediator.Send(new GetAllUsersQuery(), cancellationToken);
+        return Ok(list);
+    }
     [MapToApiVersion(1)]
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
@@ -44,11 +50,10 @@ public class UserController : ControllerBase
         var result = await _mediator.Send(new DeleteUserCommand { Id = id }, cancellationToken);
         if (!result)
         {
-            return NotFound();
+            return NotFound(result);
         }
-        return Ok();
+        return Ok(result);
     }
-
     [MapToApiVersion(1)]
     [HttpPatch("Update")]
     public async Task<IActionResult> Update([FromBody] UpdateUserCommand command, CancellationToken cancellationToken)
@@ -56,8 +61,8 @@ public class UserController : ControllerBase
         var result = await _mediator.Send(command, cancellationToken);
         if (!result)
         {
-            return NotFound();
+            return NotFound(result);
         }
-        return Ok();
+        return Ok(result);
     }
 }

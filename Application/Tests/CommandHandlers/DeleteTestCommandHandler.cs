@@ -19,9 +19,8 @@ public class DeleteTestCommandHandler : IRequestHandler<DeleteTestCommand, bool>
         var test = await _testRepository.GetByIdAsync(request.Id);
 
         if (test == null)
-        {
             return false;
-        }
-        return _testRepository.DeleteAsync(test, cancellationToken).IsCompletedSuccessfully;
+        await _testRepository.DeleteAsync(test, cancellationToken);
+        return true;
     }
 }

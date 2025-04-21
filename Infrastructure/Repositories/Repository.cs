@@ -42,10 +42,7 @@ namespace Infrastructure.Repositories;
 
         public Expression<Func<E, E>> GetSelector(Expression<Func<E, E>>? selector = null)
         {
-            if (selector == null)
-                selector = c => new E() { Id = c.Id };
-
-            return selector;
+                return selector ?? (e => e);
         }
 
         public async Task UpdateAsync(E entity, CancellationToken cancellation = default)

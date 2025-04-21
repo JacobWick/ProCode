@@ -20,7 +20,7 @@ public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, L
 
     public async Task<LessonDto> Handle(CreateLessonCommand request, CancellationToken cancellationToken)
     {
-        var exercises = await _exerciseRepository.GetAsync(e => request.Exercises.Contains(e.Id), cancellationToken);
+        var exercises = await _exerciseRepository.GetAsync(e => request.ExerciseIds.Contains(e.Id), cancellationToken);
 
         var lesson = new Lesson()
         {

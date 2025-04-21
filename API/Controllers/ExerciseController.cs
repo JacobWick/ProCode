@@ -1,55 +1,55 @@
-﻿using System.Runtime.CompilerServices;
-using Application.Exercises.Commands;
+﻿using Application.Exercises.Commands;
 using Application.Exercises.Queries;
+using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [ApiVersion(1)]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    [Route("api/[controller]")]
-    public class ExercisesController : ControllerBase
+    public class ExerciseController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public ExercisesController(IMediator mediator)
+        public ExerciseController(IMediator mediator)
         {
             _mediator = mediator;
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateExerciseCommand command)
+        [MapToApiVersion(1)]
+        [HttpPost("Create")]
+        public async Task<IActionResult> Create([FromBody] CreateExerciseCommand command, CancellationToken cancellationToken)
         {
-            var created = await _mediator.Send(command);
+            var created = await _mediator.Send(command, cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [MapToApiVersion(1)]
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var list = await _mediator.Send(new GetAllExercisesQuery());
+            var list = await _mediator.Send(new GetAllExercisesQuery(), cancellationToken);
             return Ok(list);
         }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        [MapToApiVersion(1)]
+        [HttpGet("GetById/{id}")]
+        public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetExerciseByIdQuery { Id = id });
+            var result = await _mediator.Send(new GetExerciseByIdQuery { Id = id }, cancellationToken);
             return result is not null ? Ok(result) : NotFound();
         }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateExerciseCommand command)
+        [MapToApiVersion(1)]
+        [HttpPatch("Update")]
+        public async Task<IActionResult> Update( [FromBody] UpdateExerciseCommand command, CancellationToken cancellationToken)
         {
-            command.Id = id;
-            var updated = await _mediator.Send(command);
+            var updated = await _mediator.Send(command, cancellationToken);
             return updated ? NoContent() : NotFound();
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [MapToApiVersion(1)]
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            var deleted = await _mediator.Send(new DeleteExerciseCommand { Id = id });
+            var deleted = await _mediator.Send(new DeleteExerciseCommand { Id = id }, cancellationToken);
             return deleted ? NoContent() : NotFound();
         }
     }
