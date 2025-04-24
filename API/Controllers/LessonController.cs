@@ -9,23 +9,42 @@ namespace API.Controllers;
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
-public class LessonController : ControllerBase
+public class LessonsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public LessonController(IMediator mediator)
+    public LessonsController(IMediator mediator)
     {
         _mediator = mediator;
     }
+
     [MapToApiVersion(1)]
-    [HttpPost("Create")]
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetLessonByIdQuery { Id = id }, cancellationToken);
+        return result is not null ? Ok(result) : NotFound();
+    }
+
+    [MapToApiVersion(1)]
+    [HttpGet]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetAllLessonsQuery(), cancellationToken);
+
+        return result is not null ? Ok(result) : NotFound();
+    }
+
+    [MapToApiVersion(1)]
+    [HttpPost]
     public async Task<IActionResult> Create(CreateLessonCommand command, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(command, cancellationToken);
-        return Ok(result);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
+
     [MapToApiVersion(1)]
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new DeleteLessonCommand { Id = id }, cancellationToken);
@@ -33,25 +52,19 @@ public class LessonController : ControllerBase
         {
             return NotFound(result);
         }
-        return Ok(result);
+        return NoContent();
     }
+
     [MapToApiVersion(1)]
-    [HttpPatch("Update")]
-    public async Task<IActionResult> Update(UpdateLessonCommand command, CancellationToken cancellationToken)
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody]UpdateLessonCommand command, CancellationToken cancellationToken)
     {
+        command.Id = id;
         var result = await _mediator.Send(command, cancellationToken);
         if (!result)
         {
             return NotFound(result);
         }
-        return Ok(result);
-    }
-
-    [MapToApiVersion(1)]
-    [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
-    {
-        var result = await _mediator.Send(new GetLessonByIdQuery { Id = id }, cancellationToken);
-        return result is not null ? Ok(result) : NotFound();
+        return NoContent();
     }
 }
