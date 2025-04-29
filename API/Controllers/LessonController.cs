@@ -57,7 +57,7 @@ public class LessonsController : ControllerBase
 
     [MapToApiVersion(1)]
     [HttpPatch("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody]UpdateLessonCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateLessonCommand command, CancellationToken cancellationToken)
     {
         command.Id = id;
         var result = await _mediator.Send(command, cancellationToken);
@@ -66,5 +66,13 @@ public class LessonsController : ControllerBase
             return NotFound(result);
         }
         return NoContent();
+    }
+
+    [MapToApiVersion(1)]
+    [HttpPost("{id}/complete")]
+    public async Task<IActionResult> Complete(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new CompleteLessonCommand { LessonId = id }, cancellationToken);
+        return result ? Ok() : NotFound();
     }
 }
