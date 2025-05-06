@@ -1,6 +1,6 @@
-﻿namespace Application.Courses.Queries;
+﻿using Application.DTOs;
+using MediatR;
 
-public class GetAllCoursesQuery
-{
-    
-}
+namespace Application.Courses.Queries;
+
+public class GetAllCoursesQuery : IRequest<List<CourseDto>>;
