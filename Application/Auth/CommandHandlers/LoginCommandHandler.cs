@@ -25,7 +25,7 @@ namespace Application.Auth.CommandHandlers
                 throw new UnauthorizedAccessException("Invalid credentials");
             }
 
-            return _jwtService.GenerateToken(user);
+            return await _jwtService.GenerateToken(user);
         }
     }
 }
