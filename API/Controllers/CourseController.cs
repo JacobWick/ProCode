@@ -55,9 +55,17 @@ public class CourseController : ControllerBase
 
     [MapToApiVersion(1)]
     [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string query, CancellationToken cancellationToken)
+    public async Task<IActionResult> Search([FromQuery] SearchCoursesQuery query, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new SearchCoursesQuery { SearchTerm = query }, cancellationToken);
+        var result = await _mediator.Send(query, cancellationToken);
+        return result is not null ? Ok(result) : NotFound();
+    }
+
+    [MapToApiVersion(1)]
+    [HttpGet("{id}/progress")]
+    public async Task<IActionResult> GetProgress(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetCourseProgressQuery { CourseId = id }, cancellationToken);
         return result is not null ? Ok(result) : NotFound();
     }
 }

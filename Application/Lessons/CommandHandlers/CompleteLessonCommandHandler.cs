@@ -2,19 +2,17 @@
 using Application.Lessons.Commands;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Lessons.CommandHandlers
 {
     public class CompleteLessonCommandHandler : IRequestHandler<CompleteLessonCommand, bool>
     {
-        private readonly IRepository<Lesson> _lessonRepo;
         private readonly IRepository<Progress> _progressRepo;
         private readonly IUserContextService _userContextService;
 
-
-        public CompleteLessonCommandHandler(IRepository<Lesson> lessonRepo, IRepository<Progress> progressRepo, IUserContextService userContextService)
+        public CompleteLessonCommandHandler(IRepository<Progress> progressRepo, IRepository<Lesson> lessonRepo, IUserContextService userContextService, UserManager<User> userManager)
         {
-            _lessonRepo = lessonRepo;
             _progressRepo = progressRepo;
             _userContextService = userContextService;
         }
@@ -23,36 +21,24 @@ namespace Application.Lessons.CommandHandlers
         {
             var userId = _userContextService.UserId;
 
-            var lesson = await _lessonRepo.GetByIdAsync(request.LessonId, cancellationToken: cancellationToken);
-            if (lesson == null)
-            {
-                return false;
-            }
-
-            var progresses = await _progressRepo.GetAsync(
-                p => p.User.Id == userId && p.Lessons.Any(l => l.Id == lesson.Id),
+            var progressExists = await _progressRepo.GetAsync(
+                p => p.User.Id == userId && p.Lesson.Id == request.LessonId,
                 cancellationToken
             );
-
-            var progressExists = progresses.FirstOrDefault();
 
             if (progressExists != null)
             {
                 return false;
             }
 
-            var progress = _progressRepo.GetAsync(
-                p => p.User.Id == userId && p.Course.Id == lesson.Course.Id,
-                cancellationToken
-            ).Result.FirstOrDefault();
+            var progress = new Progress()
+            {
+                UserId = userId,
+                LessonId = request.LessonId,
+                CompletedAt = DateOnly.FromDateTime(DateTime.Now),
+            };
 
-            if (progress == null) { 
-                return false;
-            }
-
-            progress.Lessons.Add(lesson);
-
-            await _progressRepo.UpdateAsync(progress, cancellationToken);
+            await _progressRepo.CreateAsync(progress, cancellationToken);
 
             return true;
         }
