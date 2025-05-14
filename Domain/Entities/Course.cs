@@ -13,10 +13,10 @@ public class Course : IEntity
 
     public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
     
-    public User User { get; set; } = null!;
+    public User User { get; set; } = null!; // author
 
-    public string? Title { get; set; }
-    public string? Description { get; set; }
+    public required string Title { get; set; }
+    public required string Description { get; set; }
     public DateTime CreatedOn { get; set; }
     public DifficultyLevel DifficultyLevel { get; set; }
     public int Rating { get; set; }
