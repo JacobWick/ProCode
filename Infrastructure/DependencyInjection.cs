@@ -15,6 +15,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped<IUserContextService, UserContextService>();
+        services.AddHttpContextAccessor();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddDbContext<PostgresDbContext>(options =>

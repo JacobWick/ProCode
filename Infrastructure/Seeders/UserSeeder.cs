@@ -36,7 +36,18 @@ namespace Infrastructure.Seeders
                 throw new Exception($"Admin creation failed: {errors}");
             }
 
-            await userManager.AddToRoleAsync(newAdmin, Roles.Admin);
+            var createdUser = await userManager.FindByEmailAsync(adminEmail);
+
+            if (createdUser == null)
+                return;
+
+            var roleResult = await userManager.AddToRoleAsync(createdUser, Roles.Admin);
+
+            if (!roleResult.Succeeded)
+            {
+                var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                throw new Exception($"Admin role assignment failed: {errors}");
+            }
         }
     }
 }

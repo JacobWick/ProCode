@@ -18,10 +18,6 @@
 
     <ItemGroup>
       <Folder Include="Courses\Commands\" />
-      <Folder Include="Courses\QueriesHandlers\" />
-      <Folder Include="Courses\Queries\" />
-      <Folder Include="Lessons\CommandHandlers\" />
-      <Folder Include="Lessons\Commands\" />
       <Folder Include="Lessons\Queries\" />
       <Folder Include="Lessons\QueryHandlers\" />
       <Folder Include="Exercises\CommandHandlers\" />
@@ -32,6 +28,7 @@
       <Folder Include="Notifications\Commands\" />
       <Folder Include="Notifications\Queries\" />
       <Folder Include="Notifications\QueryHandlers\" />
+      <Folder Include="Progresses\CommandHandlers\" />
       <Folder Include="Progresses\CommandHandlers\" />
       <Folder Include="Progresses\Commands\" />
       <Folder Include="Progresses\Queries\" />

@@ -7,12 +7,12 @@ public class Progress : IEntity
 {
     [Key]
     public Guid Id { get; set; }
-    
+
+    public Guid UserId { get; set; }
     public User User { get; set; } = null!;
-    
-    public Course Course { get; set; } = null!;
 
-    public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+    public Guid LessonId { get; set; }
+    public Lesson Lesson { get; set; } = null!;
 
-    public DateOnly LastAccessedAt { get; set; }
+    public DateOnly CompletedAt { get; set; }
 }
