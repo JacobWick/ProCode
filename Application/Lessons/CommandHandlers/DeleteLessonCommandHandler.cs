@@ -1,7 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Lessons.Commands;
 using Domain.Entities;
-using Domain.Interfaces;
 using MediatR;
 
 namespace Application.Lessons.CommandHandlers;
