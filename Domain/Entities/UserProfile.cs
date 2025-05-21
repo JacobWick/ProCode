@@ -7,6 +7,8 @@ namespace Domain.Entities
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
 
+        
+        public bool IsProfilePublic { get; set; } = true;
         public Uri AvatarUrl { get; set; } = new Uri("https://www.gravatar.com/avatar/");
         public string? Bio { get; set; }
         public Uri? Website { get; set; }
