@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Domain.Constants;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities;
