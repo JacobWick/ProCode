@@ -10,7 +10,7 @@ public class Lesson  : IEntity
     
     public Progress? Progress { get; set; }
     
-    public Course Course { get; set; } = null!;
+    public Course? Course { get; set; } 
 
     public ICollection<Exercise> Exercises { get; set; } = new List<Exercise>();
 
