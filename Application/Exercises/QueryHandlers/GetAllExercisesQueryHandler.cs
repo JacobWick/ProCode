@@ -23,7 +23,7 @@ namespace Application.Exercises.QueryHandlers
                 Id = e.Id,
                 Description = e.Description,
                 InitialContent = e.InitialContent,
-                LessonId = e.Lesson.Id
+                LessonId = e.Lesson?.Id
             }).ToList();
         }
     }

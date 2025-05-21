@@ -11,7 +11,7 @@ public class Exercise : IEntity
 
     public SolutionExample? SolutionExample { get; set; }
     
-    public Lesson Lesson { get; set; } = null!;
+    public Lesson? Lesson { get; set; }
 
     public ICollection<Test> Tests = new List<Test>();
 
