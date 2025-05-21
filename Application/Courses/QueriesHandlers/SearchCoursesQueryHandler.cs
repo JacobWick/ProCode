@@ -8,10 +8,10 @@ using MediatR;
 
 namespace Application.Courses.QueriesHandlers
 {
-    public class SearchCoursesQueryHandler : IRequestHandler<SearchCoursesQuery, PaginatedResult<CourseOverviewDto>>
+    public class SearchCoursesQueryHandler : IRequestHandler<SearchCoursesQuery, PaginatedResult<CourseOverviewDto>?>
     {
         private readonly IRepository<Course> _courseRepository;
-        public SearchCoursesQueryHandler(IRepository<Course> courseRepository)
+        public SearchCoursesQueryHandler(IRepository<Course> courseRepository, IRepository<UserProfile> userProfileRepository)
         {
             _courseRepository = courseRepository;
         }
@@ -35,7 +35,7 @@ namespace Application.Courses.QueriesHandlers
                 {
                     FirstName = c.User.FirstName,
                     LastName = c.User.LastName,
-                    AvatarUri = c.User.AvatarUri
+                    AvatarUri = c.User.Profile.AvatarUrl
                 },
                 Rating = c.Rating
             }).ToList();
