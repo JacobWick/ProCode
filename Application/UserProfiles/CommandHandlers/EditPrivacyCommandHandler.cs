@@ -8,8 +8,8 @@ namespace Application.UserProfiles.CommandHandlers
 {
     public class EditPrivacyCommandHandler : IRequestHandler<EditPrivacyCommand, bool>
     {
-        public IRepository<UserProfile> _userProfileRepository;
-        public IUserContextService _userContextService;
+        private readonly IRepository<UserProfile> _userProfileRepository;
+        private readonly IUserContextService _userContextService;
 
         public EditPrivacyCommandHandler(IRepository<UserProfile> userProfileRepositor, IUserContextService userContextService)
         {

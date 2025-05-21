@@ -9,6 +9,5 @@
         public string Bio { get; set; }
         public ICollection<string> Roles { get; set; }
         public ICollection<CourseOverviewDto> BestCourses { get; set; }
-        
     }
 }

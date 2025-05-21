@@ -8,8 +8,8 @@ namespace Application.UserProfiles.QueryHandlers
 {
     public class GetPublicProfileByIdQueryHandler : IRequestHandler<GetPublicProfileByIdQuery, PublicProfileResponse>
     {
-        public IRepository<UserProfile> _userProfileRepository;
-        public IRepository<Course> _courseRepository;
+        private readonly IRepository<UserProfile> _userProfileRepository;
+        private readonly IRepository<Course> _courseRepository;
 
         public GetPublicProfileByIdQueryHandler(IRepository<UserProfile> userProfileRepository, IRepository<Course> courseRepository)
         {
