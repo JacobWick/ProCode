@@ -15,6 +15,7 @@ namespace Infrastructure.Data
         public DbSet<SolutionExample> SolutionExamples { get; set; }
         public DbSet<Test> Tests { get; set; }
         public new DbSet<User> Users { get; set; }
+        public DbSet<UserProfile> userProfiles { get; set; }
         public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options)
         {
         }
