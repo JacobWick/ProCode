@@ -1,7 +1,7 @@
 ﻿using Application.DTOs;
 using Domain.Entities;
 
-namespace Application.Mapper;
+namespace Application.Mappers;
 
 public static class ExerciseMapper
 {

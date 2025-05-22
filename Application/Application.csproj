@@ -33,6 +33,7 @@
       <Folder Include="Progresses\Commands\" />
       <Folder Include="Progresses\Queries\" />
       <Folder Include="Progresses\QueryHandlers\" />
+      <Folder Include="Validators\Auth\" />
     </ItemGroup>
 
 </Project>
