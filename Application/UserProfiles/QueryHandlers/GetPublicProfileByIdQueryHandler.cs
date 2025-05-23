@@ -1,29 +1,33 @@
-﻿using Application.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Interfaces;
 using Application.UserProfiles.Queries;
 using Domain.Entities;
 using MediatR;
 
 namespace Application.UserProfiles.QueryHandlers
 {
-    public class GetPublicProfileByUserIdQueryHandler : IRequestHandler<GetPublicProfileByUserIdQuery, PublicProfileResponse?>
+    public class GetPublicProfileByIdQueryHandler : IRequestHandler<GetPublicProfileByIdQuery, PublicProfileResponse>
     {
-        public IRepository<UserProfile> _userProfileRepository;
-        public IRepository<Course> _courseRepository;
+        private readonly IRepository<UserProfile> _userProfileRepository;
+        private readonly IRepository<Course> _courseRepository;
 
-        public GetPublicProfileByUserIdQueryHandler(IRepository<UserProfile> userProfileRepository, IRepository<Course> courseRepository)
+        public GetPublicProfileByIdQueryHandler(IRepository<UserProfile> userProfileRepository, IRepository<Course> courseRepository)
         {
             _userProfileRepository = userProfileRepository;
             _courseRepository = courseRepository;
         }
-        public async Task<PublicProfileResponse?> Handle(GetPublicProfileByUserIdQuery request, CancellationToken cancellationToken)
+        public async Task<PublicProfileResponse> Handle(GetPublicProfileByIdQuery request, CancellationToken cancellationToken)
         {
-            var userProfiles = await _userProfileRepository.GetAsync(up => up.UserId == request.Id);
-
-            var userProfile = userProfiles.FirstOrDefault();
+            var userProfile = await _userProfileRepository.GetByIdAsync(request.Id, cancellationToken: cancellationToken);
 
             if (userProfile == null)
             {
-                return null;
+                throw new NotFoundException("No profile found", nameof(UserProfile));
+            }
+
+            if (userProfile.IsProfilePublic == false)
+            {
+                throw new ForbiddenAccessException("This profile is private.");
             }
 
             return new PublicProfileResponse

@@ -2,7 +2,7 @@
 
 namespace Application.UserProfiles.Queries
 {
-    public class GetPublicProfileByUserIdQuery: IRequest<PublicProfileResponse>
+    public class GetPublicProfileByIdQuery: IRequest<PublicProfileResponse>
     {
         public Guid Id { get; set; }
     }
