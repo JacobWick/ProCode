@@ -6,8 +6,6 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
-using Domain.Constants;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
