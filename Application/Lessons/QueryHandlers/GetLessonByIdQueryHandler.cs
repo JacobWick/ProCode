@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
 using Application.Lessons.Queries;
+using Application.Mappers;
 using Domain.Entities;
 using MediatR;
 
@@ -18,13 +19,8 @@ public class GetLessonByIdQueryHandler : IRequestHandler<GetLessonByIdQuery, Les
     public async Task<LessonDto> Handle(GetLessonByIdQuery request, CancellationToken cancellationToken)
     {
         var lesson = await _lessonRepository.GetByIdAsync(request.Id);
-        return new LessonDto
-        {
-            Id = lesson.Id,
-            Title = lesson.Title,
-            VideoUri = lesson.VideoUri,
-            TextUri = lesson.TextUri,
-            Exercises = lesson.Exercises.Select(e => e.Id).ToList()
-        };
+        if (lesson == null)
+            return null;
+        return LessonMapper.MapToDto(lesson);
     }
 }

@@ -19,4 +19,9 @@ public static class CourseMapper
             Rating = course.Rating,
         };
     }
+
+    public static List<CourseDto> MapListToDto(ICollection<Course> courses)
+    {
+        return courses.Select(MapToDto).ToList();
+    }
 }

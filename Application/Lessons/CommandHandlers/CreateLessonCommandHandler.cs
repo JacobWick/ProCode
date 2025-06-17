@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
 using Application.Lessons.Commands;
+using Application.Mappers;
 using Domain.Entities;
 using MediatR;
 
@@ -31,14 +32,6 @@ public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, L
 
         };
         await _lessonRepository.CreateAsync(lesson, cancellationToken);
-        return new LessonDto
-        {
-            Id = lesson.Id,
-            Title = lesson.Title,
-            VideoUri = lesson.VideoUri,
-            TextUri = lesson.TextUri,
-            CreatedAt = lesson.CreatedAt,
-            Exercises = lesson.Exercises.Select(e => e.Id).ToList()
-        };
+        return LessonMapper.MapToDto(lesson);
     }
 }

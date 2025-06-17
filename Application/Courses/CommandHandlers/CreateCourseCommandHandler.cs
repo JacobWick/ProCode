@@ -1,6 +1,7 @@
 ﻿using Application.Courses.Commands;
 using Application.DTOs;
 using Application.Interfaces;
+using Application.Mappers;
 using Domain.Entities;
 using MediatR;
 
@@ -34,16 +35,6 @@ public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, C
             Lessons = lessons,
         };
         await _courseRepository.CreateAsync(course, cancellationToken);
-        return new CourseDto
-        {
-            Id = course.Id,
-            Title = course.Title,
-            Description = course.Description,
-            DifficultyLevel = course.DifficultyLevel,
-            Rating = course.Rating,
-            CreatedOn = course.CreatedOn,
-            CreatedBy = course.User.Id,
-            Lessons = course.Lessons.Select(l => l.Id).ToList()
-        };
+        return CourseMapper.MapToDto(course);
     }
 }

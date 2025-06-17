@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using Application.Mappers;
 using Application.Tests.Queries;
 using Domain.Entities;
 using MediatR;
@@ -29,12 +30,7 @@ public class GetTestByIdQueryHandler : IRequestHandler<GetTestByIdQuery, TestDto
         {
             return null;
         }
-        return new TestDto
-        {
-            Id = test.Id,
-            ExerciseId = test.Exercise.Id,
-            InputData = test.InputData,
-            OutputData = test.OutputData,
-        };
+
+        return TestMapper.MapToDto(test);
     }
 }
