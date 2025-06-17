@@ -9,7 +9,7 @@ public static class BriefAuthorUserMapper
     {
         return new BriefAuthorUserDto
         {
-            AvatarUri = user.AvatarUri,
+            AvatarUri = user.Profile.AvatarUrl,
             FirstName = user.FirstName,
             LastName = user.LastName,
         };
