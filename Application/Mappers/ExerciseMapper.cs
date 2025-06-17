@@ -15,4 +15,9 @@ public static class ExerciseMapper
             LessonId = exercise.Lesson.Id
         };
     }
+
+    public static List<ExerciseDto> MapListToDto(ICollection<Exercise> exercises)
+    {
+        return exercises.Select(MapToDto).ToList();
+    }
 }

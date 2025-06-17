@@ -9,7 +9,7 @@ public class CreateSolutionExampleCommandValidator : AbstractValidator<CreateSol
     {
         RuleFor(x => x.Code)
             .NotEmpty().WithMessage("Code is required.")
-            .MinimumLength(10).WithMessage("Code must be at least 10 characters long.")
+            .MinimumLength(5).WithMessage("Code must be at least 5 characters long.")
             .MaximumLength(10000).WithMessage("Code must not exceed 10,000 characters.");
 
         RuleFor(x => x.Explanation)

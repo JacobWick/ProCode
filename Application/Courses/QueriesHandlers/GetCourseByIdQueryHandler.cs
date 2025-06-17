@@ -1,6 +1,7 @@
 ﻿using Application.Courses.Queries;
 using Application.DTOs;
 using Application.Interfaces;
+using Application.Mappers;
 using Domain.Entities;
 using MediatR;
 
@@ -18,15 +19,8 @@ public class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQuery, Cou
     public async Task<CourseDto> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
     {
         var course = await _courseRepository.GetByIdAsync(request.Id);
-        return new CourseDto
-        {
-            Id = course.Id,
-            Title = course.Title,
-            Description = course.Description,
-            CreatedOn = course.CreatedOn,
-            DifficultyLevel = course.DifficultyLevel,
-            Rating = course.Rating,
-            Lessons = course.Lessons.Select(l => l.Id).ToList(),
-        };
+        if (course == null)
+            return null;
+        return CourseMapper.MapToDto(course);
     }
 }

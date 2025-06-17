@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Exercises.Queries;
 using Application.Interfaces;
+using Application.Mappers;
 using Domain.Entities;
 using MediatR;
 
@@ -22,13 +23,7 @@ namespace Application.Exercises.QueryHandlers
             if (exercise == null)
                 return null!;
 
-            return new ExerciseDto
-            {
-                Id = request.Id,
-                Description = exercise.Description,
-                InitialContent = exercise.InitialContent,
-                LessonId = exercise.Lesson.Id
-            };
+            return ExerciseMapper.MapToDto(exercise);
         }
     }
 }

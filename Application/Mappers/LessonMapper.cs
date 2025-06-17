@@ -17,4 +17,9 @@ public static class LessonMapper
             CreatedAt = lesson.CreatedAt,
         };
     }
+
+    public static List<LessonDto> MapListToDto(ICollection<Lesson> lessons)
+    {
+        return lessons.Select(MapToDto).ToList();
+    }
 }

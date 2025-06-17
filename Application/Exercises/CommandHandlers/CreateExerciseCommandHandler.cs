@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Exercises.Commands;
 using Application.Interfaces;
+using Application.Mappers;
 using Domain.Entities;
 using MediatR;
 
@@ -36,13 +37,7 @@ namespace Application.Exercises.CommandHandlers
 
             await _exerciseRepository.CreateAsync(exercise);
 
-            return new ExerciseDto
-            {
-                Id = exercise.Id,
-                Description = exercise.Description,
-                InitialContent = exercise.InitialContent,
-                LessonId = exercise.Lesson?.Id
-            };
+            return ExerciseMapper.MapToDto(exercise);
         }
 
     }

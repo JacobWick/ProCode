@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
 using Application.Lessons.Queries;
+using Application.Mappers;
 using Domain.Entities;
 using MediatR;
 
@@ -18,14 +19,8 @@ public class GetAllLessonsQueryHandler : IRequestHandler<GetAllLessonsQuery, Lis
     public async Task<List<LessonDto>> Handle(GetAllLessonsQuery request, CancellationToken cancellationToken)
     {
         var lessons = await _lessonRepository.GetAllAsync();
-        return lessons.Select(lesson => new LessonDto
-        {
-            Id = lesson.Id,
-            CreatedAt = lesson.CreatedAt,
-            Title = lesson.Title,
-            VideoUri = lesson.VideoUri,
-            TextUri = lesson.TextUri,
-            Exercises = lesson.Exercises.Select(e => e.Id).ToList()
-        }).ToList();
+        var lessonDtos = LessonMapper.MapListToDto(lessons);
+        
+        return lessonDtos;
     }
 }

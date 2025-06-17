@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using Application.Mappers;
 using Application.Tests.Commands;
 using Domain.Entities;
 using MediatR;
@@ -27,12 +28,6 @@ public class CreateTestCommandHandler : IRequestHandler<CreateTestCommand, TestD
             OutputData = request.OutputData,
         };
         await _testRepository.CreateAsync(test, cancellationToken);
-        return new TestDto
-        {
-            Id = test.Id,
-            InputData = test.InputData,
-            OutputData = test.OutputData,
-            ExerciseId = test.Exercise.Id
-        };
+        return TestMapper.MapToDto(test);
     }
 }

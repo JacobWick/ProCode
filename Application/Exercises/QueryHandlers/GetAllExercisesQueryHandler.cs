@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Exercises.Queries;
 using Application.Interfaces;
+using Application.Mappers;
 using Domain.Entities;
 using MediatR;
 
@@ -18,13 +19,9 @@ namespace Application.Exercises.QueryHandlers
         public async Task<List<ExerciseDto>> Handle(GetAllExercisesQuery request, CancellationToken cancellationToken)
         {
             var exercises = await _exerciseRepository.GetAllAsync();
-            return exercises.Select(e => new ExerciseDto
-            {
-                Id = e.Id,
-                Description = e.Description,
-                InitialContent = e.InitialContent,
-                LessonId = e.Lesson?.Id
-            }).ToList();
+            var exerciseDtos = ExerciseMapper.MapListToDto(exercises);
+            
+            return exerciseDtos;
         }
     }
 }
