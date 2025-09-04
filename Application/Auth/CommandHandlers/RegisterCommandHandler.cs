@@ -1,5 +1,6 @@
 ﻿using Application.Auth.Commands;
 using Domain.Entities;
+using Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -16,6 +17,11 @@ namespace Application.Auth.CommandHandlers
 
         public async Task<bool> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            if (existingUser != null)
+            {
+                throw new DuplicatedEmailException(request.Email);
+            }
             var user = new User
             {
                 UserName = request.UserName,
