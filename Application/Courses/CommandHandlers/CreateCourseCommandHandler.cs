@@ -28,7 +28,7 @@ public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, C
         {
             Title = request.Title,
             Description = request.Description,
-            User = user,
+            Creator = user,
             DifficultyLevel = request.DifficultyLevel,
             CreatedOn = DateTime.Now,
             Rating = 0,

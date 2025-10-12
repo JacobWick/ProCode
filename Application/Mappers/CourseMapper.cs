@@ -13,8 +13,8 @@ public static class CourseMapper
             Title = course.Title,
             Description = course.Description,
             CreatedOn = course.CreatedOn,
-            CreatedBy = course.User.Id,
-            Lessons = course.Lessons.Select(l => l.Id).ToList(),
+            CreatedBy = course.Creator?.Id ?? course.CreatorId,
+            Lessons = course.Lessons?.Select(l => l.Id).ToList() ?? new List<Guid>(),
             DifficultyLevel = course.DifficultyLevel,
             Rating = course.Rating,
         };

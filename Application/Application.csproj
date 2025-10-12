@@ -24,16 +24,6 @@
       <Folder Include="Exercises\Commands\" />
       <Folder Include="Exercises\Queries\" />
       <Folder Include="Exercises\QueryHandlers\" />
-      <Folder Include="Notifications\CommandHandlers\" />
-      <Folder Include="Notifications\Commands\" />
-      <Folder Include="Notifications\Queries\" />
-      <Folder Include="Notifications\QueryHandlers\" />
-      <Folder Include="Progresses\CommandHandlers\" />
-      <Folder Include="Progresses\CommandHandlers\" />
-      <Folder Include="Progresses\Commands\" />
-      <Folder Include="Progresses\Queries\" />
-      <Folder Include="Progresses\QueryHandlers\" />
-      <Folder Include="Validators\Auth\" />
     </ItemGroup>
 
 </Project>

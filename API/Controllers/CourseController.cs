@@ -28,7 +28,7 @@ public class CourseController : ControllerBase
     [HttpGet()]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var list = _mediator.Send(new GetAllCoursesQuery(), cancellationToken);
+        var list = await _mediator.Send(new GetAllCoursesQuery(), cancellationToken);
         return Ok(list);
     }
     [MapToApiVersion(1)]

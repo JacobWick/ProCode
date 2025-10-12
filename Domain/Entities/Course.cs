@@ -11,7 +11,8 @@ public class Course : IEntity
 
     public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
     
-    public User User { get; set; } = null!; // author
+    public Guid CreatorId { get; set; }
+    public User Creator { get; set; } = null!; 
 
     public required string Title { get; set; }
     public required string Description { get; set; }

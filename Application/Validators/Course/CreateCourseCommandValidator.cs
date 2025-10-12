@@ -13,12 +13,7 @@ public class CreateCourseCommandValidator : AbstractValidator<CreateCourseComman
 
         RuleFor(x => x.CreatedBy)
             .NotEqual(Guid.Empty).WithMessage("Course creator is required.");
-
-        RuleFor(x => x.Lessons)
-            .NotNull().WithMessage("Lessons list is required.")
-            .Must(l => l.Any()).WithMessage("At least one lesson is required.")
-            .Must(l => l.All(id => id != Guid.Empty)).WithMessage("All lesson IDs must be valid (non-empty).");
-
+        
         RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Description is required.")
             .MinimumLength(100).WithMessage("Description must be at least 100 characters long.")

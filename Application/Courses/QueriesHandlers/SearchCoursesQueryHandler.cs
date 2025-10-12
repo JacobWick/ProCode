@@ -33,9 +33,9 @@ namespace Application.Courses.QueriesHandlers
                 DifficultyLevel = c.DifficultyLevel,
                 CreatedBy  = new BriefAuthorUserDto()
                 {
-                    FirstName = c.User.FirstName,
-                    LastName = c.User.LastName,
-                    AvatarUri = c.User.Profile.AvatarUrl
+                    FirstName = c.Creator.FirstName,
+                    LastName = c.Creator.LastName,
+                    AvatarUri = c.Creator.Profile.AvatarUrl
                 },
                 Rating = c.Rating
             }).ToList();

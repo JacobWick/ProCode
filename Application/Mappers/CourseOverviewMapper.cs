@@ -12,7 +12,7 @@ public static class CourseOverviewMapper
             Id = course.Id,
             Title = course.Title,
             Description = course.Description,
-            CreatedBy = BriefAuthorUserMapper.MapToDto(course.User),
+            CreatedBy = BriefAuthorUserMapper.MapToDto(course.Creator),
             DifficultyLevel = course.DifficultyLevel,
             Rating = course.Rating,
         };
