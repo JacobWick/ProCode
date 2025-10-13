@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiVersion(1)]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/user")]
 [ApiController]
 public class UserController : ControllerBase
 {
@@ -19,7 +19,7 @@ public class UserController : ControllerBase
         _mediator = mediator;
     }
     [MapToApiVersion(1)]
-    [HttpPost("Create")]
+    [HttpPost()]
     public async Task<IActionResult> Create([FromBody] CreateUserCommand request, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(request, cancellationToken);
@@ -30,21 +30,21 @@ public class UserController : ControllerBase
         return BadRequest(new { status = 400, message = result.Error ?? "User creation failed." });
     }
     [MapToApiVersion(1)]
-    [HttpGet("GetById/{id}")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<UserDto?>> GetById(Guid id, CancellationToken cancellationToken)
     {
         var user = await _mediator.Send(new GetUserByIdQuery{ Id = id }, cancellationToken);
         return Ok(user);
     }
     [MapToApiVersion(1)]
-    [HttpGet("GetAll")]
+    [HttpGet()]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var list = await _mediator.Send(new GetAllUsersQuery(), cancellationToken);
         return Ok(list);
     }
     [MapToApiVersion(1)]
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new DeleteUserCommand { Id = id }, cancellationToken);
@@ -55,7 +55,7 @@ public class UserController : ControllerBase
         return Ok(result);
     }
     [MapToApiVersion(1)]
-    [HttpPatch("Update")]
+    [HttpPatch()]
     public async Task<IActionResult> Update([FromBody] UpdateUserCommand command, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(command, cancellationToken);

@@ -18,12 +18,6 @@ public class CreateLessonCommandValidator : AbstractValidator<CreateLessonComman
         RuleFor(x => x.TextUri)
             .NotNull().WithMessage("Lesson text URI is required.")
             .Must(BeValidHttpUri).WithMessage("Text URI must start with http or https.");
-
-        /*RuleFor(x => x.ExerciseIds)
-            .NotNull().WithMessage("Exercise IDs are required.")
-            .Must(list => list.Any()).WithMessage("At least one exercise ID must be provided.")
-            .Must(list => list.All(id => id != Guid.Empty)).WithMessage("Exercise IDs must be valid (non-empty).");
-        */
     }
 
     private bool BeValidHttpUri(Uri uri)
