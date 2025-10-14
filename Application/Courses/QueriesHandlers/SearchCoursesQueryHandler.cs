@@ -18,7 +18,11 @@ namespace Application.Courses.QueriesHandlers
 
         public async Task<PaginatedResult<CourseOverviewDto>?> Handle(SearchCoursesQuery request, CancellationToken cancellationToken)
         {
-            var courses = await _courseRepository.GetAsync(c => c.Description.Contains(request.SearchTerm) || c.Title.Contains(request.SearchTerm), cancellationToken);
+            var courses = await _courseRepository.GetAsync(
+                c => c.Description.Contains(request.SearchTerm) || c.Title.Contains(request.SearchTerm),
+                cancellationToken,
+                c => c.Creator,
+                c => c.Creator.Profile);
 
             if (courses == null)
             {
