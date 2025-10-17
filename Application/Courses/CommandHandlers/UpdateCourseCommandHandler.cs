@@ -27,18 +27,17 @@ public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, b
             course.Description = request.Description;
         if (request.DifficultyLevel != course.DifficultyLevel)
             course.DifficultyLevel = request.DifficultyLevel;
-        if (request.Rating != course.Rating)
-            course.Rating = request.Rating;
-        if (request.Lessons.Count > 0)
+        if (request.Lessons is not null)
         {
             foreach (var lessonId in request.Lessons)
             {
-                if (course.Lessons.Any(l => l.Id == lessonId))
+                if (course.Lessons.Any(x => x.Id == lessonId))
                     continue;
                 var lesson = await _lessonRepository.GetByIdAsync(lessonId, cancellationToken: cancellationToken);
                 if (lesson is not null)
                 {
                     course.Lessons.Add(lesson);
+                    lesson.Course = course;
                 }
             }
         }

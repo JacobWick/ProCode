@@ -25,19 +25,44 @@ namespace Infrastructure.Repositories;
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<ICollection<E>> GetAllAsync(Expression<Func<E, E>>? selector = null, CancellationToken cancellationToken = default)
+        public async Task<ICollection<E>> GetAllAsync(
+            Expression<Func<E, E>>? selector = null, 
+            Expression<Func<E, object>>[]? includes = null,  
+            CancellationToken cancellationToken = default)
         {
-            return await context.Set<E>()
-                .Select(GetSelector(selector))
-                .ToListAsync(cancellationToken);
+            IQueryable<E> query = context.Set<E>();
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+            if (selector != null)
+                query = query.Select(selector);
+            return await query.ToListAsync(cancellationToken);
         }
 
-        public async Task<E?> GetByIdAsync(Guid id, Expression<Func<E, E>>? selector = null, CancellationToken cancellationToken = default)
+        public async Task<E?> GetByIdAsync (
+            Guid id, 
+            Expression<Func<E, E>>? selector = null, 
+            Expression<Func<E, object>>[]? includes = null, 
+            CancellationToken cancellationToken = default)
         {
-            return await context.Set<E>()
-                .Where(e => e.Id == id)
-                .Select(GetSelector(selector))
-                .FirstOrDefaultAsync(cancellationToken);
+            IQueryable<E> query = context.Set<E>().Where(e => e.Id == id);
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            if (selector != null)
+            {
+                query = query.Select(selector);
+            }
+            return await query.FirstOrDefaultAsync(cancellationToken);
         }
 
         public Expression<Func<E, E>> GetSelector(Expression<Func<E, E>>? selector = null)

@@ -9,6 +9,5 @@ public class UpdateCourseCommand : IRequest<bool>
     public string? Title { get; set; }
     public string? Description { get; set; }
     public DifficultyLevel DifficultyLevel { get; set; }
-    public int Rating { get; set; }
     public List<Guid>? Lessons { get; set; }
 }

@@ -24,12 +24,11 @@ public class GetTestByIdQueryHandler : IRequestHandler<GetTestByIdQuery, TestDto
             Exercise = t.Exercise,
             InputData = t.InputData,
             OutputData = t.OutputData,
-        },
+        },null, 
         cancellationToken);
         if (test == null)
-        {
             return null;
-        }
+        
 
         return TestMapper.MapToDto(test);
     }

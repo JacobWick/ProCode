@@ -12,7 +12,7 @@ public static class ExerciseMapper
             Id = exercise.Id,
             Description = exercise.Description,
             InitialContent = exercise.InitialContent,
-            LessonId = exercise.Lesson.Id
+            LessonId = exercise.Lesson?.Id ?? Guid.Empty
         };
     }
 

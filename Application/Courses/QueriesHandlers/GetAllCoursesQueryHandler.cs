@@ -1,4 +1,5 @@
-﻿using Application.Courses.Queries;
+﻿using System.Linq.Expressions;
+using Application.Courses.Queries;
 using Application.DTOs;
 using Application.Interfaces;
 using Application.Mappers;
@@ -18,7 +19,7 @@ public class GetAllCoursesQueryHandler : IRequestHandler<GetAllCoursesQuery, Lis
 
     public async Task<List<CourseDto>> Handle(GetAllCoursesQuery request, CancellationToken cancellationToken)
     {
-        var courses = await _courseRepository.GetAllAsync(cancellationToken: cancellationToken);
+        var courses = await _courseRepository.GetAllAsync(includes: new Expression<Func<Course, object>>[] {c => c.Lessons}, cancellationToken: cancellationToken);
         var coursesDtos = CourseMapper.MapListToDto(courses);
         
         return coursesDtos;
