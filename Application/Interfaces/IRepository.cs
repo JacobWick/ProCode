@@ -22,4 +22,10 @@ public interface IRepository<E> where E : class, IEntity
         CancellationToken cancellation = default);
     Task DeleteAsync(E entity,
         CancellationToken cancellation = default);
+
+    Task<ICollection<E>> GetAsync(
+            Expression<Func<E, bool>> predicate,
+            CancellationToken cancellationToken = default,
+            params Expression<Func<E, object>>[] includes);
+
 }

@@ -75,4 +75,23 @@ namespace Infrastructure.Repositories;
             context.Set<E>().Update(entity);
             await context.SaveChangesAsync(cancellation);
         }
-    }
+
+        public async Task<ICollection<E>> GetAsync(
+            Expression<Func<E, bool>> predicate,
+            CancellationToken cancellationToken = default,
+            params Expression<Func<E, object>>[] includes)
+        {
+            IQueryable<E> query = context.Set<E>();
+
+            if (includes != null && includes.Length > 0)
+            {
+                foreach (var include in includes)
+                    query = query.Include(include);
+            }
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            return await query.ToListAsync(cancellationToken);
+        }
+}
