@@ -57,6 +57,15 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("SpaDev", policy => policy
+        .WithOrigins("http://localhost:5173", "https://localhost:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
+
 builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
@@ -116,6 +125,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("SpaDev");
 
 app.UseAuthentication();
 
