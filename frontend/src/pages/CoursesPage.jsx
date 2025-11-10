@@ -2,18 +2,20 @@ import { useEffect, useState } from "react";
 import {Box, Text, SimpleGrid, Spinner, Heading, Link} from "@chakra-ui/react";
 import { getCourses } from "../api.js";
 import {COURSE_DIFFICULTY} from "../constants.js";
+import {useNavigate} from "react-router-dom";
 
 function CoursesPage() {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchCourses = async () => {
             setLoading(true);
             try {
                 const res = await getCourses();
                 setCourses(res.data);
+                console.log(res.data);
             } catch (error) {
                 console.error(error);
                 setError(error.message || "Błąd podczas pobierania kursów");
@@ -43,8 +45,7 @@ function CoursesPage() {
             {!loading && !error && (
                 <SimpleGrid columns={[1, 2, 3]} spacing={6}>
                     {courses.map((course) => (
-                        <Link key={course.id} to={`/courses/${course.id}`}>
-                            <Box bg="#1c1530" p={4} rounded="lg" shadow="md" _hover={{ bg: "#261d42" }}>
+                            <Box key={course.id} bg="#1c1530" p={4} rounded="lg" shadow="md" _hover={{ bg: "#261d42" }} onClick={() => navigate(`/courses/${course.id}`)}>
                                 <Text fontWeight="bold" fontSize="lg" color="white">
                                     {course.title}
                                 </Text>
@@ -55,7 +56,6 @@ function CoursesPage() {
                                     Poziom trudności: {COURSE_DIFFICULTY[course.difficultyLevel] ?? "—"}
                                 </Text>
                             </Box>
-                        </Link>
                     ))}
                 </SimpleGrid>
             )}

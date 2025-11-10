@@ -1,8 +1,8 @@
 ﻿import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Text, Spinner, Heading, Button } from "@chakra-ui/react";
-import {getCourseById} from "../api.js";
-import {COURSE_DIFFICULTY} from "../constants.js";
+import { getCourseById } from "../api.js";
+import { COURSE_DIFFICULTY } from "../constants.js";
 
 function CourseDetailPage() {
     const { id } = useParams();
@@ -31,9 +31,22 @@ function CourseDetailPage() {
     if (error) return <Box color="red.400">{error}</Box>;
     if (!course) return null;
 
+    const StartCourse = () => {
+        if (!course.lessons || course.lessons.length === 0) {
+            alert("Ten kurs nie ma jeszcze lekcji.");
+            return;
+        }
+        const lessonId = course.lessons[0];
+        console.log("nawiguję do:", `/courses/${course.id}/lessons/${lessonId}`);
+        navigate(`/courses/${course.id}/lessons/${lessonId}`);
+    };
+
     return (
         <Box minH="100vh" bg="#0f0a19" color="gray.200" px={6} py={8}>
-            <Button mb={4} onClick={() => navigate("/courses")}>← Powrót</Button>
+            <Button mb={4} onClick={() => navigate("/courses")}>
+                ← Powrót
+            </Button>
+
             <Heading mb={4}>Tytuł: {course.title}</Heading>
             <Text mb={2}>Twórca: {course.createdBy}</Text>
             <Text mb={2}>Opis: {course.description}</Text>
@@ -44,9 +57,19 @@ function CourseDetailPage() {
                 Ocena: {course.rating ?? 0}
             </Text>
             <Text fontSize="sm" color="gray.400">
-                Utworzno: {new Date(course.createdOn).toLocaleDateString()}
+                Utworzono: {new Date(course.createdOn).toLocaleDateString()}
             </Text>
+            <Text mb={4}>Ilość lekcji: {course.lessons.length}</Text>
+
+            <Button
+                colorScheme="teal"
+                onClick={StartCourse}
+                isDisabled={!course.lessons || course.lessons.length === 0}
+            >
+                Rozpocznij kurs
+            </Button>
         </Box>
     );
 }
+
 export default CourseDetailPage;

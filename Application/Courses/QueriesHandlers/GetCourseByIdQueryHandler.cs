@@ -1,4 +1,5 @@
-﻿using Application.Courses.Queries;
+﻿using System.Linq.Expressions;
+using Application.Courses.Queries;
 using Application.DTOs;
 using Application.Interfaces;
 using Application.Mappers;
@@ -18,7 +19,7 @@ public class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQuery, Cou
 
     public async Task<CourseDto> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
     {
-        var course = await _courseRepository.GetByIdAsync(request.Id, cancellationToken:cancellationToken);
+        var course = await _courseRepository.GetByIdAsync(request.Id, includes:new Expression<Func<Course, object>>[] {c => c.Lessons} ,cancellationToken:cancellationToken);
         if (course == null)
         {
             return null;

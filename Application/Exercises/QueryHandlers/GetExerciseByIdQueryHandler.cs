@@ -1,4 +1,5 @@
-﻿using Application.DTOs;
+﻿using System.Linq.Expressions;
+using Application.DTOs;
 using Application.Exercises.Queries;
 using Application.Interfaces;
 using Application.Mappers;
@@ -18,7 +19,7 @@ namespace Application.Exercises.QueryHandlers
 
         public async Task<ExerciseDto> Handle(GetExerciseByIdQuery request, CancellationToken cancellationToken)
         {
-            var exercise = await _exerciseRepository.GetByIdAsync(request.Id, cancellationToken: cancellationToken);
+            var exercise = await _exerciseRepository.GetByIdAsync(request.Id, includes: new Expression<Func<Exercise, object>>[] {e => e.Lesson}, cancellationToken: cancellationToken);
 
             if (exercise == null)
                 return null!;

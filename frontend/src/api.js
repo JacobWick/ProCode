@@ -26,3 +26,6 @@ export const getCourses = async () => {
 export const getCourseById = async (id) => {
     return await backendAPI.get(`/courses/${id}`);
 }
+export const getLessonById = async (id) => {
+    return await backendAPI.get(`/lessons/${id}`);
+}
