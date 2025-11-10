@@ -18,3 +18,9 @@ export const CODE_DEFAULT_CODE = {
     cpp: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello in C++, World!" << endl;\n    return 0;\n}',
     c: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World! in C\\n");\n    return 0;\n}'
 }
+export const COURSE_DIFFICULTY = {
+    0: "Początkujący",
+    1: "Średnio zaawansowany",
+    2: "Zaawansowany",
+
+}
