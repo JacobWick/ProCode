@@ -1,13 +1,15 @@
-﻿using Domain.Entities;
+﻿using Application.Interfaces;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
-    public class PostgresDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid> 
+    public class PostgresDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid> , IApplicationDbContext
     {
         public DbSet<Course> Courses { get; set; }
+        public DbSet<Tag> Tags { get; set; }
         public DbSet<Exercise> Exercises { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Notification> Notifications { get; set; }
