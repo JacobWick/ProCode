@@ -1,12 +1,26 @@
-import {Box} from "@chakra-ui/react";
-import CodeEditor from "../components/CodeEditor.jsx";
+import {
+    Box,
+    Container,
+    useColorModeValue,
+} from '@chakra-ui/react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import CodeEditor from '../components/CodeEditor';
 
-function ExercisePage() {
-  return (
-   <Box minH="100vh" bg='#0f0a19' color='gray.500' px={6} py={8}>
-        <CodeEditor/>
-   </Box>
-  );
+export default function ExercisePage() {
+    const pageBg = useColorModeValue('gray.50', 'gray.900');
+
+    return (
+        <Box minH="100vh" bg={pageBg}>
+            <Navbar />
+
+            <Box py={6}>
+                <Container maxW="container.xl">
+                    <CodeEditor />
+                </Container>
+            </Box>
+
+            <Footer />
+        </Box>
+    );
 }
-
-export default ExercisePage

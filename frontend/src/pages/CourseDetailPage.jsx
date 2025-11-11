@@ -25,11 +25,14 @@ function CourseDetailPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // ✅ WSZYSTKIE HOOKI NA POCZĄTKU - przed jakimikolwiek warunkami
     const bg = useColorModeValue("gray.50", "gray.900");
     const cardBg = useColorModeValue("white", "gray.800");
     const titleColor = useColorModeValue("gray.800", "white");
     const metaColor = useColorModeValue("gray.600", "gray.400");
     const accent = useColorModeValue("purple.500", "purple.300");
+    const borderColor = useColorModeValue("gray.200", "gray.700");
+    const iconBg = useColorModeValue("purple.50", "gray.900");
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -81,7 +84,7 @@ function CourseDetailPage() {
                                 bg={cardBg}
                                 borderRadius="lg"
                                 borderWidth="1px"
-                                borderColor={useColorModeValue("gray.200", "gray.700")}
+                                borderColor={borderColor}
                                 p={6}
                                 shadow="sm"
                             >
@@ -95,7 +98,7 @@ function CourseDetailPage() {
                                             justifyContent="center"
                                             fontSize="3xl"
                                             borderRadius="md"
-                                            bg={useColorModeValue("purple.50", "gray.900")}
+                                            bg={iconBg}
                                         >
                                             {course.category === "Python" ? "🐍" : course.category === "React" ? "⚛️" : "🎓"}
                                         </Box>
@@ -139,14 +142,12 @@ function CourseDetailPage() {
                                     </HStack>
                                 </VStack>
                             </Box>
-
-                            {/* Prawa kolumna: meta / szczegóły */}
                             <Box w={{ base: "100%", md: "360px" }}>
                                 <Box
                                     bg={cardBg}
                                     borderRadius="lg"
                                     borderWidth="1px"
-                                    borderColor={useColorModeValue("gray.200", "gray.700")}
+                                    borderColor={borderColor}
                                     p={5}
                                     shadow="sm"
                                 >
@@ -164,22 +165,6 @@ function CourseDetailPage() {
                                                 {course.lessons?.length ?? 0}
                                             </Text>
                                         </Text>
-
-                                        <Text fontSize="sm" color={metaColor}>
-                                            Kategorie powiązane:{" "}
-                                            <Text as="span" color={titleColor} fontWeight="semibold">
-                                                {course.tags?.join(", ") ?? "—"}
-                                            </Text>
-                                        </Text>
-
-                                        <Box pt={3} w="100%">
-                                            <Text fontSize="sm" color={metaColor} mb={2}>
-                                                Informacje dodatkowe:
-                                            </Text>
-                                            <Text fontSize="sm" color={metaColor}>
-                                                {course.extraInfo ?? "Brak dodatkowych informacji."}
-                                            </Text>
-                                        </Box>
                                     </VStack>
                                 </Box>
                             </Box>
