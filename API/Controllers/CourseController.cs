@@ -68,4 +68,14 @@ public class CourseController : ControllerBase
         var result = await _mediator.Send(new GetCourseProgressQuery { CourseId = id }, cancellationToken);
         return result is not null ? Ok(result) : NotFound();
     }
+
+    [MapToApiVersion(1)]
+    [HttpPatch("{id}/tags")]
+    public async Task<IActionResult> AssignTagsToCourse(Guid id, [FromBody] AssignTagsToCourseCommand command, CancellationToken cancellationToken)
+    {
+        command.CourseId = id;
+
+        await _mediator.Send(command, cancellationToken);
+        return NoContent();
+    }
 }
