@@ -27,6 +27,8 @@ public static class DependencyInjection
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<PostgresDbContext>();
 
+        services.AddScoped<IApplicationDbContext>(provider =>
+            provider.GetRequiredService<PostgresDbContext>());
         return services;
     }
 }

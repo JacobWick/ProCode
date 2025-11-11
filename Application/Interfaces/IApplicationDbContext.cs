@@ -1,12 +1,9 @@
-﻿using Application.Interfaces;
-using Domain.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data
+namespace Application.Interfaces
 {
-    public class PostgresDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid> , IApplicationDbContext
+    public interface IApplicationDbContext
     {
         public DbSet<Course> Courses { get; set; }
         public DbSet<Tag> Tags { get; set; }
@@ -16,10 +13,7 @@ namespace Infrastructure.Data
         public DbSet<Progress> Progresses { get; set; }
         public DbSet<SolutionExample> SolutionExamples { get; set; }
         public DbSet<Test> Tests { get; set; }
-        public new DbSet<User> Users { get; set; }
         public DbSet<UserProfile> userProfiles { get; set; }
-        public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options)
-        {
-        }
+
     }
 }
