@@ -20,6 +20,30 @@ export const execute = async (language, code) => {
     });
     return response.data;
 }
+export const executeSolution = async (language, code, stdin = "") => {
+    const response = await fetch('https://emkc.org/api/v2/piston/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            language: language,
+            version: '*', // użyj najnowszej wersji
+            files: [
+                {
+                    name: 'main',
+                    content: code
+                }
+            ],
+            stdin: stdin, // ⭐ Tutaj przekazujemy dane wejściowe!
+            args: [],
+            compile_timeout: 10000,
+            run_timeout: 3000,
+            compile_memory_limit: -1,
+            run_memory_limit: -1
+        })
+    });
+
+    return await response.json();
+};
 export const getCourses = async () => {
     return await backendAPI.get("/courses");
 }
@@ -28,4 +52,7 @@ export const getCourseById = async (id) => {
 }
 export const getLessonById = async (id) => {
     return await backendAPI.get(`/lessons/${id}`);
+}
+export const getExerciseById = async (id) => {
+    return await backendAPI.get(`/exercise/${id}`);
 }

@@ -1,23 +1,38 @@
-﻿import {Box, HStack, useColorModeValue} from '@chakra-ui/react';
+﻿import { Box, HStack, useColorModeValue } from '@chakra-ui/react';
 import { Editor } from '@monaco-editor/react';
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import LanguageSelector from "./LanguageSelector.jsx";
 import { CODE_DEFAULT_CODE } from "../constants.js";
 import Output from "./Output.jsx";
 
-const CodeEditor = () => {
+const CodeEditor = ({ initialContent, inputData, outputData, exerciseId }) => {
     const editorRef = useRef();
     const [value, setValue] = useState("");
     const [language, setLanguage] = useState("javascript");
     const monacoTheme = useColorModeValue("vs", "vs-dark");
+
+    useEffect(() => {
+        if (initialContent) {
+            const commentedContent = `// ${initialContent}\n\n${CODE_DEFAULT_CODE[language]}`;
+            setValue(commentedContent);
+        } else {
+            setValue(CODE_DEFAULT_CODE[language]);
+        }
+    }, [initialContent, language]);
+
     const onMount = (editor) => {
         editorRef.current = editor;
         editor.focus();
     };
 
-    const onSelect = (language) => {
-        setLanguage(language);
-        setValue(CODE_DEFAULT_CODE[language]);
+    const onSelect = (newLanguage) => {
+        setLanguage(newLanguage);
+        if (initialContent) {
+            const commentedContent = `// ${initialContent}\n\n${CODE_DEFAULT_CODE[newLanguage]}`;
+            setValue(commentedContent);
+        } else {
+            setValue(CODE_DEFAULT_CODE[newLanguage]);
+        }
     };
 
     return (
@@ -29,13 +44,18 @@ const CodeEditor = () => {
                         height="75vh"
                         language={language}
                         theme={monacoTheme}
-                        defaultValue={CODE_DEFAULT_CODE[language]}
-                        onMount={onMount}
                         value={value}
-                        onChange={(value) => setValue(value)}
+                        onMount={onMount}
+                        onChange={(newValue) => setValue(newValue)}
                     />
                 </Box>
-                <Output editorRef={editorRef} language={language} />
+                <Output
+                    editorRef={editorRef}
+                    language={language}
+                    inputData={inputData}
+                    outputData={outputData}
+                    exerciseId={exerciseId}
+                />
             </HStack>
         </Box>
     );

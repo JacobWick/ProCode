@@ -16,7 +16,7 @@ public class UpdateTestCommandHandler : IRequestHandler<UpdateTestCommand, bool>
 
     public async Task<bool> Handle(UpdateTestCommand request, CancellationToken cancellationToken)
     {
-        var test = await _testRepository.GetByIdAsync(request.Id);
+        var test = await _testRepository.GetByIdAsync(request.Id, cancellationToken: cancellationToken);
         if (test is null) 
             return false;
         if (request.InputData is not null)
@@ -29,7 +29,7 @@ public class UpdateTestCommandHandler : IRequestHandler<UpdateTestCommand, bool>
             test.OutputData = request.OutputData;
         }
 
-        await _testRepository.UpdateAsync(test);
+        await _testRepository.UpdateAsync(test, cancellationToken);
         return true;
     }
 }

@@ -1,12 +1,15 @@
-﻿import { Box, Button, Text, useToast, VStack, useColorModeValue, HStack } from "@chakra-ui/react";
-import { execute } from "../api.js";
+﻿import { Box, Button, Text, useToast, VStack, useColorModeValue, HStack, Badge } from "@chakra-ui/react";
+import { CheckIcon, WarningIcon } from "@chakra-ui/icons";
+import {execute, executeSolution} from "../api.js";
 import { useState } from "react";
 
-const Output = ({ editorRef, language }) => {
+const Output = ({ editorRef, language, inputData, outputData}) => {
     const toast = useToast();
     const [output, setOutput] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [codeError, setCodeError] = useState(false);
+    const [testsPassed, setTestsPassed] = useState(null);
 
     const bg = useColorModeValue("gray.50", "gray.800");
     const border = useColorModeValue("gray.200", "gray.700");
@@ -18,9 +21,13 @@ const Output = ({ editorRef, language }) => {
 
         try {
             setIsLoading(true);
-            const { run: result } = await execute(language, code);
-            setOutput(result.output.split("\n"));
-            result.stderr ? setCodeError(true) : setCodeError(false);
+            const result = await execute(language, code, "");
+
+            const output = result.run.stdout || result.run.output || "";
+            setOutput(output.split("\n"));
+
+            const hasError = result.run.stderr && result.run.stderr.length > 0;
+            setCodeError(hasError);
         } catch (error) {
             console.error(error);
             toast({
@@ -34,23 +41,132 @@ const Output = ({ editorRef, language }) => {
         }
     };
 
-    const handleSubmitSolution = () => {
-        toast({
-            title: "Rozwiązanie przesłane!",
-            description: "Twoje rozwiązanie zostało zapisane do oceny.",
-            status: "success",
-            duration: 4000,
-        });
+    const checkSolution = async () => {
+        const code = editorRef.current?.getValue();
+        if (!code) {
+            toast({
+                title: "Brak kodu",
+                description: "Napisz kod przed sprawdzeniem rozwiązania",
+                status: "warning",
+                duration: 3000,
+            });
+            return false;
+        }
+
+        if (!inputData || inputData.length === 0 || !outputData || outputData.length === 0) {
+            return true;
+        }
+
+        try {
+            const results = [];
+
+            for (let i = 0; i < inputData.length; i++) {
+                const input = inputData[i];
+                const expectedOutput = outputData[i];
+                const result = await executeSolution(language, code, input);
+
+                const actualOutput = result.run.stdout.trim();
+                const hasError = result.run.stderr && result.run.stderr.length > 0;
+
+                const isCorrect = !hasError && actualOutput === expectedOutput.trim();
+
+                results.push({
+                    input,
+                    expected: expectedOutput,
+                    actual: actualOutput,
+                    passed: isCorrect,
+                    error: hasError ? result.run.stderr : null
+                });
+            }
+
+            const allPassed = results.every(r => r.passed);
+            setTestsPassed(allPassed);
+
+            if (!allPassed) {
+                const failedTests = results.filter(r => !r.passed);
+                console.log("Nieudane testy:", failedTests);
+            }
+
+            return allPassed;
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Błąd podczas testowania",
+                description: error.message,
+                status: "error",
+                duration: 5000,
+            });
+            return false;
+        }
+    };
+
+    const handleSubmitSolution = async () => {
+        try {
+            setIsSubmitting(true);
+
+            const passed = await checkSolution();
+
+            if (passed) {
+                toast({
+                    title: "Gratulacje!",
+                    description: "Twoje rozwiązanie jest poprawne!",
+                    status: "success",
+                    duration: 5000,
+                });
+
+                // Tutaj możesz dodać wywołanie API do zapisania wyniku
+                // await submitExerciseSolution(exerciseId, editorRef.current?.getValue(), true);
+            } else {
+                toast({
+                    title: "Rozwiązanie niepoprawne",
+                    description: "Sprawdź swój kod i spróbuj ponownie.",
+                    status: "error",
+                    duration: 5000,
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Wystąpił błąd",
+                description: error.message || "Problem z przesłaniem rozwiązania",
+                status: "error",
+                duration: 6000,
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
         <Box w="50%">
             <VStack align="start" spacing={4}>
-                <Text fontSize="lg" color={textColor}>
-                    Wynik:
-                </Text>
+                <HStack justify="space-between" w="100%">
+                    <Text fontSize="lg" color={textColor}>
+                        Wynik:
+                    </Text>
+                    {testsPassed !== null && (
+                        <Badge
+                            colorScheme={testsPassed ? "green" : "red"}
+                            fontSize="md"
+                            px={3}
+                            py={1}
+                        >
+                            {testsPassed ? (
+                                <HStack spacing={1}>
+                                    <CheckIcon boxSize={3} />
+                                    <Text>Testy zaliczone</Text>
+                                </HStack>
+                            ) : (
+                                <HStack spacing={1}>
+                                    <WarningIcon boxSize={3} />
+                                    <Text>Testy niezaliczone</Text>
+                                </HStack>
+                            )}
+                        </Badge>
+                    )}
+                </HStack>
 
-                <HStack spacing={3}>
+                <HStack spacing={3} w="100%">
                     <Button
                         colorScheme="purple"
                         variant="solid"
@@ -58,6 +174,7 @@ const Output = ({ editorRef, language }) => {
                         shadow="md"
                         isLoading={isLoading}
                         onClick={runCode}
+                        flex={1}
                         _hover={{ transform: "scale(1.02)", shadow: "lg" }}
                     >
                         Uruchom kod
@@ -65,10 +182,12 @@ const Output = ({ editorRef, language }) => {
 
                     <Button
                         colorScheme="teal"
-                        variant="outline"
+                        variant="solid"
                         rounded="xl"
                         shadow="md"
+                        isLoading={isSubmitting}
                         onClick={handleSubmitSolution}
+                        flex={1}
                         _hover={{ transform: "scale(1.02)", shadow: "lg" }}
                     >
                         Prześlij rozwiązanie
@@ -97,7 +216,7 @@ const Output = ({ editorRef, language }) => {
                         ))
                     ) : (
                         <Text color="gray.500">
-                            Kliknij <b>„Uruchom kod”</b>, aby zobaczyć wynik działania programu.
+                            Kliknij <b>„Uruchom kod"</b>, aby zobaczyć wynik działania programu.
                         </Text>
                     )}
                 </Box>
@@ -105,4 +224,5 @@ const Output = ({ editorRef, language }) => {
         </Box>
     );
 };
+
 export default Output;

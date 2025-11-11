@@ -1,4 +1,4 @@
-﻿using Application.DTOs;
+using Application.DTOs;
 using Application.Interfaces;
 using Application.Mappers;
 using Application.Tests.Commands;
@@ -20,13 +20,23 @@ public class CreateTestCommandHandler : IRequestHandler<CreateTestCommand, TestD
 
     public async Task<TestDto> Handle(CreateTestCommand request, CancellationToken cancellationToken)
     {
-        var exercise = _exerciseRepository.GetByIdAsync(request.ExerciseId).Result;
+        var exercise = await _exerciseRepository.GetByIdAsync(request.ExerciseId, cancellationToken: cancellationToken);
+        if (exercise is null)
+            return null!;
+        
+        var existing = await _testRepository
+            .GetAsync(t => t.ExerciseId == request.ExerciseId, cancellationToken: cancellationToken);
+        if (existing != null && existing.Any())
+        {
+            return TestMapper.MapToDto(existing.First());
+        }
         var test = new Test
         {
-            Exercise = exercise,
-            InputData = request.InputData,
-            OutputData = request.OutputData,
+            ExerciseId = exercise.Id,
+            InputData = request.InputData ?? new List<string>(),
+            OutputData = request.OutputData ?? new List<string>()
         };
+
         await _testRepository.CreateAsync(test, cancellationToken);
         return TestMapper.MapToDto(test);
     }

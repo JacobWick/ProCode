@@ -19,7 +19,7 @@ namespace Application.Exercises.QueryHandlers
 
         public async Task<List<ExerciseDto>> Handle(GetAllExercisesQuery request, CancellationToken cancellationToken)
         {
-            var exercises = await _exerciseRepository.GetAllAsync(includes: new Expression<Func<Exercise, object>>[] {e => e.Lesson}, cancellationToken: cancellationToken);
+            var exercises = await _exerciseRepository.GetAllAsync(includes: new Expression<Func<Exercise, object>>[] {e => e.Lesson, e => e.Test}, cancellationToken: cancellationToken);
             var exerciseDtos = ExerciseMapper.MapListToDto(exercises);
             
             return exerciseDtos;
