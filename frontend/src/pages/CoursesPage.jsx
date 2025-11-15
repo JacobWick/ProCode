@@ -6,7 +6,6 @@ import {
     Spinner,
     Heading,
     Container,
-    Badge,
     VStack,
     HStack,
     useColorModeValue,
@@ -26,7 +25,6 @@ const CourseCard = ({ course, onClick }) => {
     const titleColor = useColorModeValue("gray.800", "white");
     const descColor = useColorModeValue("gray.600", "gray.300");
     const metaColor = useColorModeValue("gray.500", "gray.400");
-
 
     return (
         <Box

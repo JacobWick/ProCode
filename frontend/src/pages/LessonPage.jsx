@@ -13,12 +13,10 @@ import {
     AlertIcon,
     Container,
     useColorModeValue,
-    Stack,
     Badge,
     SimpleGrid,
     List,
     ListItem,
-    Icon,
     Avatar,
     AspectRatio,
 } from "@chakra-ui/react";
@@ -67,7 +65,6 @@ function LessonPage() {
         if (lessonId) fetchData();
     }, [lessonId, courseId]);
 
-    // Helper: normalize id and title
     const normalizeId = (item) => {
         if (item == null) return null;
         if (typeof item === "string" || typeof item === "number") return String(item);
@@ -79,7 +76,6 @@ function LessonPage() {
         return item.title ?? item.name ?? `Lekcja ${idx + 1}`;
     };
 
-    // Build lessons list (array of objects with id & title where possible)
     const lessonsListRaw = Array.isArray(course?.lessons) ? course.lessons : [];
     const lessonsList = lessonsListRaw.map((l, i) => ({
         id: normalizeId(l),
@@ -102,24 +98,19 @@ function LessonPage() {
         }
         navigate(`/courses/${courseId}/lessons/${lesson.id ?? lesson.Id}/exercises/${firstExerciseId}`);
     };
-
-    // Convert YouTube links to embed URL, otherwise return original URL
     const toEmbedUrl = (url) => {
         if (!url) return null;
         try {
             const u = new URL(url);
             const host = u.hostname.toLowerCase();
             if (host.includes("youtube.com")) {
-                // https://www.youtube.com/watch?v=VIDEOID
                 const vid = u.searchParams.get("v");
                 if (vid) return `https://www.youtube.com/embed/${vid}`;
             }
             if (host.includes("youtu.be")) {
-                // https://youtu.be/VIDEOID
                 const vid = u.pathname.slice(1);
                 if (vid) return `https://www.youtube.com/embed/${vid}`;
             }
-            // otherwise return original (may or may not be embeddable)
             return url;
         } catch (e) {
             return url;
