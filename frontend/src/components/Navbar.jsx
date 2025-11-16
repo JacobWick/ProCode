@@ -68,8 +68,8 @@ const Navbar = () => {
 
                     <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
                         <Link as={RouterLink} to="/courses">Kursy</Link>
-                        <Link as={RouterLink} to="/create">Stwórz</Link>
-                        <Link>Ścieżki nauki</Link>
+                        {user?.role === "Mentor" && (<Link as={RouterLink} to="/create">Stwórz</Link>)}
+                        {user && (<Link>Ścieżki nauki</Link>)}
                     </HStack>
 
                     <HStack spacing={4}>
@@ -110,6 +110,10 @@ const Navbar = () => {
                                         </VStack>
                                     </MenuItem>
                                     <MenuDivider />
+                                    {user?.role == "Admin" && (
+                                        <MenuItem onClick={() => navigate('/administrator')}>
+                                            Panel Administratora
+                                    </MenuItem>)}
                                     <MenuItem onClick={() => navigate('/profile')}>
                                         Mój profil
                                     </MenuItem>

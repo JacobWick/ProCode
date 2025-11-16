@@ -109,3 +109,18 @@ export const register = async (data) => {
         return await backendAPI.post("/solutionexamples", solutionExampleData);
 
     }
+export const getUsers = async () => {
+    return await backendAPI.get("/user");
+}
+export const getUserById = async (id) => {
+    return await backendAPI.get(`/user/${id}`);
+}
+export const createUser = async (userData) => {
+    return await backendAPI.post("/user", userData);
+}
+export const updateUser = async (id, userData) => {
+    return await backendAPI.put(`/user/${id}`, userData);
+}
+export const deleteUser = async (id) => {
+    return await backendAPI.delete(`/user/${id}`);
+}

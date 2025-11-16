@@ -44,7 +44,6 @@ const Footer = () => {
                         </Link>
                     </VStack>
 
-                    {/* Sekcja 3 */}
                     <VStack align="start">
                         <Text fontWeight="bold" mb={2}>
                             Pomoc
