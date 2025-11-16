@@ -101,11 +101,11 @@ export const login = async (data) => {
 }
 export const register = async (data) => {
     return await backendAPI.post(`/auth/register`, data)
-
-export const createTest = async (testData) => {
-    return await backendAPI.post("/tests", testData);
 }
-export const createSolutionExample = async (solutionExampleData) => {
-    return await backendAPI.post("/solutionexamples", solutionExampleData);
+    export const createTest = async (testData) => {
+        return await backendAPI.post("/tests", testData);
+    }
+    export const createSolutionExample = async (solutionExampleData) => {
+        return await backendAPI.post("/solutionexamples", solutionExampleData);
 
-}
+    }
