@@ -1,4 +1,5 @@
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
     Box,
     Flex,
@@ -6,18 +7,56 @@ import {
     Button,
     Container,
     HStack,
+    VStack,
     Link,
     IconButton,
     useColorMode,
     useColorModeValue,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuDivider,
+    Avatar,
+    Text,
 } from '@chakra-ui/react';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { MoonIcon, SunIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { jwtDecode } from 'jwt-decode';
 
 const Navbar = () => {
-    const navigate = useNavigate();
     const { colorMode, toggleColorMode } = useColorMode();
+    const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+
     const bg = useColorModeValue('white', 'gray.800');
     const borderColor = useColorModeValue('gray.200', 'gray.700');
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                console.log(decoded)
+                setUser({
+                    id: decoded.nameidentifier,
+                    name: decoded.name,
+                    surname: decoded.surname,
+                    email: decoded.email,
+                    role: decoded.role,
+                    username: decoded.username
+                });
+            } catch (error) {
+                console.error('Błąd dekodowania tokenu:', error);
+                localStorage.removeItem('token');
+            }
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setUser(null);
+        navigate('/');
+    };
 
     return (
         <Box bg={bg} borderBottom="1px" borderColor={borderColor} position="sticky" top="0" zIndex="10">
@@ -26,15 +65,76 @@ const Navbar = () => {
                     <RouterLink to="/">
                         <Heading size="md" color="purple.500" cursor="pointer">ProCode</Heading>
                     </RouterLink>
+
                     <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
                         <Link as={RouterLink} to="/courses">Kursy</Link>
                         <Link as={RouterLink} to="/create">Stwórz</Link>
                         <Link>Ścieżki nauki</Link>
                     </HStack>
+
                     <HStack spacing={4}>
-                        <IconButton icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />} onClick={toggleColorMode} variant="ghost" aria-label="Toggle color mode"/>
-                        <Button onClick={() => navigate('/login')} variant="ghost">Zaloguj się</Button>
-                        <Button onClick={() => navigate('/register')} colorScheme="purple">Zarejestruj się</Button>
+                        <IconButton
+                            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+                            onClick={toggleColorMode}
+                            variant="ghost"
+                            aria-label="Toggle color mode"
+                        />
+
+                        {user ? (
+                            <Menu>
+                                <MenuButton
+                                    as={Button}
+                                    rightIcon={<ChevronDownIcon />}
+                                    variant="ghost"
+                                >
+                                    <HStack spacing={2}>
+                                        <Avatar
+                                            size="sm"
+                                            name={`${user.name|| ''} ${user.surname || ''}`}
+                                            bg="purple.500"
+                                        />
+                                        <Text display={{ base: 'none', md: 'block' }}>
+                                            {user.name || user.surname}
+                                        </Text>
+                                    </HStack>
+                                </MenuButton>
+                                <MenuList>
+                                    <MenuItem isDisabled>
+                                        <VStack align="start" spacing={0}>
+                                            <Text fontWeight="semibold">
+                                                {user.name} {user.surname}
+                                            </Text>
+                                            <Text fontSize="sm" color="gray.500">
+                                                @{user.username}
+                                            </Text>
+                                        </VStack>
+                                    </MenuItem>
+                                    <MenuDivider />
+                                    <MenuItem onClick={() => navigate('/profile')}>
+                                        Mój profil
+                                    </MenuItem>
+                                    <MenuItem onClick={() => navigate('/my-courses')}>
+                                        Moje kursy
+                                    </MenuItem>
+                                    <MenuItem onClick={() => navigate('/settings')}>
+                                        Ustawienia
+                                    </MenuItem>
+                                    <MenuDivider />
+                                    <MenuItem onClick={handleLogout} color="red.500">
+                                        Wyloguj się
+                                    </MenuItem>
+                                </MenuList>
+                            </Menu>
+                        ) : (
+                            <>
+                                <Button as={RouterLink} to="/login" variant="ghost">
+                                    Zaloguj się
+                                </Button>
+                                <Button as={RouterLink} to="/register" colorScheme="purple">
+                                    Zarejestruj się
+                                </Button>
+                            </>
+                        )}
                     </HStack>
                 </Flex>
             </Container>
