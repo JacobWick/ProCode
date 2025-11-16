@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiVersion(1)]
-[Route("api/v{version:apiVersion}/test")]
+[Route("api/v{version:apiVersion}/tests")]
 [ApiController]
 public class TestController : ControllerBase
 {

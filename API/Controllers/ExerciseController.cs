@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [ApiVersion(1)]
-    [Route("api/v{version:apiVersion}/exercise")]
+    [Route("api/v{version:apiVersion}/exercises")]
     [ApiController]
     public class ExerciseController : ControllerBase
     {

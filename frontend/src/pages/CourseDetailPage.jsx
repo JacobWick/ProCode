@@ -25,7 +25,6 @@ function CourseDetailPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // ✅ WSZYSTKIE HOOKI NA POCZĄTKU - przed jakimikolwiek warunkami
     const bg = useColorModeValue("gray.50", "gray.900");
     const cardBg = useColorModeValue("white", "gray.800");
     const titleColor = useColorModeValue("gray.800", "white");
@@ -52,7 +51,7 @@ function CourseDetailPage() {
 
     const startCourse = () => {
         if (!course?.lessons || course.lessons.length === 0) {
-            alert("Ten kurs nie ma jeszcze lekcji.");
+            alert("Ten kurs nie posiada lekcji.");
             return;
         }
         const lessonId = course.lessons[0];

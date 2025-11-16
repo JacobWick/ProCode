@@ -14,7 +14,6 @@ const languages = Object.entries(LANGUAGE_VERSIONS);
 const ACTIVE_COLOR = "blue.400";
 
 const LanguageSelector = ({ language, onSelect }) => {
-    // dynamiczne kolory zależnie od motywu
     const menuBg = useColorModeValue("white", "#110c1b");
     const itemHoverBg = useColorModeValue("gray.100", "gray.900");
     const activeBg = useColorModeValue("gray.100", "gray.900");

@@ -69,14 +69,29 @@ backendAPI.interceptors.response.use(
   }
 );
 
+export const createCourse = async (courseData) => {
+    return await backendAPI.post("/courses", courseData);
+}
 export const getCourses = async () => {
     return await backendAPI.get("/courses");
 }
 export const getCourseById = async (id) => {
     return await backendAPI.get(`/courses/${id}`);
 }
+export const createLesson = async (lessonData) => {
+    return await backendAPI.post("/lessons", lessonData);
+}
+export const getLessons = async () => {
+    return await backendAPI.get("/lessons");
+}
 export const getLessonById = async (id) => {
     return await backendAPI.get(`/lessons/${id}`);
+}
+export const getExercises = async () => {
+    return await backendAPI.get("/exercise");
+}
+export const createExercise = async (exerciseData) => {
+    return await backendAPI.post("/exercise", exerciseData);
 }
 export const getExerciseById = async (id) => {
     return await backendAPI.get(`/exercise/${id}`);
@@ -86,4 +101,11 @@ export const login = async (data) => {
 }
 export const register = async (data) => {
     return await backendAPI.post(`/auth/register`, data)
+
+export const createTest = async (testData) => {
+    return await backendAPI.post("/tests", testData);
+}
+export const createSolutionExample = async (solutionExampleData) => {
+    return await backendAPI.post("/solutionexamples", solutionExampleData);
+
 }
