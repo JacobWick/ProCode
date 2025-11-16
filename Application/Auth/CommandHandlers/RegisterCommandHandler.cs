@@ -1,4 +1,5 @@
 ﻿using Application.Auth.Commands;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Exceptions;
 using MediatR;
@@ -31,6 +32,8 @@ namespace Application.Auth.CommandHandlers
             };
 
             var result = await _userManager.CreateAsync(user, request.Password);
+
+            await _userManager.AddToRoleAsync(user, Roles.Student);
 
             return result.Succeeded;
         }
