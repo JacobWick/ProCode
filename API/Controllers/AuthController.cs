@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [ApiVersion(1)]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v{version:apiVersion}/auth")]
     [ApiController]
     public class AuthController : Controller
     {
@@ -17,14 +17,14 @@ namespace API.Controllers
             _mediator = mediator;
         }
         [MapToApiVersion(1)]
-        [HttpPost("Register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterCommand command, CancellationToken cancellationToken)
         {
             var success = await _mediator.Send(command, cancellationToken);
             return success ? Ok() : BadRequest("Registration failed");
         }
         [MapToApiVersion(1)]
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginCommand command, CancellationToken cancellationToken)
         {
             try

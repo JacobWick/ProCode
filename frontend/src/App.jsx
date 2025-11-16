@@ -5,6 +5,8 @@ import './index.css'
 import CoursesPage from "./pages/CoursesPage.jsx";
 import CourseDetailPage from "./pages/CourseDetailPage.jsx";
 import LessonPage from "./pages/LessonPage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx";
 import CreatePage from "./pages/CreatePage.jsx";
 import CreateCoursePage from "./pages/CreateCoursePage.jsx";
 import CreateExercisePage from "./pages/CreateExercisePage.jsx";
@@ -12,12 +14,13 @@ import CreateLessonPage from "./pages/CreateLessonPage.jsx";
 import CreateTestPage from "./pages/CreateTestPage.jsx";
 import CreateSolutionPage from "./pages/CreateSolutionPage.jsx";
 
-
 function App() {
     return (
             <Routes>
                 <Route path="/" element={<HomePage/>} />
                 <Route path="/exercise" element={<ExercisePage/>} />
+                <Route path="/login" element={<LoginPage/>} />
+                <Route path="/register" element={<RegisterPage/>} />
                 <Route path="/courses" element={<CoursesPage/>} />
                 <Route path="/courses/:id" element={<CourseDetailPage/>} />
                 <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonPage />} />

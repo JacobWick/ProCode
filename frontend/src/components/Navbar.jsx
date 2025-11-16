@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
     Box,
     Flex,
@@ -14,6 +14,7 @@ import {
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 const Navbar = () => {
+    const navigate = useNavigate();
     const { colorMode, toggleColorMode } = useColorMode();
     const bg = useColorModeValue('white', 'gray.800');
     const borderColor = useColorModeValue('gray.200', 'gray.700');
@@ -32,8 +33,8 @@ const Navbar = () => {
                     </HStack>
                     <HStack spacing={4}>
                         <IconButton icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />} onClick={toggleColorMode} variant="ghost" aria-label="Toggle color mode"/>
-                        <Button variant="ghost">Zaloguj się</Button>
-                        <Button colorScheme="purple">Zarejestruj się</Button>
+                        <Button onClick={() => navigate('/login')} variant="ghost">Zaloguj się</Button>
+                        <Button onClick={() => navigate('/register')} colorScheme="purple">Zarejestruj się</Button>
                     </HStack>
                 </Flex>
             </Container>

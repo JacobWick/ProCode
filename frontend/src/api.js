@@ -44,6 +44,31 @@ export const executeSolution = async (language, code, stdin = "") => {
 
     return await response.json();
 };
+
+backendAPI.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+backendAPI.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const createCourse = async (courseData) => {
     return await backendAPI.post("/courses", courseData);
 }
@@ -71,9 +96,16 @@ export const createExercise = async (exerciseData) => {
 export const getExerciseById = async (id) => {
     return await backendAPI.get(`/exercise/${id}`);
 }
+export const login = async (data) => {
+    return await backendAPI.post(`/auth/login`, data)
+}
+export const register = async (data) => {
+    return await backendAPI.post(`/auth/register`, data)
+
 export const createTest = async (testData) => {
     return await backendAPI.post("/tests", testData);
 }
 export const createSolutionExample = async (solutionExampleData) => {
     return await backendAPI.post("/solutionexamples", solutionExampleData);
+
 }
