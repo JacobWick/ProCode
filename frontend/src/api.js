@@ -72,5 +72,8 @@ export const getExerciseById = async (id) => {
     return await backendAPI.get(`/exercise/${id}`);
 }
 export const createTest = async (testData) => {
-    return await backendAPI.post("/test", testData);
+    return await backendAPI.post("/tests", testData);
+}
+export const createSolutionExample = async (solutionExampleData) => {
+    return await backendAPI.post("/solutionexamples", solutionExampleData);
 }

@@ -222,7 +222,6 @@ export default function CreateExercisePage() {
                     </VStack>
                 </Container>
             </Box>
-
             <Footer />
         </Box>
     );

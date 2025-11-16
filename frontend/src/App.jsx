@@ -10,6 +10,7 @@ import CreateCoursePage from "./pages/CreateCoursePage.jsx";
 import CreateExercisePage from "./pages/CreateExercisePage.jsx";
 import CreateLessonPage from "./pages/CreateLessonPage.jsx";
 import CreateTestPage from "./pages/CreateTestPage.jsx";
+import CreateSolutionPage from "./pages/CreateSolutionPage.jsx";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/create-lesson" element={<CreateLessonPage/>}/>
                 <Route path="/create-exercise" element={<CreateExercisePage/>}/>
                 <Route path="/create-test" element={<CreateTestPage/>}/>
+                <Route path="/create-solution" element={<CreateSolutionPage/>}/>
             </Routes>
     );
 }
