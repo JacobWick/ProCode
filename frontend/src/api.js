@@ -26,14 +26,14 @@ export const executeSolution = async (language, code, stdin = "") => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             language: language,
-            version: '*', // użyj najnowszej wersji
+            version: '*',
             files: [
                 {
                     name: 'main',
                     content: code
                 }
             ],
-            stdin: stdin, // ⭐ Tutaj przekazujemy dane wejściowe!
+            stdin: stdin,
             args: [],
             compile_timeout: 10000,
             run_timeout: 3000,
@@ -44,6 +44,31 @@ export const executeSolution = async (language, code, stdin = "") => {
 
     return await response.json();
 };
+
+backendAPI.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+backendAPI.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const getCourses = async () => {
     return await backendAPI.get("/courses");
 }
@@ -55,4 +80,10 @@ export const getLessonById = async (id) => {
 }
 export const getExerciseById = async (id) => {
     return await backendAPI.get(`/exercise/${id}`);
+}
+export const login = async (data) => {
+    return await backendAPI.post(`/auth/login`, data)
+}
+export const register = async (data) => {
+    return await backendAPI.post(`/auth/register`, data)
 }
