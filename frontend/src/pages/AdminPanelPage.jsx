@@ -201,7 +201,7 @@ export default function AdminPanelPage() {
                             <Button
                                 leftIcon={<AddIcon />}
                                 colorScheme="purple"
-                                onClick={() => navigate('/admin/users/create')}
+                                onClick={() => navigate('/administrator/users/create')}
                             >
                                 Dodaj użytkownika
                             </Button>
@@ -255,7 +255,7 @@ export default function AdminPanelPage() {
                                                             colorScheme="blue"
                                                             variant="ghost"
                                                             size="sm"
-                                                            onClick={() => navigate(`/admin/users/${u.id}/edit`)}
+                                                            onClick={() => navigate(`/administrator/users/${u.id}/edit`)}
                                                             aria-label="Edytuj użytkownika"
                                                         />
                                                         <IconButton

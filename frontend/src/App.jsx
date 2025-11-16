@@ -14,6 +14,8 @@ import CreateLessonPage from "./pages/CreateLessonPage.jsx";
 import CreateTestPage from "./pages/CreateTestPage.jsx";
 import CreateSolutionPage from "./pages/CreateSolutionPage.jsx";
 import AdminPanelPage from "./pages/AdminPanelPage.jsx";
+import EditUserPage from "./pages/EditUserPage.jsx";
+import CreateUserPage from "./pages/CreateUserPage.jsx";
 
 function App() {
     return (
@@ -33,6 +35,8 @@ function App() {
                 <Route path="/create-test" element={<CreateTestPage/>}/>
                 <Route path="/create-solution" element={<CreateSolutionPage/>}/>
                 <Route path="/administrator" element={<AdminPanelPage/>}/>
+                <Route path="/administrator/users/:userId/edit" element={<EditUserPage/>}/>
+                <Route path="/administrator/users/create" element={<CreateUserPage/>}/>
             </Routes>
     );
 }

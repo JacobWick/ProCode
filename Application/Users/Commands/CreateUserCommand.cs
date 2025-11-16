@@ -1,5 +1,4 @@
-﻿using Application.DTOs;
-using MediatR;
+﻿using MediatR;
 
 namespace Application.Users.Commands;
 
@@ -10,4 +9,5 @@ public class CreateUserCommand : IRequest<CreateUserResult>
     public string UserName { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
+    public string Role { get; set; }
 }

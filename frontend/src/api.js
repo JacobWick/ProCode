@@ -119,7 +119,7 @@ export const createUser = async (userData) => {
     return await backendAPI.post("/user", userData);
 }
 export const updateUser = async (id, userData) => {
-    return await backendAPI.put(`/user/${id}`, userData);
+    return await backendAPI.patch(`/user/${id}`, userData);
 }
 export const deleteUser = async (id) => {
     return await backendAPI.delete(`/user/${id}`);

@@ -36,7 +36,6 @@ const Navbar = () => {
         if (token) {
             try {
                 const decoded = jwtDecode(token);
-                console.log(decoded)
                 setUser({
                     id: decoded.nameidentifier,
                     name: decoded.name,
