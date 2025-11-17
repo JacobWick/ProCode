@@ -3,6 +3,7 @@ using Application.Courses.Queries;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace API.Controllers;
 
@@ -77,5 +78,18 @@ public class CourseController : ControllerBase
 
         await _mediator.Send(command, cancellationToken);
         return NoContent();
+    }
+
+    [MapToApiVersion(1)]
+    [HttpPost("{id}/enroll")]
+    public async Task<IActionResult> EnrollInCourse(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new EnrollInCourseCommand { CourseId = id}, cancellationToken);
+        if (!result)
+        {
+            return NotFound();
+        }
+
+        return Ok(new { Message = $"User successfully enrolled in course {id}." });
     }
 }

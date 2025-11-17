@@ -28,4 +28,6 @@ public interface IRepository<E> where E : class, IEntity
             CancellationToken cancellationToken = default,
             params Expression<Func<E, object>>[] includes);
 
+    Task SaveChangesAsync(CancellationToken cancellation = default);
+
 }
