@@ -21,7 +21,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, bool>
 
     public async Task<bool> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByIdAsync(request.Id);
+        var user = await _userRepository.GetByIdAsync(request.Id, cancellationToken: cancellationToken);
         if (user == null)
         {
             return false;
@@ -46,25 +46,18 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, bool>
         await _userRepository.UpdateAsync(user, cancellationToken);
         if (request.Role is not null)
         {
-           var roleExists =  await _roleManager.RoleExistsAsync(request.Role);
-           if (!roleExists)
+            if (!await _roleManager.RoleExistsAsync(request.Role))
+                return false;
+           var userRoles = await _userManager.GetRolesAsync(user);
+           foreach (var role in userRoles)
            {
-               return false;
-           }
-           var currentRole = await _roleManager.FindByNameAsync(request.Role);
-           if (currentRole != null)
-           {
-               var removeResult  = await _userManager.RemoveFromRoleAsync(user, currentRole.Name);
-               if (!removeResult.Succeeded)
-               {
+               var remove = await _userManager.RemoveFromRoleAsync(user, role);
+               if (!remove.Succeeded)
                    return false;
-               }
            }
-           var addResult = await _userManager.AddToRoleAsync(user, request.Role);
-           if (!addResult.Succeeded)
-           {
+           var newRole = await _userManager.AddToRoleAsync(user, request.Role);
+           if (!newRole.Succeeded)
                return false;
-           }
         }
         return true;
     }

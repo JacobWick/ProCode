@@ -98,7 +98,7 @@ export default function EditUserPage() {
                 role: userData.role || null,
             };
             const response = await updateUser(userId, updateUserData);
-            if (response === true) {
+            if (response.data === true) {
                 toast({
                     title: "Użytkownik zaktualizowany!",
                     description: `Dane użytkownika ${userData.userName} zostały zapisane`,
