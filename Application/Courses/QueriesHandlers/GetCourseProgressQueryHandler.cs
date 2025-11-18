@@ -38,6 +38,7 @@ namespace Application.Courses.QueriesHandlers
             return new CourseProgressDto
             {
                 CourseId = request.CourseId,
+                Title = courseExists.Title,
                 TotalLessons = totalLessons.Count,
                 CompletedLessons = completedLessons.Count
             };

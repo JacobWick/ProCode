@@ -18,6 +18,7 @@ namespace Infrastructure.Data
         public DbSet<Test> Tests { get; set; }
         public new DbSet<User> Users { get; set; }
         public DbSet<UserProfile> userProfiles { get; set; }
+        public DbSet<UserCourse> userCourses { get; set; }
         public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options)
         {
             
@@ -35,7 +36,17 @@ namespace Infrastructure.Data
             modelBuilder.Entity<Test>()
                 .HasIndex(t => t.ExerciseId)
                 .IsUnique();
-            
+
+            modelBuilder.Entity<UserCourse>()
+                .HasOne(uc => uc.User)
+                .WithMany(u => u.CoursesEnrolledIn)
+                .HasForeignKey(uc => uc.UserId);
+
+            modelBuilder.Entity<UserCourse>()
+                .HasOne(uc => uc.Course)
+                .WithMany(c => c.UsersEnrolled)
+                .HasForeignKey(uc => uc.CourseId);
+
         }
 
     }

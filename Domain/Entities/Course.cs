@@ -10,6 +10,7 @@ public class Course : IEntity
     public ICollection<Progress> Progresses { get; set; } = new List<Progress>();
     public ICollection<Tag> Tags { get; set; } = new List<Tag>();
     public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+    public ICollection<UserCourse> UsersEnrolled { get; set; } = new List<UserCourse>();
     
     public Guid CreatorId { get; set; }
     public User Creator { get; set; } = null!;

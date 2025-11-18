@@ -48,7 +48,7 @@ namespace API.Controllers
 
         [MapToApiVersion(1)]
         [Authorize]
-        [HttpGet("edit-profile")]
+        [HttpGet("me")]
         public async Task<IActionResult> GetEditProfile(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new EditProfileQuery(), cancellationToken);

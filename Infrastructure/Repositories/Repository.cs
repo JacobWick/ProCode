@@ -94,4 +94,9 @@ namespace Infrastructure.Repositories;
 
             return await query.ToListAsync(cancellationToken);
         }
+
+    public async Task SaveChangesAsync(CancellationToken cancellation = default)
+    {
+        await context.SaveChangesAsync(cancellation);
+    }
 }
