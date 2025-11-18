@@ -14,20 +14,20 @@ namespace Infrastructure.Services
         }
 
         public Guid UserId =>
-            Guid.Parse(_httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? Guid.Empty.ToString());
+            Guid.Parse(_httpContextAccessor.HttpContext?.User.FindFirstValue("nameidentifier") ?? Guid.Empty.ToString());
 
         public bool IsAuthenticated =>
             _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
 
         public string UserName =>
-            _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+            _httpContextAccessor.HttpContext?.User?.FindFirstValue("name") ?? string.Empty;
 
         public string Email =>
-            _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
+            _httpContextAccessor.HttpContext?.User?.FindFirstValue("email") ?? string.Empty;
 
         public List<string> Roles =>
             _httpContextAccessor.HttpContext?.User?.Claims
-                .Where(c => c.Type == ClaimTypes.Role)
+                .Where(c => c.Type == "role")
                 .Select(c => c.Value).ToList() ?? new();
     }
 }
