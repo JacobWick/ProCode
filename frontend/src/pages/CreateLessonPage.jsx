@@ -61,10 +61,10 @@ export default function CreateLessonPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!lessonData.title || !lessonData.courseId) {
+        if (!lessonData.title) {
             toast({
                 title: "Błąd walidacji",
-                description: "Tytuł i kurs są wymagane",
+                description: "Tytuł jest wymagany",
                 status: "error",
                 duration: 3000,
             });
@@ -137,7 +137,7 @@ export default function CreateLessonPage() {
                         >
                             <form onSubmit={handleSubmit}>
                                 <VStack spacing={6} align="stretch">
-                                    <FormControl isRequired>
+                                    <FormControl>
                                         <FormLabel>Wybierz kurs</FormLabel>
                                         <Select
                                             name="courseId"
