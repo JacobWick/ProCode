@@ -25,6 +25,7 @@ import { ArrowBackIcon, DeleteIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { getLessons, createCourse } from '../api';
+import {jwtDecode} from "jwt-decode";
 
 const DIFFICULTY_LEVELS = [
     { value: 0, label: 'Początkujący' },
@@ -92,17 +93,8 @@ export default function CreateCoursePage() {
             });
             return;
         }
-
-        if (selectedLessons.length === 0) {
-            toast({
-                title: "Błąd walidacji",
-                description: "Kurs musi mieć przynajmniej jedną lekcję",
-                status: "error",
-                duration: 3000,
-            });
-            return;
-        }
-
+        const token = localStorage.getItem('token');
+        const decoded = jwtDecode(token);
         try {
             setIsLoading(true);
 
@@ -111,7 +103,7 @@ export default function CreateCoursePage() {
                 description: courseData.description,
                 difficultyLevel: courseData.difficultyLevel,
                 lessons: selectedLessons,
-                createdBy: "043c981f-b76b-411c-a638-2871ec330533",
+                createdBy: decoded.nameidentifier,
             };
 
             console.log('Creating course:', createCourseData);
@@ -221,7 +213,7 @@ export default function CreateCoursePage() {
                                         </FormHelperText>
                                     </FormControl>
 
-                                    <FormControl isRequired>
+                                    <FormControl>
                                         <FormLabel>Lekcje w kursie ({selectedLessons.length})</FormLabel>
                                         <Box
                                             maxH="300px"

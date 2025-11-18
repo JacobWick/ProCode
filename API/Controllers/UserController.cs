@@ -55,7 +55,7 @@ public class UserController : ControllerBase
         return Ok(result);
     }
     [MapToApiVersion(1)]
-    [HttpPatch()]
+    [HttpPatch("{id}")]
     public async Task<IActionResult> Update([FromBody] UpdateUserCommand command, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(command, cancellationToken);

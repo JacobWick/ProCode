@@ -67,8 +67,8 @@ export default function CreatePage() {
             path: '/create-course',
         },
         {
-            title: 'Dodaj lekcję',
-            description: 'Dodaj nową lekcję do istniejącego kursu',
+            title: 'Utwórz lekcję',
+            description: 'Stwórz nową lekcję, którą możesz dodać do kursu',
             color: 'blue',
             path: '/create-lesson',
         },
@@ -90,6 +90,12 @@ export default function CreatePage() {
             color: 'yellow',
             path: '/create-solution',
         },
+        {
+            title: 'Edycja',
+            description: 'Przejdź do edycji swoich kursów',
+            color: 'red',
+            path: '/my-courses'
+        }
     ];
 
     return (

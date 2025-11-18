@@ -26,15 +26,16 @@ namespace Infrastructure.Services
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.FirstName ?? ""),
-                new Claim(ClaimTypes.Surname, user.LastName ?? ""),
-                new Claim(ClaimTypes.Email, user.Email ?? ""),
+                new Claim("nameidentifier", user.Id.ToString()),
+                new Claim("name", user.FirstName ?? ""),
+                new Claim("surname", user.LastName ?? ""),
+                new Claim("email", user.Email ?? ""),
+                new Claim("username", user.UserName ?? ""),
             };
 
             foreach (var role in userRoles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role ?? ""));
+                claims.Add(new Claim("role", role ?? ""));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
