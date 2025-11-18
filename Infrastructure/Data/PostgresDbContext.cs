@@ -38,9 +38,6 @@ namespace Infrastructure.Data
                 .IsUnique();
 
             modelBuilder.Entity<UserCourse>()
-                .HasKey(uc => new { uc.UserId, uc.CourseId });
-
-            modelBuilder.Entity<UserCourse>()
                 .HasOne(uc => uc.User)
                 .WithMany(u => u.CoursesEnrolledIn)
                 .HasForeignKey(uc => uc.UserId);
