@@ -13,6 +13,7 @@ import CreateExercisePage from "./pages/CreateExercisePage.jsx";
 import CreateLessonPage from "./pages/CreateLessonPage.jsx";
 import CreateTestPage from "./pages/CreateTestPage.jsx";
 import CreateSolutionPage from "./pages/CreateSolutionPage.jsx";
+import UserProfile from "./pages/UserProfile.jsx"
 
 function App() {
     return (
@@ -31,6 +32,8 @@ function App() {
                 <Route path="/create-exercise" element={<CreateExercisePage/>}/>
                 <Route path="/create-test" element={<CreateTestPage/>}/>
                 <Route path="/create-solution" element={<CreateSolutionPage/>}/>
+                <Route path="/my-profile" element={<UserProfile/>}/>
+
             </Routes>
     );
 }

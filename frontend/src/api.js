@@ -109,3 +109,9 @@ export const register = async (data) => {
         return await backendAPI.post("/solutionexamples", solutionExampleData);
 
     }
+export const getMyProfile = async () => {
+    return await backendAPI.get(`/profiles/me`)
+}
+export const getCourseProgress = async (id) => {
+    return await backendAPI.get(`/courses/${id}/progress`)
+}
