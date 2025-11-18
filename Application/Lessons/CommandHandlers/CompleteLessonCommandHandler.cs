@@ -11,7 +11,9 @@ namespace Application.Lessons.CommandHandlers
         private readonly IRepository<Progress> _progressRepo;
         private readonly IUserContextService _userContextService;
 
-        public CompleteLessonCommandHandler(IRepository<Progress> progressRepo, IRepository<Lesson> lessonRepo, IUserContextService userContextService, UserManager<User> userManager)
+        public CompleteLessonCommandHandler(
+            IRepository<Progress> progressRepo, 
+            IUserContextService userContextService)
         {
             _progressRepo = progressRepo;
             _userContextService = userContextService;
@@ -26,7 +28,7 @@ namespace Application.Lessons.CommandHandlers
                 cancellationToken
             );
 
-            if (progressExists != null)
+            if (progressExists.Any())
             {
                 return false;
             }
