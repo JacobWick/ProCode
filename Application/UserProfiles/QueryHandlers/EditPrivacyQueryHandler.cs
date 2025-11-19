@@ -37,6 +37,7 @@ namespace Application.UserProfiles.QueryHandlers
 
             return new PrivacyResponse
             {
+                Id = userId,
                 IsProfilePublic = userProfile.IsProfilePublic,
             };
         }

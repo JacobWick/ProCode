@@ -51,8 +51,17 @@ namespace API.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> GetEditProfile(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new EditProfileQuery(), cancellationToken);
+            var result = await _mediator.Send(new GetMyProfileQuery(), cancellationToken);
             return result is not null ? Ok(result) : NotFound();
+        }
+
+        [MapToApiVersion(1)]
+        [Authorize]
+        [HttpPatch("me")]
+        public async Task<IActionResult> EditProfile([FromBody]EditProfileCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return result ? Ok(result) : NotFound();
         }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Application.UserProfiles.QueryHandlers
 {
-    public class GetMyProfileProfileQueryHandler : IRequestHandler<EditProfileQuery, GetMyProfileResponse>
+    public class GetMyProfileProfileQueryHandler : IRequestHandler<GetMyProfileQuery, GetMyProfileResponse>
     {
         private readonly IRepository<UserProfile> _userProfileRepository;
         private readonly IRepository<UserCourse> _enrollmentRepository;
@@ -27,7 +27,7 @@ namespace Application.UserProfiles.QueryHandlers
             _userManager = userManager;
         }
 
-        public async Task<GetMyProfileResponse> Handle(EditProfileQuery request, CancellationToken cancellationToken)
+        public async Task<GetMyProfileResponse> Handle(GetMyProfileQuery request, CancellationToken cancellationToken)
         {
             var userId = _userContextService.UserId;
 

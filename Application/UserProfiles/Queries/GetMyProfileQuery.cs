@@ -2,7 +2,7 @@
 
 namespace Application.UserProfiles.Queries
 {
-    public class EditProfileQuery: IRequest<GetMyProfileResponse>
+    public class GetMyProfileQuery: IRequest<GetMyProfileResponse>
     {
     }
 }
