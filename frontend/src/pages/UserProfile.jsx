@@ -18,8 +18,10 @@ import {
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { getMyProfile, getCourseProgress } from '../api';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
+    const navigate = useNavigate();
     const [profileData, setProfileData] = useState(null);
     const [courseProgress, setCourseProgress] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -38,7 +40,6 @@ const UserProfile = () => {
         try {
             setLoading(true);
             
-            // Pobierz profil użytkownika
             console.log('Fetching profile data...');
             const profileResponse = await getMyProfile();
             const profile = profileResponse.data;
@@ -204,7 +205,7 @@ const UserProfile = () => {
                                 </HStack>
                             )}
                         </VStack>
-                        <Button colorScheme="whiteAlpha" size="lg">
+                        <Button onClick={() => navigate('edit')} colorScheme="whiteAlpha" size="lg">
                             Edytuj profil
                         </Button>
                     </Flex>

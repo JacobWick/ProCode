@@ -17,6 +17,7 @@ import UserProfile from "./pages/UserProfile.jsx"
 import AdminPanelPage from "./pages/AdminPanelPage.jsx";
 import EditUserPage from "./pages/EditUserPage.jsx";
 import CreateUserPage from "./pages/CreateUserPage.jsx";
+import EditProfile from "./pages/EditProfilePage.jsx";
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
                 <Route path="/create-test" element={<CreateTestPage/>}/>
                 <Route path="/create-solution" element={<CreateSolutionPage/>}/>
                 <Route path="/my-profile" element={<UserProfile/>}/>
+                <Route path="/my-profile/edit" element={<EditProfile/>}/>
                 <Route path="/administrator" element={<AdminPanelPage/>}/>
                 <Route path="/administrator/users/:userId/edit" element={<EditUserPage/>}/>
                 <Route path="/administrator/users/create" element={<CreateUserPage/>}/>

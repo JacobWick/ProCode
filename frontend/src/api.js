@@ -131,3 +131,6 @@ export const updateUser = async (id, userData) => {
 export const deleteUser = async (id) => {
     return await backendAPI.delete(`/user/${id}`);
 } 
+export const editProfile = async (data) => {
+    return await backendAPI.patch(`/profiles/me`, data);
+} 
