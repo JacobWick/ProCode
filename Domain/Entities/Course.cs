@@ -15,8 +15,8 @@ public class Course : IEntity
     public Guid CreatorId { get; set; }
     public User Creator { get; set; } = null!;
 
-    public required string Title { get; set; }
-    public required string Description { get; set; }
+    public string Title { get; set; } = null!;
+    public string Description { get; set; } = null!;
     public DateTime CreatedOn { get; set; }
     public DifficultyLevel DifficultyLevel { get; set; }
     public int Rating { get; set; }
