@@ -37,6 +37,8 @@ namespace Application.UserProfiles.CommandHandlers
 
             userProfile.IsProfilePublic = request.IsProfilePublic;
 
+            await _userProfileRepository.UpdateAsync(userProfile, cancellationToken);
+
             return true;
         }
     }
