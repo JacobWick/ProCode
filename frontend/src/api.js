@@ -134,3 +134,7 @@ export const deleteUser = async (id) => {
 export const editProfile = async (data) => {
     return await backendAPI.patch(`/profiles/me`, data);
 } 
+export const getRecommendedCourses = async (data) => {
+    return await backendAPI.get(`courses/recommended`, data);
+} 
+

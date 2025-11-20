@@ -68,7 +68,7 @@ const Navbar = () => {
                     <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
                         <Link as={RouterLink} to="/courses">Kursy</Link>
                         {user?.role === "Mentor" && (<Link as={RouterLink} to="/create">Stwórz</Link>)}
-                        {user && (<Link>Ścieżki nauki</Link>)}
+                        {user && (<Link as={RouterLink} to="/courses/recommended">Ścieżki nauki</Link>)}
                     </HStack>
 
                     <HStack spacing={4}>

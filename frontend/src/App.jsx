@@ -18,6 +18,7 @@ import AdminPanelPage from "./pages/AdminPanelPage.jsx";
 import EditUserPage from "./pages/EditUserPage.jsx";
 import CreateUserPage from "./pages/CreateUserPage.jsx";
 import EditProfile from "./pages/EditProfilePage.jsx";
+import RoadmapPage from "./pages/RoadmapPage.jsx";
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
                 <Route path="/administrator" element={<AdminPanelPage/>}/>
                 <Route path="/administrator/users/:userId/edit" element={<EditUserPage/>}/>
                 <Route path="/administrator/users/create" element={<CreateUserPage/>}/>
+                <Route path="/courses/recommended" element={<RoadmapPage/>}/>
             </Routes>
     );
 }
