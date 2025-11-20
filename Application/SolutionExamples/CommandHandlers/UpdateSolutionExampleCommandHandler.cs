@@ -20,9 +20,9 @@ public class UpdateSolutionExampleCommandHandler : IRequestHandler<UpdateSolutio
         
         if (solutionExample == null) 
             return false;
-        if (request.Code is not null)
+        if (request.Code != "")
             solutionExample.Code = request.Code;
-        if (request.Explanation is not null)
+        if (request.Explanation != "")
             solutionExample.Explanation = request.Explanation;
         
         await _solutionExampleRepository.UpdateAsync(solutionExample, cancellationToken);

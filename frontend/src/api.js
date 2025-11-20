@@ -72,6 +72,12 @@ backendAPI.interceptors.response.use(
 export const createCourse = async (courseData) => {
     return await backendAPI.post("/courses", courseData);
 }
+export const updateCourse = async (courseData) => {
+    return await backendAPI.patch("/courses", courseData);
+}
+export const deleteCourse = async (courseId) => {
+    return await backendAPI.delete(`/courses/${courseId}`);
+}
 export const getCourses = async () => {
     return await backendAPI.get("/courses");
 }
@@ -81,6 +87,12 @@ export const getCourseById = async (id) => {
 export const createLesson = async (lessonData) => {
     return await backendAPI.post("/lessons", lessonData);
 }
+export const updateLesson = async (lessonId, lessonData) => {
+    return await backendAPI.patch(`/lessons/${lessonId}`, lessonData);
+}
+export const deleteLesson = async (lessonId) => {
+    return await backendAPI.delete(`/lessons/${lessonId}`);
+}
 export const getLessons = async () => {
     return await backendAPI.get("/lessons");
 }
@@ -88,13 +100,25 @@ export const getLessonById = async (id) => {
     return await backendAPI.get(`/lessons/${id}`);
 }
 export const getExercises = async () => {
-    return await backendAPI.get("/exercise");
+    return await backendAPI.get("/exercises");
 }
 export const createExercise = async (exerciseData) => {
-    return await backendAPI.post("/exercise", exerciseData);
+    return await backendAPI.post("/exercises", exerciseData);
+}
+export const updateExercise = async (exerciseData) => {
+    return await backendAPI.patch(`/exercises`, exerciseData);
+}
+export const deleteExercise = async (id) => {
+    return await backendAPI.delete(`/exercises/${id}`);
 }
 export const getExerciseById = async (id) => {
-    return await backendAPI.get(`/exercise/${id}`);
+    return await backendAPI.get(`/exercises/${id}`);
+}
+export const getTestById = async (id) => {
+    return await backendAPI.get(`/tests/${id}`);
+}
+export const updateTest = async (testData) => {
+    return await backendAPI.patch(`/tests`, testData);
 }
 export const login = async (data) => {
     return await backendAPI.post(`/auth/login`, data)
@@ -105,11 +129,28 @@ export const register = async (data) => {
     export const createTest = async (testData) => {
         return await backendAPI.post("/tests", testData);
     }
+    export const deleteTest = async (id) => {
+    return await backendAPI.delete(`/tests/${id}`);
+    }
+    export const getTests = async () => {
+    return await backendAPI.get("/tests");
+    }
     export const createSolutionExample = async (solutionExampleData) => {
         return await backendAPI.post("/solutionexamples", solutionExampleData);
 
     }
-
+    export const deleteSolutionExample = async (id) => {
+    return await backendAPI.delete(`/solutionexamples/${id}`);
+    }
+export const getSolutionExampleById = async (id) => {
+    return await backendAPI.get(`/solutionexamples/${id}`);
+}
+export const getSolutionExamples = async () => {
+    return await backendAPI.get("/solutionexamples");
+}
+export const updateSolutionExample = async (solutionExampleData) => {
+    return await backendAPI.patch(`/solutionexamples`, solutionExampleData);
+}
 export const getMyProfile = async () => {
     return await backendAPI.get(`/profiles/me`)
 }
@@ -133,4 +174,4 @@ export const deleteUser = async (id) => {
 } 
 export const editProfile = async (data) => {
     return await backendAPI.patch(`/profiles/me`, data);
-} 
+}

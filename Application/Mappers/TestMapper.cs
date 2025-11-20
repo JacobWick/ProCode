@@ -15,4 +15,8 @@ public static class TestMapper
             OutputData = test.OutputData.ToList()
         };
     }
+    public static List<TestDto> MapListToDto(ICollection<Test> tests)
+    {
+        return tests.Select(MapToDto).ToList();
+    }
 }

@@ -20,10 +20,10 @@ namespace Application.Exercises.CommandHandlers
 
             if (exercise == null) return false;
 
-            if (request.Description is not null)
+            if (request.Description != "")
                 exercise.Description = request.Description;
 
-            if (request.InitialContent is not null)
+            if (request.InitialContent != "")
                 exercise.InitialContent = request.InitialContent;
 
             await _exerciseRepository.UpdateAsync(exercise, cancellation: cancellationToken);

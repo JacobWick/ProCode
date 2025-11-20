@@ -9,6 +9,7 @@ public class CreateLessonCommandValidator : AbstractValidator<CreateLessonComman
     {
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Lesson title is required.")
+            .MinimumLength(5).WithMessage("Lesson title must be at least 5 characters long")
             .MaximumLength(200).WithMessage("Lesson title must not exceed 200 characters.");
 
         RuleFor(x => x.VideoUri)
