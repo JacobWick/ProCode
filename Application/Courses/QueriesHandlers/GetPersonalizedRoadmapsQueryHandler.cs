@@ -38,7 +38,10 @@ namespace Application.Courses.QueriesHandlers
             if (user is null)
                 throw new Exception("User not found");
 
-            var allCourses = await _courseRepo.GetAllAsync(cancellationToken: cancellationToken);
+            var allCourses = await _courseRepo.GetAsync(
+                c => !c.UsersEnrolled.Any(u => u.Id == userId),
+                cancellationToken: cancellationToken); 
+
             var roadmap = _personalizationService.GenerateRoadmap(user, allCourses);
 
             return roadmap;

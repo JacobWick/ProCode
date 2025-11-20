@@ -21,6 +21,7 @@ namespace Application.Services
                 .Where(x => x.Score > 2)
                 .OrderByDescending(x => x.Score)
                 .ThenBy(x => x.Course.DifficultyLevel)
+                .Take(3)
                 .Select(x => x.Course)
                 .ToList();
 
