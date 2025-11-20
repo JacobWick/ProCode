@@ -15,7 +15,7 @@ namespace Infrastructure.Repositories
         }
 
 
-        public async Task<User?> GetUsersByIdWithProgressAndInterests(Guid id)
+        public async Task<User?> GetUsersByIdWithProgressAndInterestsAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Users
                 .AsNoTracking()
@@ -39,7 +39,7 @@ namespace Infrastructure.Repositories
                         }
                     }).ToList()
                 })
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
         }
     }
 }
