@@ -72,5 +72,12 @@ namespace API.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result ? Ok(result) : NotFound();
         }
+
+        [HttpGet("intestest")]
+        public async Task<IActionResult> GetInterests(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetInterestsQuery(), cancellationToken);
+            return result is not null ? Ok(result) : NotFound();
+        }
     }
 }
