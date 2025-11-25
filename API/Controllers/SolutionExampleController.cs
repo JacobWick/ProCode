@@ -1,5 +1,6 @@
 ﻿using Application.SolutionExamples.Commands;
 using Application.SolutionExamples.Queries;
+using Application.Tests.Queries;
 using Asp.Versioning;
 using Domain.Entities;
 using MediatR;
@@ -23,6 +24,14 @@ public class SolutionExampleController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateSolutionExampleCommand command)
     {
         var result = await _mediator.Send(command);
+        return Ok(result);
+    }
+
+    [MapToApiVersion(1)]
+    [HttpGet()]
+    public async Task<IActionResult> GetAll([FromQuery] GetAllTestsQuery request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(request, cancellationToken);
         return Ok(result);
     }
     [MapToApiVersion(1)]

@@ -24,17 +24,17 @@ public class UpdateLessonCommandHandler : IRequestHandler<UpdateLessonCommand, b
             return false;
         }
 
-        if (request.Title is not null)
+        if (request.Title != "")
         {
             lesson.Title = request.Title;
         }
 
-        if (request.VideoUri is not null)
+        if (request.VideoUri != lesson.VideoUri)
         {
             lesson.VideoUri = request.VideoUri;
         }
 
-        if (request.TextUri is not null)
+        if (request.TextUri != lesson.VideoUri)
         {
             lesson.TextUri = request.TextUri;
         }

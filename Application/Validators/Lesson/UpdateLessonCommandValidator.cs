@@ -11,7 +11,8 @@ public class UpdateLessonCommandValidator : AbstractValidator<UpdateLessonComman
             .NotEqual(Guid.Empty).WithMessage("Lesson Id is required.");
 
         RuleFor(x => x.Title)
-            .MaximumLength(200).WithMessage("Title must not exceed 200 characters.")
+            .MinimumLength(5).WithMessage("Lesson title must be at least 5 characters long")
+            .MaximumLength(200).WithMessage("Lesson title must not exceed 200 characters.")
             .When(x => !string.IsNullOrWhiteSpace(x.Title));
 
         RuleFor(x => x.Exercises)

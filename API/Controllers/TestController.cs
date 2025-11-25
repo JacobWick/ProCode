@@ -24,6 +24,14 @@ public class TestController : ControllerBase
         var created = await _mediator.Send(command, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
+
+    [MapToApiVersion(1)]
+    [HttpGet()]
+    public async Task<IActionResult> GetAll([FromQuery] GetAllTestsQuery request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(request, cancellationToken);
+        return Ok(result);
+    }
     [MapToApiVersion(1)]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)

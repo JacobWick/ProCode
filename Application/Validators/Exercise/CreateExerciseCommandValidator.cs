@@ -10,7 +10,7 @@ public class CreateExerciseCommandValidator  : AbstractValidator<CreateExerciseC
         RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Description is required")
             .MinimumLength(20).WithMessage("Description must be at least 20 characters long")
-            .MaximumLength(2000).WithMessage("Description must not exceed 2000 characters");
+            .MaximumLength(1000).WithMessage("Description must not exceed 1000 characters");
         RuleFor(x => x.InitialContent)
             .NotEmpty().WithMessage("Initial content is required")
             .MinimumLength(10).WithMessage("Initial content must be at least 10 characters long")
