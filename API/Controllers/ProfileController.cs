@@ -66,14 +66,14 @@ namespace API.Controllers
         }
 
         [MapToApiVersion(1)]
-        [HttpPut("interests")]
+        [HttpPut("me/interests")]
         public async Task<IActionResult> UpdateInterests([FromBody] UpdateInterestsCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return result ? Ok(result) : NotFound();
         }
 
-        [HttpGet("intestest")]
+        [HttpGet("me/interests")]
         public async Task<IActionResult> GetInterests(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetInterestsQuery(), cancellationToken);
