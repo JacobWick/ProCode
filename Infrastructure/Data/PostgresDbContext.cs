@@ -47,6 +47,9 @@ namespace Infrastructure.Data
                 .WithMany(c => c.UsersEnrolled)
                 .HasForeignKey(uc => uc.CourseId);
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.TagsIntrestedIn)
+                .WithMany(t => t.InterestedUsers);
         }
 
     }

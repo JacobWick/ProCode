@@ -175,27 +175,11 @@ export const deleteUser = async (id) => {
 export const editProfile = async (data) => {
     return await backendAPI.patch(`/profiles/me`, data);
 }
-export const getUserNotifications = async (userId, isRead) => {
-    return await backendAPI.get(`/notifications/${userId}`, {params: {isRead}});
+export const getRecommendedCourses = async (data) => {
+    return await backendAPI.get(`courses/recommended`, data);
 }
-export const getUnreadNotificationsCount = async (userId) => {
-    return await backendAPI.get(`/notifications/${userId}/count`);
-}
-export const sendNotification = async (notificationData) => {
-    if (notificationData.userIds.length === 1) {
-        notificationData.userId = notificationData.userIds[0];
-        notificationData.userIds = [];
-    }
-    else {
-        notificationData.userId = "00000000-0000-0000-0000-000000000000";
-    }
-    return await backendAPI.post(`/notifications/send`, notificationData);
-}
-export const markNotificationAsRead = async (notificationId) => {
-    return await backendAPI.put(`/notifications/${notificationId}/read`, {});
-}
-export const markAllNotificationsAsRead = async (userId) => {
-    return await backendAPI.put(`/notifications/read`, {userId});
+export const getUserTags = async () => {
+    return await backendAPI.get(`/profiles/me/interests`);
 }
 export const getUserNotifications = async (userId, isRead) => {
     return await backendAPI.get(`/notifications/${userId}`, {params: {isRead}});
@@ -219,3 +203,33 @@ export const markNotificationAsRead = async (notificationId) => {
 export const markAllNotificationsAsRead = async (userId) => {
     return await backendAPI.put(`/notifications/read`, {userId});
 }
+export const getUserNotifications = async (userId, isRead) => {
+    return await backendAPI.get(`/notifications/${userId}`, {params: {isRead}});
+}
+export const getUnreadNotificationsCount = async (userId) => {
+    return await backendAPI.get(`/notifications/${userId}/count`);
+}
+export const sendNotification = async (notificationData) => {
+    if (notificationData.userIds.length === 1) {
+        notificationData.userId = notificationData.userIds[0];
+        notificationData.userIds = [];
+    }
+    else {
+        notificationData.userId = "00000000-0000-0000-0000-000000000000";
+    }
+    return await backendAPI.post(`/notifications/send`, notificationData);
+}
+export const markNotificationAsRead = async (notificationId) => {
+    return await backendAPI.put(`/notifications/${notificationId}/read`, {});
+}
+export const markAllNotificationsAsRead = async (userId) => {
+    return await backendAPI.put(`/notifications/read`, {userId});
+}
+export const updateUserTags = async (tags) => {
+    return await backendAPI.put(`/profiles/me/interests`, {tags});
+}
+export const getAllTags = async () => {
+    return await backendAPI.get(`/tags`);
+}
+
+

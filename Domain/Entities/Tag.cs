@@ -8,5 +8,6 @@ namespace Domain.Entities
         public string Name { get; set; } = null!;
 
         public ICollection<Course> Courses { get; set; } = new List<Course>();
+        public ICollection<User> InterestedUsers { get; set; } = new List<User>();
     }
 }

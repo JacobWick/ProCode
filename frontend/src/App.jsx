@@ -25,6 +25,7 @@ import EditTestPage from "./pages/Admin/Edit/EditTestPage.jsx";
 import EditSolutionExamplePage from "./pages/Admin/Edit/EditSolutionExamplePage.jsx";
 import './index.css'
 import NotificationsPage from "./pages/Profile/NotificationsPage.jsx";
+import RoadmapPage from "./pages/RoadmapPage.jsx";
 
 function App() {
     return (
@@ -50,6 +51,7 @@ function App() {
                 <Route path="/administrator" element={<AdminPanelPage/>}/>
                 <Route path="/administrator/users/:userId/edit" element={<EditUserPage/>}/>
                 <Route path="/administrator/users/create" element={<CreateUserPage/>}/>
+                <Route path="/courses/recommended" element={<RoadmapPage/>}/>
                 <Route path="/edit-lesson/:lessonId" element={<EditLessonPage/>}/>
                 <Route path="/edit-exercise/:exerciseId" element={<EditExercisePage/>}/>
                 <Route path="/edit-test/:testId" element={<EditTestPage/>}/>

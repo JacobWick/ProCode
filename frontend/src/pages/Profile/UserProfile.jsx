@@ -19,6 +19,7 @@ import {
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { getMyProfile, getCourseProgress } from '../../api.js';
 import { useNavigate } from 'react-router-dom';
+import EditInterests from '../components/EditInterests.jsx';
 
 const UserProfile = () => {
     const navigate = useNavigate();
@@ -435,6 +436,7 @@ const UserProfile = () => {
                         </VStack>
                     </Box>
                 )}
+            <EditInterests/>
             </Container>
         </Box>
     );
