@@ -29,5 +29,5 @@ public interface IRepository<E> where E : class, IEntity
             params Expression<Func<E, object>>[] includes);
 
     Task SaveChangesAsync(CancellationToken cancellation = default);
-
+    Task<int> CountAsync(Expression<Func<E, bool>>? predicate = null, CancellationToken cancellationToken = default);
 }

@@ -24,3 +24,29 @@ export const COURSE_DIFFICULTY = {
     2: "Zaawansowany",
 
 }
+export const NOTIFICATION_TYPE_COLORS = {
+    0: 'yellow',
+    1: 'blue',
+    2: 'green',
+    3: 'red',
+};
+
+export const NOTIFICATION_TYPE_LABELS = {
+    0: 'Społeczność',
+    1: 'Nowy kurs',
+    2: 'Sukces',
+    3: 'Błąd',
+};
+export const NOTIFICATION_TYPE_COLORS = {
+    0: 'yellow',
+    1: 'blue',
+    2: 'green',
+    3: 'red',
+};
+
+export const NOTIFICATION_TYPE_LABELS = {
+    0: 'Społeczność',
+    1: 'Nowy kurs',
+    2: 'Sukces',
+    3: 'Błąd',
+};

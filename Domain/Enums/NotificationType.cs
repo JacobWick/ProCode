@@ -3,6 +3,8 @@
     public enum NotificationType
     {
         Community,
-        NewCourse
+        NewCourse,
+        Success,
+        Failure
     }
 }

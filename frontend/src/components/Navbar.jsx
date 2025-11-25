@@ -20,6 +20,7 @@ import {
     Avatar,
     Text,
 } from '@chakra-ui/react';
+import NotificationBell from './NotificationBell';
 import { MoonIcon, SunIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { jwtDecode } from 'jwt-decode';
 
@@ -67,7 +68,7 @@ const Navbar = () => {
 
                     <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
                         <Link as={RouterLink} to="/courses">Kursy</Link>
-                        {user?.role === "Mentor" && (<Link as={RouterLink} to="/create">Stwórz</Link>)}
+                        {user?.role === "Mentor" || user?.role === "Admin" && (<Link as={RouterLink} to="/create">Stwórz</Link>)}
                         {user && (<Link>Ścieżki nauki</Link>)}
                     </HStack>
 
@@ -78,7 +79,7 @@ const Navbar = () => {
                             variant="ghost"
                             aria-label="Toggle color mode"
                         />
-
+                        <NotificationBell/>
                         {user ? (
                             <Menu>
                                 <MenuButton
@@ -113,14 +114,11 @@ const Navbar = () => {
                                         <MenuItem onClick={() => navigate('/administrator')}>
                                             Panel Administratora
                                     </MenuItem>)}
-                                    <MenuItem onClick={() => navigate('/profile')}>
+                                    <MenuItem onClick={() => navigate('/my-profile')}>
                                         Mój profil
                                     </MenuItem>
                                     <MenuItem onClick={() => navigate('/my-courses')}>
                                         Moje kursy
-                                    </MenuItem>
-                                    <MenuItem onClick={() => navigate('/settings')}>
-                                        Ustawienia
                                     </MenuItem>
                                     <MenuDivider />
                                     <MenuItem onClick={handleLogout} color="red.500">

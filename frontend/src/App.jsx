@@ -1,30 +1,30 @@
 import {Routes, Route } from "react-router-dom";
-import ExercisePage from "./pages/ExercisePage";
+import ExercisePage from "./pages/Learning/ExercisePage.jsx";
 import HomePage from "./pages/HomePage";
+import CoursesPage from "./pages/Learning/CoursesPage.jsx";
+import CourseDetailPage from "./pages/Learning/CourseDetailPage.jsx";
+import LessonPage from "./pages/Learning/LessonPage.jsx";
+import LoginPage from "./pages/Auth/LoginPage.jsx";
+import RegisterPage from "./pages/Auth/RegisterPage.jsx";
+import CreatePage from "./pages/Admin/Create/CreatePage.jsx";
+import CreateCoursePage from "./pages/Admin/Create/CreateCoursePage.jsx";
+import CreateExercisePage from "./pages/Admin/Create/CreateExercisePage.jsx";
+import CreateLessonPage from "./pages/Admin/Create/CreateLessonPage.jsx";
+import CreateTestPage from "./pages/Admin/Create/CreateTestPage.jsx";
+import CreateSolutionPage from "./pages/Admin/Create/CreateSolutionPage.jsx";
+import UserProfile from "./pages/Profile/UserProfile.jsx"
+import AdminPanelPage from "./pages/Admin/AdminPanelPage.jsx";
+import EditUserPage from "./pages/Admin/Edit/EditUserPage.jsx";
+import CreateUserPage from "./pages/Admin/Create/CreateUserPage.jsx";
+import EditProfile from "./pages/Admin/Edit/EditProfilePage.jsx";
+import EditCoursePage from "./pages/Admin/Edit/EditCoursePage.jsx";
+import MyCoursesPage from "./pages/Profile/MyCoursesPage.jsx";
+import EditLessonPage from "./pages/Admin/Edit/EditLessonPage.jsx";
+import EditExercisePage from "./pages/Admin/Edit/EditExercisePage.jsx";
+import EditTestPage from "./pages/Admin/Edit/EditTestPage.jsx";
+import EditSolutionExamplePage from "./pages/Admin/Edit/EditSolutionExamplePage.jsx";
 import './index.css'
-import CoursesPage from "./pages/CoursesPage.jsx";
-import CourseDetailPage from "./pages/CourseDetailPage.jsx";
-import LessonPage from "./pages/LessonPage.jsx";
-import LoginPage from "./pages/LoginPage.jsx";
-import RegisterPage from "./pages/RegisterPage.jsx";
-import CreatePage from "./pages/CreatePage.jsx";
-import CreateCoursePage from "./pages/CreateCoursePage.jsx";
-import CreateExercisePage from "./pages/CreateExercisePage.jsx";
-import CreateLessonPage from "./pages/CreateLessonPage.jsx";
-import CreateTestPage from "./pages/CreateTestPage.jsx";
-import CreateSolutionPage from "./pages/CreateSolutionPage.jsx";
-import UserProfile from "./pages/UserProfile.jsx"
-import AdminPanelPage from "./pages/AdminPanelPage.jsx";
-import EditUserPage from "./pages/EditUserPage.jsx";
-import CreateUserPage from "./pages/CreateUserPage.jsx";
-import EditProfile from "./pages/EditProfilePage.jsx";
-import EditCoursePage from "./pages/EditCoursePage.jsx";
-import MyCoursesPage from "./pages/MyCoursesPage.jsx";
-import EditLessonPage from "./pages/EditLessonPage.jsx";
-import EditExercisePage from "./pages/EditExercisePage.jsx";
-import EditTestPage from "./pages/EditTestPage.jsx";
-import EditSolutionExamplePage from "./pages/EditSolutionExamplePage.jsx";
-
+import NotificationsPage from "./pages/Profile/NotificationsPage.jsx";
 
 function App() {
     return (
@@ -54,6 +54,7 @@ function App() {
                 <Route path="/edit-exercise/:exerciseId" element={<EditExercisePage/>}/>
                 <Route path="/edit-test/:testId" element={<EditTestPage/>}/>
                 <Route path="/edit-solution/:solutionId" element={<EditSolutionExamplePage/>}/>
+                <Route path="/notifications" element={<NotificationsPage />} />
             </Routes>
     );
 }

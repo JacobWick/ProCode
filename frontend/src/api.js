@@ -1,4 +1,4 @@
-﻿import axios from 'axios'
+import axios from 'axios'
 import {LANGUAGE_VERSIONS} from "./constants.js";
 
 const pistonAPI = axios.create({
@@ -174,4 +174,48 @@ export const deleteUser = async (id) => {
 } 
 export const editProfile = async (data) => {
     return await backendAPI.patch(`/profiles/me`, data);
+}
+export const getUserNotifications = async (userId, isRead) => {
+    return await backendAPI.get(`/notifications/${userId}`, {params: {isRead}});
+}
+export const getUnreadNotificationsCount = async (userId) => {
+    return await backendAPI.get(`/notifications/${userId}/count`);
+}
+export const sendNotification = async (notificationData) => {
+    if (notificationData.userIds.length === 1) {
+        notificationData.userId = notificationData.userIds[0];
+        notificationData.userIds = [];
+    }
+    else {
+        notificationData.userId = "00000000-0000-0000-0000-000000000000";
+    }
+    return await backendAPI.post(`/notifications/send`, notificationData);
+}
+export const markNotificationAsRead = async (notificationId) => {
+    return await backendAPI.put(`/notifications/${notificationId}/read`, {});
+}
+export const markAllNotificationsAsRead = async (userId) => {
+    return await backendAPI.put(`/notifications/read`, {userId});
+}
+export const getUserNotifications = async (userId, isRead) => {
+    return await backendAPI.get(`/notifications/${userId}`, {params: {isRead}});
+}
+export const getUnreadNotificationsCount = async (userId) => {
+    return await backendAPI.get(`/notifications/${userId}/count`);
+}
+export const sendNotification = async (notificationData) => {
+    if (notificationData.userIds.length === 1) {
+        notificationData.userId = notificationData.userIds[0];
+        notificationData.userIds = [];
+    }
+    else {
+        notificationData.userId = "00000000-0000-0000-0000-000000000000";
+    }
+    return await backendAPI.post(`/notifications/send`, notificationData);
+}
+export const markNotificationAsRead = async (notificationId) => {
+    return await backendAPI.put(`/notifications/${notificationId}/read`, {});
+}
+export const markAllNotificationsAsRead = async (userId) => {
+    return await backendAPI.put(`/notifications/read`, {userId});
 }

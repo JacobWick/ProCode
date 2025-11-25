@@ -12,7 +12,7 @@ namespace Domain.Entities
         public User User { get; set; } = null!;
 
         [Required]
-        public string? MessageText { get; set; }
+        public string? Message { get; set; }
         public NotificationType Type { get; set; }
         public DateTime CreatedAt { get; set; }
         public Boolean IsRead { get; set; } 

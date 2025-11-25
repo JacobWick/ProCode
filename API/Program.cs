@@ -2,10 +2,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using API.Exceptions;
 using Application;
+using Application.Interfaces;
 using Asp.Versioning;
 using Domain.Entities;
 using Infrastructure;
 using Infrastructure.Seeders;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -69,6 +71,7 @@ builder.Services.AddCors(options =>
 builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddApiVersioning(options =>
     {
         options.DefaultApiVersion = new ApiVersion(1);

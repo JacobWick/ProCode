@@ -114,8 +114,8 @@ const Output = ({ editorRef, language, inputData, outputData}) => {
                     duration: 5000,
                 });
 
-                // Tutaj możesz dodać wywołanie API do zapisania wyniku
-                // await submitExerciseSolution(exerciseId, editorRef.current?.getValue(), true);
+
+                await submitExerciseSolution(exerciseId, editorRef.current?.getValue(), true);
             } else {
                 toast({
                     title: "Rozwiązanie niepoprawne",

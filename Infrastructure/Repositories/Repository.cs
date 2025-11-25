@@ -99,4 +99,13 @@ namespace Infrastructure.Repositories;
     {
         await context.SaveChangesAsync(cancellation);
     }
+    public async Task<int> CountAsync(
+        Expression<Func<E, bool>>? predicate = null,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<E> query = context.Set<E>();
+        if (predicate != null) query = query.Where(predicate);
+        return await query.CountAsync(cancellationToken);
+    }
+
 }
