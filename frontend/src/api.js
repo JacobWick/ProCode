@@ -137,4 +137,13 @@ export const editProfile = async (data) => {
 export const getRecommendedCourses = async (data) => {
     return await backendAPI.get(`courses/recommended`, data);
 } 
+export const getUserTags = async () => {
+    return await backendAPI.get(`/profiles/me/interests`);
+}
+export const updateUserTags = async (tags) => {
+    return await backendAPI.put(`/profiles/me/interests`, {tags});
+}
+export const getAllTags = async () => {
+    return await backendAPI.get(`/tags`);
+}
 

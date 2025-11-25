@@ -105,7 +105,7 @@ const Navbar = () => {
                                             </Text>
                                             <Text fontSize="sm" color="gray.500">
                                                 @{user.username}
-                                            </Text>
+                                            </Text> 
                                         </VStack>
                                     </MenuItem>
                                     <MenuDivider />
@@ -113,7 +113,7 @@ const Navbar = () => {
                                         <MenuItem onClick={() => navigate('/administrator')}>
                                             Panel Administratora
                                     </MenuItem>)}
-                                    <MenuItem onClick={() => navigate('/profile')}>
+                                    <MenuItem onClick={() => navigate('/my-profile')}>
                                         Mój profil
                                     </MenuItem>
                                     <MenuItem onClick={() => navigate('/my-courses')}>
