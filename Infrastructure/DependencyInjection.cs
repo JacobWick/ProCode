@@ -29,6 +29,7 @@ public static class DependencyInjection
 
         services.AddScoped<IApplicationDbContext>(provider =>
             provider.GetRequiredService<PostgresDbContext>());
+        services.AddScoped<IUserRepository, UserRepository>();
         return services;
     }
 }

@@ -18,12 +18,14 @@ import AdminPanelPage from "./pages/AdminPanelPage.jsx";
 import EditUserPage from "./pages/EditUserPage.jsx";
 import CreateUserPage from "./pages/CreateUserPage.jsx";
 import EditProfile from "./pages/EditProfilePage.jsx";
+import RoadmapPage from "./pages/RoadmapPage.jsx";
 import EditCoursePage from "./pages/EditCoursePage.jsx";
 import MyCoursesPage from "./pages/MyCoursesPage.jsx";
 import EditLessonPage from "./pages/EditLessonPage.jsx";
 import EditExercisePage from "./pages/EditExercisePage.jsx";
 import EditTestPage from "./pages/EditTestPage.jsx";
 import EditSolutionExamplePage from "./pages/EditSolutionExamplePage.jsx";
+
 
 
 function App() {
@@ -50,6 +52,7 @@ function App() {
                 <Route path="/administrator" element={<AdminPanelPage/>}/>
                 <Route path="/administrator/users/:userId/edit" element={<EditUserPage/>}/>
                 <Route path="/administrator/users/create" element={<CreateUserPage/>}/>
+                <Route path="/courses/recommended" element={<RoadmapPage/>}/>
                 <Route path="/edit-lesson/:lessonId" element={<EditLessonPage/>}/>
                 <Route path="/edit-exercise/:exerciseId" element={<EditExercisePage/>}/>
                 <Route path="/edit-test/:testId" element={<EditTestPage/>}/>

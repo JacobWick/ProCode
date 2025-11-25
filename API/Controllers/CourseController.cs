@@ -1,5 +1,6 @@
 ﻿using Application.Courses.Commands;
 using Application.Courses.Queries;
+using Application.Courses.QueriesHandlers;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -91,5 +92,15 @@ public class CourseController : ControllerBase
         }
 
         return Ok(new { Message = $"User successfully enrolled in course {id}." });
+    }
+
+    [MapToApiVersion(1)]
+    [HttpGet("recommended")]
+    public async Task<IActionResult> GetRecommendedCourses(CancellationToken cancellationToken)
+    {
+        var query = new GetPersonalizedRoadmapsQuery();
+
+        var result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
     }
 }

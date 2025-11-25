@@ -9,8 +9,8 @@ public class Lesson  : IEntity
     public Guid Id { get; set; }
     
     public Progress? Progress { get; set; }
-    
-    public Course? Course { get; set; } 
+
+    public Course Course { get; set; } = null!;
 
     public ICollection<Exercise> Exercises { get; set; } = new List<Exercise>();
 

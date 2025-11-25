@@ -1,4 +1,6 @@
 ﻿using Application.Behaviors;
+using Application.Interfaces;
+using Application.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +16,7 @@ public static class DependencyInjection
             configuration.RegisterServicesFromAssembly(assembly));
         services.AddValidatorsFromAssembly(assembly);
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        services.AddScoped<IPersonalizationService, PersonalizationService>();
         return services;
     }
 }

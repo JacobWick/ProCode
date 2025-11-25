@@ -1,5 +1,6 @@
 ﻿using Application.UserProfiles.Commands;
 using Application.UserProfiles.Queries;
+using Application.Users.Commands;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -40,7 +41,7 @@ namespace API.Controllers
         [MapToApiVersion(1)]
         [Authorize]
         [HttpPatch("edit-privacy")]
-        public async Task<IActionResult> PatchEditPrivacy([FromBody]EditPrivacyCommand editPrivacyCommmand, CancellationToken cancellationToken)
+        public async Task<IActionResult> PatchEditPrivacy([FromBody] EditPrivacyCommand editPrivacyCommmand, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new EditPrivacyCommand(), cancellationToken);
             return result ? Ok(result) : NotFound();
@@ -58,10 +59,25 @@ namespace API.Controllers
         [MapToApiVersion(1)]
         [Authorize]
         [HttpPatch("me")]
-        public async Task<IActionResult> EditProfile([FromBody]EditProfileCommand command, CancellationToken cancellationToken)
+        public async Task<IActionResult> EditProfile([FromBody] EditProfileCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return result ? Ok(result) : NotFound();
+        }
+
+        [MapToApiVersion(1)]
+        [HttpPut("me/interests")]
+        public async Task<IActionResult> UpdateInterests([FromBody] UpdateInterestsCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return result ? Ok(result) : NotFound();
+        }
+
+        [HttpGet("me/interests")]
+        public async Task<IActionResult> GetInterests(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetInterestsQuery(), cancellationToken);
+            return result is not null ? Ok(result) : NotFound();
         }
     }
 }
