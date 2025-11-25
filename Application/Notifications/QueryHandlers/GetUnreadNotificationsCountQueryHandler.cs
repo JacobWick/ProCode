@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Application.Notifications.Queries;
 using Domain.Entities;
 using MediatR;
