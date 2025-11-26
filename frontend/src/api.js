@@ -209,5 +209,6 @@ export const updateUserTags = async (tags) => {
 export const getAllTags = async () => {
     return await backendAPI.get(`/tags`);
 }
-
-
+export const completeLesson = async (id) => {
+    return await backendAPI.post(`/lessons/${id}/complete`);
+}

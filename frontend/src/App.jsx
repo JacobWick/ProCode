@@ -25,7 +25,7 @@ import EditTestPage from "./pages/Admin/Edit/EditTestPage.jsx";
 import EditSolutionExamplePage from "./pages/Admin/Edit/EditSolutionExamplePage.jsx";
 import './index.css'
 import NotificationsPage from "./pages/Profile/NotificationsPage.jsx";
-import RoadmapPage from "./pages/RoadmapPage.jsx";
+import RoadmapPage from "./pages/Profile/RoadmapPage.jsx";
 
 function App() {
     return (

@@ -5,7 +5,7 @@ import LanguageSelector from "./LanguageSelector.jsx";
 import { CODE_DEFAULT_CODE } from "../constants.js";
 import Output from "./Output.jsx";
 
-const CodeEditor = ({ initialContent, inputData, outputData, exerciseId }) => {
+const CodeEditor = ({initialContent, inputData, outputData, exerciseId, courseId, lessonId, lesson, solutionExampleId}) => {
     const editorRef = useRef();
     const [value, setValue] = useState("");
     const [language, setLanguage] = useState("javascript");
@@ -55,6 +55,10 @@ const CodeEditor = ({ initialContent, inputData, outputData, exerciseId }) => {
                     inputData={inputData}
                     outputData={outputData}
                     exerciseId={exerciseId}
+                    courseId={courseId}
+                    lessonId={lessonId}
+                    lesson={lesson}
+                    solutionExampleId={solutionExampleId}
                 />
             </HStack>
         </Box>

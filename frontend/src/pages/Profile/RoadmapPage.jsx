@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar.jsx";
 import { Box, Container, Flex, Text, Spinner, Heading, Card, CardBody, Stack, Badge, useColorModeValue } from "@chakra-ui/react";
-import { getRecommendedCourses } from "../api";
+import { getRecommendedCourses } from "../../api.js";
 
 export default function RoadmapPage() {
   const [courses, setCourses] = useState([]);

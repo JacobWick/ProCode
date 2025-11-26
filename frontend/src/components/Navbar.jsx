@@ -79,7 +79,7 @@ const Navbar = () => {
                             variant="ghost"
                             aria-label="Toggle color mode"
                         />
-                        <NotificationBell/>
+                        {user && (<NotificationBell/>)}
                         {user ? (
                             <Menu>
                                 <MenuButton

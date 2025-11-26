@@ -40,7 +40,8 @@ namespace Application.Courses.QueriesHandlers
                 CourseId = request.CourseId,
                 Title = courseExists.Title,
                 TotalLessons = totalLessons.Count,
-                CompletedLessons = completedLessons.Count
+                CompletedLessons = completedLessons.Count,
+                CompletedLessonsIds = completedLessons.Select(l => l.Id).ToList()
             };
         }
     }
