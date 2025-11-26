@@ -19,5 +19,7 @@ public class Exercise : IEntity
 
     public string Description { get; set; } = string.Empty;
     public string InitialContent { get; set; } = string.Empty;
-    
+
+    public Guid? ChallengeId { get; set; }
+    public Challenge? Challenge { get; set; }
 }
