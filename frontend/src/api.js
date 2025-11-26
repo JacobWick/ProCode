@@ -1,4 +1,4 @@
-import axios from 'axios'
+﻿import axios from 'axios'
 import {LANGUAGE_VERSIONS} from "./constants.js";
 
 const pistonAPI = axios.create({
@@ -209,5 +209,9 @@ export const updateUserTags = async (tags) => {
 export const getAllTags = async () => {
     return await backendAPI.get(`/tags`);
 }
-
-
+export const getActiveChallenges = async () => {
+    return await backendAPI.get(`/challenges/active`);
+}
+export const getChallengeById = async (id) => {
+    return await backendAPI.get(`/challenges/${id}`);
+}

@@ -26,6 +26,7 @@ import EditSolutionExamplePage from "./pages/Admin/Edit/EditSolutionExamplePage.
 import './index.css'
 import NotificationsPage from "./pages/Profile/NotificationsPage.jsx";
 import RoadmapPage from "./pages/RoadmapPage.jsx";
+import ChallengePage from "./pages/Learning/ChallengePage.jsx";
 
 function App() {
     return (
@@ -57,6 +58,8 @@ function App() {
                 <Route path="/edit-test/:testId" element={<EditTestPage/>}/>
                 <Route path="/edit-solution/:solutionId" element={<EditSolutionExamplePage/>}/>
                 <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/challenges/:id" element={<ChallengePage />} />
+
             </Routes>
     );
 }
