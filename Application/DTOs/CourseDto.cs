@@ -8,7 +8,7 @@ public class CourseDto
     public string Title { get; set; }
     public string Description { get; set; }
     public DateTime CreatedOn { get; set; }
-    public Guid CreatedBy { get; set; }
+    public string CreatedBy { get; set; }
     public List<Guid> Lessons { get; set; }
     public DifficultyLevel DifficultyLevel { get; set; }
     public int Rating { get; set; }

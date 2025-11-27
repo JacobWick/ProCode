@@ -27,12 +27,21 @@ public class CourseController : ControllerBase
         return CreatedAtAction(nameof(Create), new {id = created.Id}, created);
     }
     [MapToApiVersion(1)]
+    [HttpGet("paginated")]
+    public async Task<IActionResult> GetPaginatedCourses([FromQuery] GetPaginatedCoursesQuery query,CancellationToken cancellationToken)
+    {
+        var list = await _mediator.Send(query, cancellationToken);
+        return Ok(list);
+    }
+
+    [MapToApiVersion(1)]
     [HttpGet()]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var list = await _mediator.Send(new GetAllCoursesQuery(), cancellationToken);
         return Ok(list);
     }
+
     [MapToApiVersion(1)]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
