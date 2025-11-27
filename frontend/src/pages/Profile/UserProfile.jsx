@@ -427,7 +427,7 @@ const UserProfile = () => {
                                                 </Text>
                                             </HStack>
                                         </VStack>
-                                        <Button colorScheme="purple" size="sm">
+                                        <Button onClick={() => navigate(`/courses/${course.courseId}`)} colorScheme="purple" size="sm">
                                             Rozpocznij
                                         </Button>
                                     </Flex>
