@@ -107,7 +107,7 @@ function CourseDetailPage() {
                                                 {course.title}
                                             </Heading>
                                             <Text fontSize="sm" color={metaColor}>
-                                                {course.createdBy ?? "Autor nieznany"}
+                                                {course.creatorUsername ?? "Autor nieznany"}
                                             </Text>
                                         </Box>
                                     </HStack>

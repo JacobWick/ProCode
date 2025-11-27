@@ -19,7 +19,7 @@ public class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQuery, Cou
 
     public async Task<CourseDto> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
     {
-        var course = await _courseRepository.GetByIdAsync(request.Id, includes:new Expression<Func<Course, object>>[] {c => c.Lessons} ,cancellationToken:cancellationToken);
+        var course = await _courseRepository.GetByIdAsync(request.Id, includes:new Expression<Func<Course, object>>[] {c => c.Lessons, c => c.Creator} ,cancellationToken:cancellationToken);
         if (course == null)
         {
             return null;

@@ -75,7 +75,7 @@ const CourseCard = ({ course, onClick }) => {
                 </HStack>
 
                 <Text fontSize="sm" color={metaColor}>
-                    Prowadzący: {course.createdBy ?? "—"}
+                    Prowadzący: {course.creatorUsername ?? "—"}
                 </Text>
 
                 <Text mt={3} fontSize="sm" color={metaColor}>
