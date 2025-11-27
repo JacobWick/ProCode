@@ -40,6 +40,10 @@ namespace Application.Courses.QueriesHandlers
 
             var allCourses = await _courseRepo.GetAsync(
                 c => !c.UsersEnrolled.Any(u => u.Id == userId),
+                includes: new Expression<Func<Course, object>>[]
+                {
+                    c => c.UsersEnrolled,
+                },
                 cancellationToken: cancellationToken); 
 
             var roadmap = _personalizationService.GenerateRoadmap(user, allCourses);

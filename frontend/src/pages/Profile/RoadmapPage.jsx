@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar.jsx";
 import { Box, Container, Flex, Text, Spinner, Heading, Card, CardBody, Stack, Badge, useColorModeValue } from "@chakra-ui/react";
 import { getRecommendedCourses } from "../../api.js";
+import { useNavigate } from "react-router-dom";
+import { COURSE_DIFFICULTY } from "../../constants.js";
 
 export default function RoadmapPage() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRecommendedCourses = async () => {
@@ -66,8 +69,8 @@ export default function RoadmapPage() {
                 border="3px solid white"
               />
 
-              <Card ml="60px" width="100%" bg={cardBg} boxShadow="xl" borderRadius="2xl" p={6}
-                _hover={{ transform: 'scale(1.01)', transition: '0.2s', shadow: 'xl' }}>
+              <Card onClick={() => navigate(`/courses/${course.id}`)} ml="60px" width="100%" bg={cardBg} boxShadow="xl" borderRadius="2xl" p={6}
+                _hover={{ cursor: 'pointer', transform: 'scale(1.01)', transition: '0.2s', shadow: 'xl' }}>
                 <CardBody>
                   <Stack spacing={4}>
                     <Flex justify="space-between" align="center" wrap="wrap" gap={4}>
@@ -77,9 +80,8 @@ export default function RoadmapPage() {
                       </Box>
                       <Flex gap={3} align="center">
                         <Badge colorScheme="purple" px={3} py={1} borderRadius="lg">
-                          🎯 {course.difficultyLevel === 0 ? 'Beginner' : course.difficultyLevel === 1 ? 'Intermediate' : 'Advanced'}
+                          🎯 {COURSE_DIFFICULTY[course.difficultyLevel]}
                         </Badge>
-                        <Text fontWeight="bold" color="orange.400">⭐ {course.rating}</Text>
                       </Flex>
                     </Flex>
 
