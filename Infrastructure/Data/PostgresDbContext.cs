@@ -27,11 +27,36 @@ namespace Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
             
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.Creator)
+                .WithMany()
+                .HasForeignKey(c => c.CreatorId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Lesson>()
+                .HasOne(l => l.Course)
+                .WithMany(c => c.Lessons)
+                .HasForeignKey(l => l.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Exercise>()
+                .HasOne(e => e.Lesson)
+                .WithMany(l => l.Exercises)
+                .HasForeignKey(e => e.LessonId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+            
             modelBuilder.Entity<Exercise>()
                 .HasOne(e => e.Test)
                 .WithOne(t => t.Exercise)
                 .HasForeignKey<Test>(t => t.ExerciseId)
-                .IsRequired(); 
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Exercise>()
+                .HasOne(e => e.SolutionExample)
+                .WithOne(s => s.Exercise)
+                .HasForeignKey<SolutionExample>(s => s.ExerciseId)
+                .OnDelete(DeleteBehavior.Cascade);
             
             modelBuilder.Entity<Test>()
                 .HasIndex(t => t.ExerciseId)

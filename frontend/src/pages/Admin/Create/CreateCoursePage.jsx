@@ -1,316 +1,228 @@
-﻿import { useState, useEffect } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Box,
-    Container,
-    Heading,
-    Text,
-    Button,
-    VStack,
-    FormControl,
-    FormLabel,
-    Input,
-    Textarea,
-    Select,
-    FormHelperText,
-    useColorModeValue,
-    useToast,
-    HStack,
-    Checkbox,
-    Stack,
-    Badge,
-    IconButton,
+    Box, Container, Button, VStack, HStack,
+    useToast, useColorModeValue, Stepper, Step, StepIndicator,
+    StepStatus, StepIcon, StepNumber, StepTitle, StepDescription,
+    StepSeparator, useDisclosure, Heading, Text
 } from '@chakra-ui/react';
-import { ArrowBackIcon, DeleteIcon } from '@chakra-ui/icons';
-import Navbar from '../../../components/Navbar.jsx';
-import Footer from '../../../components/Footer.jsx';
-import { getLessons, createCourse } from '../../../api.js';
+import { ArrowBackIcon } from '@chakra-ui/icons';
+
+import CourseInfoStep from '../../../components/CourseInfoStep.jsx';
+import LessonsStep from '../../../components/CreateLessonsStep.jsx';
+import ExercisesStep from '../../../components/CreateExercisesStep.jsx';
+import SummaryStep from '../../../components/SummaryStep.jsx';
+import TestCreationModal from '../../../components/TestCreationModal.jsx';
+import SolutionCreationModal from '../../../components/SolutionCreationModal.jsx';
+import {createCourse, createExercise, createLesson, createSolutionExample, createTest} from "../../../api.js";
 import {jwtDecode} from "jwt-decode";
 
-const DIFFICULTY_LEVELS = [
-    { value: 0, label: 'Początkujący' },
-    { value: 1, label: 'Średniozaawansowany' },
-    { value: 2, label: 'Zaawansowany' },
+const steps = [
+    { title: 'Kurs', description: 'Informacje' },
+    { title: 'Lekcje', description: 'Struktura' },
+    { title: 'Zadania', description: 'Praktyka' },
+    { title: 'Koniec', description: 'Zapisz' }
 ];
 
 export default function CreateCoursePage() {
     const navigate = useNavigate();
     const toast = useToast();
-    const [isLoading, setIsLoading] = useState(false);
-    const [allLessons, setAllLessons] = useState([]);
-    const [selectedLessons, setSelectedLessons] = useState([]);
-    const [courseData, setCourseData] = useState({
-        title: '',
-        description: '',
-        difficultyLevel: 0,
-    });
+    const { isOpen: isTestOpen, onOpen: onTestOpen, onClose: onTestClose } = useDisclosure();
+    const { isOpen: isSolOpen, onOpen: onSolOpen, onClose: onSolClose } = useDisclosure();
 
-    const bgColor = useColorModeValue('white', 'gray.800');
-    const borderColor = useColorModeValue('gray.200', 'gray.700');
-    const pageBg = useColorModeValue('gray.50', 'gray.900');
+    const [activeStep, setActiveStep] = useState(0);
+    const [courseData, setCourseData] = useState({ title: '', description: '', difficultyLevel: 0 });
+    const [lessons, setLessons] = useState([]);
+    const [exercises, setExercises] = useState([]);
+    const [activeExerciseId, setActiveExerciseId] = useState(null);
 
-    useEffect(() => {
-        const fetchLessons = async () => {
-            try {
-                const response = await getLessons();
-                setAllLessons(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchLessons();
-    }, []);
-
-    const handleChange = (e) => {
+    const handleCourseChange = (e) => {
         const { name, value } = e.target;
-        setCourseData(prev => ({
-            ...prev,
-            [name]: name === 'difficultyLevel' ? parseInt(value) : value
-        }));
+        setCourseData(prev => ({ ...prev, [name]: name === 'difficultyLevel' ? parseInt(value) : value }));
     };
 
-    const handleLessonToggle = (lessonId) => {
-        setSelectedLessons(prev =>
-            prev.includes(lessonId)
-                ? prev.filter(id => id !== lessonId)
-                : [...prev, lessonId]
-        );
+    const addLesson = (lessonForm) => {
+        setLessons(prev => [...prev, { ...lessonForm, id: Date.now() }]);
     };
 
-    const handleRemoveLesson = (lessonId) => {
-        setSelectedLessons(prev => prev.filter(id => id !== lessonId));
+    const removeLesson = (id) => {
+        setLessons(prev => prev.filter(l => l.id !== id));
+        setExercises(prev => prev.filter(e => e.lessonId !== id));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const addExercise = (exerciseForm) => {
+        const lesson = lessons[exerciseForm.lessonIndex];
+        setExercises(prev => [...prev, {
+            ...exerciseForm,
+            id: Date.now(),
+            lessonId: lesson.id,
+            lessonTitle: lesson.title,
+            testCases: [],
+            solution: null
+        }]);
+    };
 
-        if (!courseData.title || !courseData.description) {
-            toast({
-                title: "Błąd walidacji",
-                description: "Tytuł i opis są wymagane",
-                status: "error",
-                duration: 3000,
-            });
-            return;
-        }
-        const token = localStorage.getItem('token');
-        const decoded = jwtDecode(token);
+    const updateExerciseWithTests = (tests) => {
+        setExercises(prev => prev.map(ex => ex.id === activeExerciseId ? { ...ex, testCases: tests } : ex));
+    };
+
+    const updateExerciseWithSolution = (solution) => {
+        setExercises(prev => prev.map(ex => ex.id === activeExerciseId ? { ...ex, solution: solution } : ex));
+    };
+
+    const handleNext = () => {
+        if (activeStep === 0 && !courseData.title) return toast({ title: "Błąd", description: "Wymagany tytuł", status: "error" });
+        if (activeStep === 1 && lessons.length === 0) return toast({ title: "Błąd", description: "Brak lekcji", status: "error" });
+        setActiveStep(prev => prev + 1);
+    };
+
+    const handleSubmit = async () => {
         try {
-            setIsLoading(true);
-
-            const createCourseData = {
+            const token = localStorage.getItem('token');
+            const decoded = jwtDecode(token);
+            const createdCourseResponse = await createCourse({
                 title: courseData.title,
                 description: courseData.description,
                 difficultyLevel: courseData.difficultyLevel,
-                lessons: selectedLessons,
-                createdBy: decoded.nameidentifier,
-            };
+                createdBy: decoded.nameidentifier
+            });
+            const courseId = createdCourseResponse.data.id;
+            for (const lesson of lessons) {
+                const createdLessonResponse = await createLesson({
+                    courseId: courseId,
+                    title: lesson.title,
+                    description: lesson.description,
+                    videoUri: lesson.videoUri,
+                    textUri: lesson.textUri,
+                    exerciseIds: [],
+                });
+                const lessonId = createdLessonResponse.data.id;
+                for (const exercise of exercises) {
 
-            console.log('Creating course:', createCourseData);
+                    const createdExerciseResponse = await createExercise({
+                        description: exercise.description,
+                        initialContent: exercise.initialContent,
+                        lessonId: lessonId
+                    });
+                    const exerciseId = createdExerciseResponse.data.id;
 
-            const response = await createCourse(createCourseData);
-            console.log('Created course: ', response.data);
+                    if (exercise.testCases && exercise.testCases.length > 0) {
+                        await createTest({
+                            exerciseId: exerciseId,
+                            inputData: exercise.testCases.map(tc => tc.input),
+                            outputData: exercise.testCases.map(tc => tc.output),
+                        });
+                    }
+
+                    if (exercise.solution) {
+                        await createSolutionExample({
+                            exerciseId: exerciseId,
+                            code: exercise.solution.code,
+                            explanation: exercise.solution.explanation,
+                        });
+                    }
+                }
+            }
+
+
             toast({
-                title: "Kurs utworzony!",
-                description: "Twój kurs został pomyślnie zapisany",
+                title: "Sukces",
+                description: "Kurs został utworzony pomyślnie!",
                 status: "success",
                 duration: 5000,
             });
-
-            navigate('/create');
-        } catch (error) {
+            navigate("/")
+        }
+        catch(error) {
             console.error(error);
             toast({
-                title: "Błąd tworzenia kursu",
-                description: error.message || "Nie udało się utworzyć kursu",
+                title: "Błąd!",
+                description: "Wystąpił błąd podczas tworzenia kursu.",
                 status: "error",
-                duration: 6000,
-            });
-        } finally {
-            setIsLoading(false);
+            })
         }
     };
 
+    const pageBg = useColorModeValue('gray.50', 'gray.900');
+
     return (
-        <Box minH="100vh" bg={pageBg}>
-            <Navbar />
-
-            <Box py={10}>
-                <Container maxW="container.lg">
-                    <VStack spacing={8} align="stretch">
-                        <HStack>
-                            <Button
-                                leftIcon={<ArrowBackIcon />}
-                                variant="ghost"
-                                onClick={() => navigate('/create')}
-                            >
-                                Powrót
-                            </Button>
-                        </HStack>
-
-                        <Box>
-                            <Heading size="xl" mb={2}>Utwórz nowy kurs</Heading>
-                            <Text color="gray.500">
-                                Wypełnij informacje o kursie i wybierz lekcje
-                            </Text>
-                        </Box>
-
-                        <Box
-                            bg={bgColor}
-                            p={8}
-                            borderRadius="xl"
-                            borderWidth="1px"
-                            borderColor={borderColor}
-                            boxShadow="sm"
-                        >
-                            <form onSubmit={handleSubmit}>
-                                <VStack spacing={6} align="stretch">
-                                    <FormControl isRequired>
-                                        <FormLabel>Tytuł kursu</FormLabel>
-                                        <Input
-                                            name="title"
-                                            placeholder="np. Kompletny kurs React od podstaw"
-                                            value={courseData.title}
-                                            onChange={handleChange}
-                                            size="lg"
-                                        />
-                                        <FormHelperText>
-                                            Podaj atrakcyjny i opisowy tytuł kursu
-                                        </FormHelperText>
-                                    </FormControl>
-
-                                    <FormControl isRequired>
-                                        <FormLabel>Opis kursu</FormLabel>
-                                        <Textarea
-                                            name="description"
-                                            placeholder="Opisz czego uczestnicy nauczą się w tym kursie..."
-                                            value={courseData.description}
-                                            onChange={handleChange}
-                                            rows={6}
-                                            resize="vertical"
-                                        />
-                                        <FormHelperText>
-                                            Szczegółowy opis pomoże uczestnikom zrozumieć wartość kursu
-                                        </FormHelperText>
-                                    </FormControl>
-
-                                    <FormControl isRequired>
-                                        <FormLabel>Poziom trudności</FormLabel>
-                                        <Select
-                                            name="difficultyLevel"
-                                            value={courseData.difficultyLevel}
-                                            onChange={handleChange}
-                                            size="lg"
-                                        >
-                                            {DIFFICULTY_LEVELS.map(level => (
-                                                <option key={level.value} value={level.value}>
-                                                    {level.label}
-                                                </option>
-                                            ))}
-                                        </Select>
-                                        <FormHelperText>
-                                            Wybierz odpowiedni poziom dla grupy docelowej
-                                        </FormHelperText>
-                                    </FormControl>
-
-                                    <FormControl>
-                                        <FormLabel>Lekcje w kursie ({selectedLessons.length})</FormLabel>
-                                        <Box
-                                            maxH="300px"
-                                            overflowY="auto"
-                                            borderWidth="1px"
-                                            borderColor={borderColor}
-                                            borderRadius="md"
-                                            p={4}
-                                        >
-                                            <Stack spacing={3}>
-                                                {allLessons.map(lesson => (
-                                                    <Checkbox
-                                                        key={lesson.id}
-                                                        isChecked={selectedLessons.includes(lesson.id)}
-                                                        onChange={() => handleLessonToggle(lesson.id)}
-                                                    >
-                                                        {lesson.title}
-                                                    </Checkbox>
-                                                ))}
-                                            </Stack>
-                                        </Box>
-                                        <FormHelperText>
-                                            Wybierz przynajmniej jedną lekcję dla kursu
-                                        </FormHelperText>
-                                    </FormControl>
-
-                                    {selectedLessons.length > 0 && (
-                                        <Box>
-                                            <Text fontSize="sm" fontWeight="semibold" mb={2}>
-                                                Wybrane lekcje:
-                                            </Text>
-                                            <Stack spacing={2}>
-                                                {selectedLessons.map((lessonId, index) => {
-                                                    const lesson = allLessons.find(l => l.id === lessonId);
-                                                    return (
-                                                        <HStack
-                                                            key={lessonId}
-                                                            bg={useColorModeValue('purple.50', 'purple.900')}
-                                                            p={2}
-                                                            borderRadius="md"
-                                                            justify="space-between"
-                                                        >
-                                                            <HStack>
-                                                                <Badge colorScheme="purple">{index + 1}</Badge>
-                                                                <Text fontSize="sm">{lesson?.title}</Text>
-                                                            </HStack>
-                                                            <IconButton
-                                                                icon={<DeleteIcon />}
-                                                                size="sm"
-                                                                variant="ghost"
-                                                                colorScheme="red"
-                                                                onClick={() => handleRemoveLesson(lessonId)}
-                                                                aria-label="Usuń lekcję"
-                                                            />
-                                                        </HStack>
-                                                    );
-                                                })}
-                                            </Stack>
-                                        </Box>
-                                    )}
-
-                                    <Box
-                                        bg="purple.50"
-                                        borderLeftWidth="4px"
-                                        borderLeftColor="purple.500"
-                                        p={4}
-                                        borderRadius="md"
-                                    >
-                                        <Text fontSize="sm" color="purple.800">
-                                            <strong>Wskazówka:</strong> Jeśli nie masz jeszcze lekcji, najpierw
-                                            utwórz je w panelu "Dodaj lekcję", a potem wróć tutaj i utwórz kurs.
-                                        </Text>
+        <Box minH="100vh" bg={pageBg} py={10}>
+            <Container maxW="container.lg">
+                <VStack spacing={8} align="stretch">
+                    <HStack>
+                        <Button leftIcon={<ArrowBackIcon />} variant="ghost" onClick={() => navigate('/')}>Powrót</Button>
+                    </HStack>
+                    <Box>
+                        <Heading size="xl" mb={2}>
+                            Kreator nowego kursu
+                        </Heading>
+                        <Text color="gray.500">
+                            Uzupełnij kolejne kroki, aby zbudować kompletny kurs z lekcjami i zadaniami.
+                        </Text>
+                    </Box>
+                    <Box bg="white" p={8} borderRadius="xl" shadow="sm">
+                        <Stepper index={activeStep} mb={8} colorScheme="purple">
+                            {steps.map((step, index) => (
+                                <Step key={index}>
+                                    <StepIndicator><StepStatus complete={<StepIcon />} incomplete={<StepNumber />} active={<StepNumber />} /></StepIndicator>
+                                    <Box flexShrink="0" display={{ base: 'none', md: 'block' }}>
+                                        <StepTitle>{step.title}</StepTitle>
+                                        <StepDescription>{step.description}</StepDescription>
                                     </Box>
+                                    <StepSeparator />
+                                </Step>
+                            ))}
+                        </Stepper>
 
-                                    <HStack justify="flex-end" spacing={3}>
-                                        <Button
-                                            variant="ghost"
-                                            onClick={() => navigate('/create')}
-                                        >
-                                            Anuluj
-                                        </Button>
-                                        <Button
-                                            type="submit"
-                                            colorScheme="purple"
-                                            isLoading={isLoading}
-                                        >
-                                            Utwórz kurs
-                                        </Button>
-                                    </HStack>
-                                </VStack>
-                            </form>
+                        {activeStep === 0 && <CourseInfoStep data={courseData} onChange={handleCourseChange} />}
+                        {activeStep === 1 && <LessonsStep lessons={lessons} onAdd={addLesson} onRemove={removeLesson} />}
+                        {activeStep === 2 && <ExercisesStep
+                            lessons={lessons}
+                            exercises={exercises}
+                            onAdd={addExercise}
+                            onRemove={(id) => setExercises(prev => prev.filter(e => e.id !== id))}
+                            onOpenTest={(id) => { setActiveExerciseId(id); onTestOpen(); }}
+                            onOpenSolution={(id) => { setActiveExerciseId(id); onSolOpen(); }}
+                        />}
+                        {activeStep === 3 && <SummaryStep data={courseData} lessons={lessons} exercises={exercises} />}
+                        <Box mt={10} pt={4} borderTopWidth="1px" borderColor="gray.200">
+                            <Text fontWeight="bold"fontSize="xs" color="black" textAlign="right" mb={3}>
+                                Pola oznaczone symbolem (<Box as="span" color="red.500">*</Box>) są wymagane
+                            </Text>
+                            <HStack justify="space-between">
+                                <Button
+                                    onClick={() => setActiveStep(p => p - 1)}
+                                    isDisabled={activeStep === 0}
+                                    variant="ghost"
+                                >
+                                    Wstecz
+                                </Button>
+
+                                <Button
+                                    colorScheme="purple"
+                                    onClick={activeStep === 3 ? handleSubmit : handleNext}
+                                >
+                                    {activeStep === 3 ? "Utwórz kurs" : "Dalej"}
+                                </Button>
+                            </HStack>
                         </Box>
-                    </VStack>
-                </Container>
-            </Box>
+                    </Box>
 
-            <Footer />
+                </VStack>
+            </Container>
+
+            <TestCreationModal
+                isOpen={isTestOpen}
+                onClose={onTestClose}
+                initialTests={exercises.find(e => e.id === activeExerciseId)?.testCases}
+                onSave={updateExerciseWithTests}
+            />
+            <SolutionCreationModal
+                isOpen={isSolOpen}
+                onClose={onSolClose}
+                initialSolution={exercises.find(e => e.id === activeExerciseId)?.solution}
+                onSave={updateExerciseWithSolution}
+            />
         </Box>
     );
 }

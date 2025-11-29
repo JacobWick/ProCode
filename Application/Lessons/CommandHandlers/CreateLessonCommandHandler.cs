@@ -24,7 +24,9 @@ public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, L
 
         var lesson = new Lesson()
         {
+            CourseId = request.CourseId,
             Title = request.Title,
+            Description = request.Description,
             VideoUri = request.VideoUri,
             TextUri = request.TextUri,
             CreatedAt = DateTime.Now,

@@ -6,12 +6,7 @@ import CourseDetailPage from "./pages/Learning/CourseDetailPage.jsx";
 import LessonPage from "./pages/Learning/LessonPage.jsx";
 import LoginPage from "./pages/Auth/LoginPage.jsx";
 import RegisterPage from "./pages/Auth/RegisterPage.jsx";
-import CreatePage from "./pages/Admin/Create/CreatePage.jsx";
 import CreateCoursePage from "./pages/Admin/Create/CreateCoursePage.jsx";
-import CreateExercisePage from "./pages/Admin/Create/CreateExercisePage.jsx";
-import CreateLessonPage from "./pages/Admin/Create/CreateLessonPage.jsx";
-import CreateTestPage from "./pages/Admin/Create/CreateTestPage.jsx";
-import CreateSolutionPage from "./pages/Admin/Create/CreateSolutionPage.jsx";
 import UserProfile from "./pages/Profile/UserProfile.jsx"
 import AdminPanelPage from "./pages/Admin/AdminPanelPage.jsx";
 import EditUserPage from "./pages/Admin/Edit/EditUserPage.jsx";
@@ -40,12 +35,7 @@ function App() {
                 <Route path="/courses/:courseId/lessons/:lessonId/exercises/:exerciseId" element={<ExercisePage />} />
                 <Route path="/edit-course/:courseId" element={<EditCoursePage/>} />
                 <Route path="my-courses" element={<MyCoursesPage/>} />
-                <Route path="/create" element={<CreatePage/>}/>
                 <Route path="/create-course" element={<CreateCoursePage/>}/>
-                <Route path="/create-lesson" element={<CreateLessonPage/>}/>
-                <Route path="/create-exercise" element={<CreateExercisePage/>}/>
-                <Route path="/create-test" element={<CreateTestPage/>}/>
-                <Route path="/create-solution" element={<CreateSolutionPage/>}/>
                 <Route path="/my-profile" element={<UserProfile/>}/>
                 <Route path="/my-profile/edit" element={<EditProfile/>}/>
                 <Route path="/administrator" element={<AdminPanelPage/>}/>

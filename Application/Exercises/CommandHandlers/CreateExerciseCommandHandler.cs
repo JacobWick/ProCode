@@ -23,7 +23,7 @@ namespace Application.Exercises.CommandHandlers
         {
             Lesson? lesson = null;
             
-            if (request.LessonId != null)
+            if (request.LessonId != Guid.Empty)
             {
                 lesson = await _lessonRepository.GetByIdAsync(request.LessonId);
             }

@@ -12,6 +12,7 @@ public class Exercise : IEntity
     public SolutionExample? SolutionExample { get; set; }
     
     public Lesson? Lesson { get; set; }
+    public Guid? LessonId { get; set; }
 
     public Test Test { get; set; }
 
