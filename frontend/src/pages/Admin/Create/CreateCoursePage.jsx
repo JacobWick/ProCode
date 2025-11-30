@@ -23,7 +23,7 @@ const steps = [
     { title: 'Zadania', description: 'Praktyka' },
     { title: 'Koniec', description: 'Zapisz' }
 ];
-
+import { courseSchema } from '../../../validationSchemas.js';
 export default function CreateCoursePage() {
     const navigate = useNavigate();
     const toast = useToast();
@@ -31,6 +31,7 @@ export default function CreateCoursePage() {
     const { isOpen: isSolOpen, onOpen: onSolOpen, onClose: onSolClose } = useDisclosure();
 
     const [activeStep, setActiveStep] = useState(0);
+    const [errors, setErrors] = useState({});
     const [courseData, setCourseData] = useState({ title: '', description: '', difficultyLevel: 0 });
     const [lessons, setLessons] = useState([]);
     const [exercises, setExercises] = useState([]);
@@ -38,6 +39,7 @@ export default function CreateCoursePage() {
 
     const handleCourseChange = (e) => {
         const { name, value } = e.target;
+        if (errors[name]) setErrors(prev => ({ ...prev, [name]: undefined }));
         setCourseData(prev => ({ ...prev, [name]: name === 'difficultyLevel' ? parseInt(value) : value }));
     };
 
@@ -71,8 +73,24 @@ export default function CreateCoursePage() {
     };
 
     const handleNext = () => {
-        if (activeStep === 0 && !courseData.title) return toast({ title: "Błąd", description: "Wymagany tytuł", status: "error" });
-        if (activeStep === 1 && lessons.length === 0) return toast({ title: "Błąd", description: "Brak lekcji", status: "error" });
+        if (activeStep === 0) {
+            const result = courseSchema.safeParse(courseData);
+            if (!result.success) {
+                const formattedErrors = result.error.flatten().fieldErrors;
+                setErrors(formattedErrors);
+                toast({ title: "Popraw błędy", status: "error", duration: 2000 });
+                return;
+            }
+            setErrors({});
+        }
+
+        if (activeStep === 1) {
+            if (lessons.length === 0) {
+                return toast({ title: "Błąd", description: "Musisz dodać przynajmniej jedną lekcję.", status: "error" });
+            }
+        }
+
+
         setActiveStep(prev => prev + 1);
     };
 
@@ -174,7 +192,7 @@ export default function CreateCoursePage() {
                             ))}
                         </Stepper>
 
-                        {activeStep === 0 && <CourseInfoStep data={courseData} onChange={handleCourseChange} />}
+                        {activeStep === 0 && <CourseInfoStep data={courseData} onChange={handleCourseChange} errors={errors} />}
                         {activeStep === 1 && <LessonsStep lessons={lessons} onAdd={addLesson} onRemove={removeLesson} />}
                         {activeStep === 2 && <ExercisesStep
                             lessons={lessons}

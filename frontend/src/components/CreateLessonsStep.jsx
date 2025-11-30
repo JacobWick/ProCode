@@ -1,92 +1,96 @@
-﻿import { useState } from 'react';
-import {
-    VStack,
-    Box,
-    FormControl,
-    FormLabel,
-    Input,
-    HStack,
-    Button,
-    List,
-    ListItem,
-    Badge,
-    Text,
-    IconButton,
-    Textarea, FormHelperText
+﻿import {
+    VStack, Box, FormControl, FormLabel, Input, HStack, Button, List, ListItem, Badge, Text, IconButton, Textarea, FormHelperText, FormErrorMessage
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { lessonSchema } from "../validationSchemas.js";
 
 export default function CreateLessonsStep({ lessons, onAdd, onRemove }) {
-    const [form, setForm] = useState({ title: '', videoUri: '', textUri: '' });
 
-    const handleAdd = () => {
-        if (!form.title) return;
-        onAdd(form);
-        setForm({ title: '', description: '', videoUri: '', textUri: '' });
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors }
+    } = useForm({
+        resolver: zodResolver(lessonSchema)
+    });
+
+    const onSubmit = (data) => {
+        onAdd(data);
+        reset();
     };
 
     return (
         <VStack spacing={6} align="stretch">
             <Box bg="gray.50" p={5} borderRadius="md" borderWidth="1px">
-                <VStack spacing={4} align="stretch" mb={6}>
-                    <FormControl isRequired>
+                <VStack spacing={4} align="stretch" mb={6} as="form">
+
+                    <FormControl isRequired isInvalid={!!errors.title}>
                         <FormLabel>Tytuł lekcji</FormLabel>
                         <Input
-                            name="title"
+                            {...register("title")}
                             placeholder="Tytuł lekcji"
-                            value={form.title}
-                            onChange={e => setForm({...form, title: e.target.value})}
                             bg="white"
                         />
                         <FormHelperText color="gray.500">
                             Zdefiniuj główny temat lekcji. Jaką konkretną umiejętność zdobędzie kursant po jej ukończeniu?
                         </FormHelperText>
+                        <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
                     </FormControl>
+
                     <VStack width="full" align="stretch" mb={7}>
-                        <FormControl isRequired>
+                        <FormControl isRequired isInvalid={!!errors.description}>
                             <FormLabel>Opis lekcji</FormLabel>
                             <Textarea
-                                name="description"
+                                {...register("description")}
                                 placeholder="Wprowadź w zagadnienie"
-                                value={form.description}
-                                onChange={e => setForm({...form, description: e.target.value})}
-                                rows={6} />
+                                rows={6}
+                                bg="white"
+                            />
                             <FormHelperText color="gray.500">
                                 Wprowadź kursanta w teorię. Wyjaśnij zagadnienie prostym językiem, podając definicję lub kontekst użycia.
                             </FormHelperText>
+                            <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
+                            <FormHelperText color="gray.500">Minimum 10 znaków</FormHelperText>
                         </FormControl>
-                        <FormControl>
-                            <FormLabel>
-                                Link do filmu (opcjonalne)
-                            </FormLabel>
+
+                        <FormControl isInvalid={!!errors.videoUri}>
+                            <FormLabel>Link do filmu (opcjonalne)</FormLabel>
                             <Input
-                                name="videoUri"
+                                {...register("videoUri")}
                                 placeholder="https://example.com"
-                                value={form.videoUri}
-                                onChange={e => setForm({...form, videoUri: e.target.value})}
                                 bg="white"
                             />
                             <FormHelperText color="gray.500">
                                 Wzbogać lekcję o materiał wideo. Wizualne przykłady znacznie przyspieszają proces zrozumienia trudnych tematów.
                             </FormHelperText>
+                            {errors.videoUri ?
+                                <FormErrorMessage>{errors.videoUri.message}</FormErrorMessage> :
+                                <FormHelperText color="gray.500">Musi zaczynać się od http/https</FormHelperText>
+                            }
                         </FormControl>
-                        <FormControl>
-                            <FormLabel>
-                                Link do tekstu (opcjonalne)
-                            </FormLabel>
+                        <FormControl isInvalid={!!errors.textUri}>
+                            <FormLabel>Link do tekstu (opcjonalne)</FormLabel>
                             <Input
-                                name="textUri"
+                                {...register("textUri")}
                                 placeholder="https://example.com"
-                                value={form.textUri}
-                                onChange={e => setForm({...form, textUri: e.target.value})}
                                 bg="white"
                             />
                             <FormHelperText color="gray.500">
                                 Wskaż źródła zewnętrzne (dokumentacja, artykuły). Pozwól ambitnym uczestnikom zgłębić temat we własnym zakresie.
                             </FormHelperText>
+                            {errors.textUri ?
+                                <FormErrorMessage>{errors.textUri.message}</FormErrorMessage> :
+                                <FormHelperText color="gray.500">Musi zaczynać się od http/https</FormHelperText>
+                            }
                         </FormControl>
                     </VStack>
-                    <Button leftIcon={<AddIcon />} onClick={handleAdd} colorScheme="blue" width="full">Dodaj lekcję</Button>
+
+                    <Button leftIcon={<AddIcon />} onClick={handleSubmit(onSubmit)} colorScheme="blue" width="full">
+                        Dodaj lekcję
+                    </Button>
                 </VStack>
             </Box>
 

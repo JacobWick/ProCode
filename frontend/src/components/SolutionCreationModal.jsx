@@ -1,10 +1,13 @@
-﻿import { useState, useEffect } from 'react';
+﻿import { useEffect } from 'react';
 import {
     Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
     Button, Tabs, TabList, TabPanels, Tab, TabPanel, FormControl, FormLabel, Select, Textarea, Box, HStack, Text,
-    FormHelperText
+    FormHelperText, FormErrorMessage
 } from '@chakra-ui/react';
 import { Editor } from '@monaco-editor/react';
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { solutionSchema } from "../validationSchemas.js";
 
 const LANGUAGES = [
     { value: 'javascript', label: 'JavaScript' },
@@ -15,65 +18,86 @@ const LANGUAGES = [
 ];
 
 export default function SolutionCreationModal({ isOpen, onClose, initialSolution, onSave }) {
-    const [solution, setSolution] = useState({ code: '', explanation: '', language: 'javascript' });
+
+    const {
+        register,
+        handleSubmit,
+        control,
+        reset,
+        formState: { errors }
+    } = useForm({
+        resolver: zodResolver(solutionSchema),
+        defaultValues: {
+            code: '',
+            explanation: '',
+            language: 'javascript'
+        }
+    });
 
     useEffect(() => {
         if (isOpen) {
-            setSolution(initialSolution || { code: '', explanation: '', language: 'javascript' });
+            reset(initialSolution || { code: '', explanation: '', language: 'javascript' });
         }
-    }, [isOpen, initialSolution]);
+    }, [isOpen, initialSolution, reset]);
 
-    const handleSave = () => {
-        if (!solution.code || !solution.explanation) return;
-        onSave(solution);
+    const onSubmit = (data) => {
+        onSave(data);
         onClose();
     };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="4xl">
             <ModalOverlay />
-            <ModalContent>
+            <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
                 <ModalHeader>Wzorcowe rozwiązanie</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Tabs>
+                    <Tabs isLazy>
                         <TabList>
-                            <Tab>Kod</Tab>
-                            <Tab>Wyjaśnienie</Tab>
+                            <Tab>Kod <Text as="span" color="red.500" ml={1}>*</Text></Tab>
+                            <Tab>Wyjaśnienie <Text as="span" color="red.500" ml={1}>*</Text></Tab>
                         </TabList>
                         <TabPanels>
                             <TabPanel>
                                 <HStack mb={4}>
                                     <Text>Język:</Text>
-                                    <Select
-                                        w="200px"
-                                        value={solution.language}
-                                        onChange={e => setSolution({ ...solution, language: e.target.value })}
-                                    >
+                                    <Select w="200px" {...register("language")}>
                                         {LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
                                     </Select>
                                 </HStack>
-                                <Box border="1px solid" borderColor="gray.200" borderRadius="md" overflow="hidden">
-                                    <Editor
-                                        height="300px"
-                                        language={solution.language}
-                                        value={solution.code}
-                                        onChange={val => setSolution({ ...solution, code: val || '' })}
-                                        options={{ minimap: { enabled: false } }}
-                                    />
-                                </Box>
+
+                                <FormControl isInvalid={!!errors.code}>
+                                    <Box border="1px solid" borderColor={errors.code ? "red.300" : "gray.200"} borderRadius="md" overflow="hidden">
+                                        <Controller
+                                            name="code"
+                                            control={control}
+                                            render={({ field: { onChange, value } }) => (
+                                                <Editor
+                                                    height="300px"
+                                                    language="javascript"
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    options={{ minimap: { enabled: false } }}
+                                                />
+                                            )}
+                                        />
+                                    </Box>
+                                    <FormErrorMessage>{errors.code?.message}</FormErrorMessage>
+                                </FormControl>
                             </TabPanel>
+
                             <TabPanel>
-                                <FormControl isRequired>
+                                <FormControl isRequired isInvalid={!!errors.explanation}>
                                     <FormLabel>Wyjaśnienie</FormLabel>
                                     <Textarea
+                                        {...register("explanation")}
                                         rows={12}
-                                        value={solution.explanation}
-                                        onChange={e => setSolution({ ...solution, explanation: e.target.value })}
+                                        placeholder="Wytłumacz dlaczego to rozwiązanie działa..."
                                     />
-                                    <FormHelperText  color="gray.500">
-                                        Pomóż zrozumieć użytkownikowi, dlaczego to rozwiązanie jest poprawne
-                                    </FormHelperText>
+                                    {errors.explanation ?
+                                        <FormErrorMessage>{errors.explanation.message}</FormErrorMessage> :
+                                        <FormHelperText>Minimum 10 znaków.</FormHelperText>
+                                    }
                                 </FormControl>
                             </TabPanel>
                         </TabPanels>
@@ -81,7 +105,7 @@ export default function SolutionCreationModal({ isOpen, onClose, initialSolution
                 </ModalBody>
                 <ModalFooter>
                     <Button variant="ghost" mr={3} onClick={onClose}>Anuluj</Button>
-                    <Button colorScheme="yellow" onClick={handleSave}>Zapisz rozwiązanie</Button>
+                    <Button type="submit" colorScheme="yellow">Zapisz rozwiązanie</Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>
