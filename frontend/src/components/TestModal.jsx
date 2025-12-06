@@ -29,16 +29,10 @@ export default function TestModal({ isOpen, onClose, initialTests, onSave }) {
     });
 
     useEffect(() => {
-        console.log("=== TestModal useEffect ===");
-        console.log("isOpen:", isOpen);
-        console.log("initialTests:", initialTests);
-
         if (isOpen) {
             const values = (initialTests && initialTests.length > 0)
                 ? initialTests.map(t => ({ input: t.input ?? '', output: t.output ?? '' }))
                 : [{ input: '', output: '' }];
-
-            console.log("Resetting form with values:", values);
             reset({ testCases: values });
         }
     }, [isOpen, initialTests, reset]);

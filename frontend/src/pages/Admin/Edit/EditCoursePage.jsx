@@ -338,8 +338,6 @@ export default function EditCoursePage() {
                     const hasValidId = exercise.solutionId &&
                         exercise.solutionId !== emptyGuid;
                     if (hasValidId) {
-                        console.log("UPDATING solution:", exercise.solutionId);
-
                         const cleanPayload = {
                             id: exercise.solutionId,
                             code: solCode,
