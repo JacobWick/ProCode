@@ -19,8 +19,7 @@ import {
     createExercise,
     createLesson,
     createSolutionExample,
-    createTest,
-    updateExercise
+    createTest
 } from "../../../api.js";
 import {jwtDecode} from "jwt-decode";
 

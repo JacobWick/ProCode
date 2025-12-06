@@ -77,8 +77,6 @@ export default function SolutionModal({ isOpen, onClose, initialSolution, onSave
                                     <FormErrorMessage>{errors.code?.message}</FormErrorMessage>
                                 </FormControl>
                             </TabPanel>
-
-                            {/* Panel Wyjaśnienia */}
                             <TabPanel>
                                 <FormControl isRequired isInvalid={!!errors.explanation}>
                                     <FormLabel>Wyjaśnienie</FormLabel>

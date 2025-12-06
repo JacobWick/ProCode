@@ -72,7 +72,6 @@ export default function ExercisesStep({ lessons, exercises, onAdd, onRemove, onU
                         </FormHelperText>
                         <FormErrorMessage>{errors.lessonIndex?.message}</FormErrorMessage>
                     </FormControl>
-
                     <FormControl isRequired isInvalid={!!errors.description}>
                         <FormLabel>Treść zadania</FormLabel>
                         <Textarea
@@ -88,7 +87,6 @@ export default function ExercisesStep({ lessons, exercises, onAdd, onRemove, onU
                             <FormHelperText color="gray.500">Minimum 20 znaków</FormHelperText>
                         }
                     </FormControl>
-
                     <FormControl isInvalid={!!errors.initialContent}>
                         <FormLabel>Kod początkowy (opcjonalne)</FormLabel>
                         <Input
@@ -104,7 +102,6 @@ export default function ExercisesStep({ lessons, exercises, onAdd, onRemove, onU
                             <FormHelperText color="gray.500">Minimum 10 znaków</FormHelperText>
                         }
                     </FormControl>
-
                     <HStack>
                         {editingId && (
                             <Button leftIcon={<CloseIcon />} onClick={cancelEdit} variant="ghost" width="50%">
@@ -122,14 +119,10 @@ export default function ExercisesStep({ lessons, exercises, onAdd, onRemove, onU
                     </HStack>
                 </VStack>
             </Box>
-
             <Stack spacing={4}>
                 {exercises.map((exercise) => {
-                    // --- LOGIKA STANU (NOWOŚĆ) ---
                     const hasTests = exercise.testCases && exercise.testCases.length > 0;
                     const hasSolution = !!exercise.solution;
-                    // -----------------------------
-
                     return (
                         <Box
                             key={exercise.id}
@@ -144,7 +137,6 @@ export default function ExercisesStep({ lessons, exercises, onAdd, onRemove, onU
                                 <VStack align="start" spacing={1}>
                                     <HStack>
                                         <Badge colorScheme="purple">{exercise.lessonTitle}</Badge>
-                                        {/* Badge informacyjne */}
                                         {exercise.isNew && <Badge colorScheme="green">NOWE</Badge>}
                                         {hasTests && <Badge colorScheme="orange" variant="subtle">Testy: {exercise.testCases.length}</Badge>}
                                         {hasSolution && <Badge colorScheme="yellow" variant="subtle">Rozwiązanie</Badge>}
@@ -171,7 +163,6 @@ export default function ExercisesStep({ lessons, exercises, onAdd, onRemove, onU
                             </HStack>
                             <Divider my={2} />
                             <HStack spacing={4}>
-
                                 <Button
                                     size="sm"
                                     leftIcon={hasTests ? <CheckIcon /> : <SettingsIcon />}
@@ -181,8 +172,6 @@ export default function ExercisesStep({ lessons, exercises, onAdd, onRemove, onU
                                 >
                                     {hasTests ? `Edytuj testy (${exercise.testCases.length})` : "Skonfiguruj testy"}
                                 </Button>
-
-                                {/* Przycisk ROZWIĄZANIE - zmienia wygląd jeśli jest rozwiązanie */}
                                 <Button
                                     size="sm"
                                     leftIcon={hasSolution ? <CheckIcon /> : <EditIcon />}
