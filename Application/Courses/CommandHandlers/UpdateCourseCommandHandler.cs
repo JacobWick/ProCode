@@ -21,11 +21,8 @@ public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, b
         var course = await _courseRepository.GetByIdAsync(request.Id, cancellationToken: cancellationToken);
         if (course == null)
             return false;
-        if (request.Title != "")
             course.Title = request.Title;
-        if (request.Description != "")
             course.Description = request.Description;
-        if (request.DifficultyLevel != course.DifficultyLevel)
             course.DifficultyLevel = request.DifficultyLevel;
         if (request.Lessons is not null)
         {

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Box,
@@ -53,15 +53,11 @@ import {
     deleteUser,
     getCourses,
     deleteCourse,
-    getLessons,
-    deleteLesson,
-    getExercises,
-    deleteExercise,
-    getTests,
-    deleteTest,
-    getSolutionExamples,
-    deleteSolutionExample,
     sendNotification,
+    getLessons,
+    getExercises,
+    getTests,
+    getSolutionExamples
 } from '../../api.js';
 import { COURSE_DIFFICULTY } from '../../constants.js';
 
@@ -111,8 +107,14 @@ export default function AdminPanelPage() {
                 });
                 if (role === 'Admin') {
                     setIsAdmin(true);
-
-                    const [usersRes, coursesRes, lessonsRes, exercisesRes, testsRes, solutionsRes] = await Promise.all([
+                    const [
+                        usersRes,
+                        coursesRes,
+                        lessonsRes,
+                        exercisesRes,
+                        testsRes,
+                        solutionsRes
+                    ] = await Promise.all([
                         getUsers(),
                         getCourses(),
                         getLessons(),
@@ -161,21 +163,7 @@ export default function AdminPanelPage() {
                     await deleteCourse(itemToDelete.id);
                     setCourses(courses.filter(c => c.id !== itemToDelete.id));
                     break;
-                case 'lesson':
-                    await deleteLesson(itemToDelete.id);
-                    setLessons(lessons.filter(l => l.id !== itemToDelete.id));
-                    break;
-                case 'exercise':
-                    await deleteExercise(itemToDelete.id);
-                    setExercises(exercises.filter(e => e.id !== itemToDelete.id));
-                    break;
-                case 'test':
-                    await deleteTest(itemToDelete.id);
-                    setTests(tests.filter(t => t.id !== itemToDelete.id));
-                    break;
-                case 'solution':
-                    await deleteSolutionExample(itemToDelete.id);
-                    setSolutionExamples(solutionExamples.filter(s => s.id !== itemToDelete.id));
+                default:
                     break;
             }
 
@@ -199,6 +187,7 @@ export default function AdminPanelPage() {
             });
         }
     };
+
     const handleSendNotification = async () => {
         if (!notificationMessage.trim()) {
             toast({
@@ -252,6 +241,7 @@ export default function AdminPanelPage() {
             setIsSendingNotification(false);
         }
     };
+
     const handleUserSelect = (userId) => {
         setSelectedUsers(prev =>
             prev.includes(userId)
@@ -259,6 +249,7 @@ export default function AdminPanelPage() {
                 : [...prev, userId]
         );
     };
+
     if (isLoading) {
         return (
             <Box minH="100vh" bg={pageBg}>
@@ -331,7 +322,6 @@ export default function AdminPanelPage() {
     return (
         <Box minH="100vh" bg={pageBg}>
             <Navbar />
-
             <Box py={10}>
                 <Container maxW="container.xl">
                     <VStack spacing={8} align="stretch">
@@ -406,15 +396,10 @@ export default function AdminPanelPage() {
                                 </CardBody>
                             </Card>
                         </SimpleGrid>
-
                         <Tabs colorScheme="purple" variant="enclosed">
                             <TabList>
                                 <Tab>Użytkownicy</Tab>
                                 <Tab>Kursy</Tab>
-                                <Tab>Lekcje</Tab>
-                                <Tab>Zadania</Tab>
-                                <Tab>Testy</Tab>
-                                <Tab>Rozwiązania</Tab>
                             </TabList>
 
                             <TabPanels>
@@ -485,7 +470,6 @@ export default function AdminPanelPage() {
                                         </Box>
                                     </Box>
                                 </TabPanel>
-
                                 <TabPanel>
                                     <Box
                                         bg={bgColor}
@@ -545,246 +529,11 @@ export default function AdminPanelPage() {
                                         </Box>
                                     </Box>
                                 </TabPanel>
-
-                                <TabPanel>
-                                    <Box
-                                        bg={bgColor}
-                                        p={6}
-                                        borderRadius="xl"
-                                        borderWidth="1px"
-                                        borderColor={borderColor}
-                                    >
-                                        <HStack justify="space-between" mb={4}>
-                                            <Heading size="md">Lekcje ({lessons.length})</Heading>
-                                        </HStack>
-
-                                        <Box overflowX="auto">
-                                            <Table variant="simple" size="sm">
-                                                <Thead>
-                                                    <Tr>
-                                                        <Th>Tytuł</Th>
-                                                        <Th>Video</Th>
-                                                        <Th>Materiały</Th>
-                                                        <Th>Akcje</Th>
-                                                    </Tr>
-                                                </Thead>
-                                                <Tbody>
-                                                    {lessons.map((l) => (
-                                                        <Tr key={l.id}>
-                                                            <Td fontWeight="semibold">{l.title || '—'}</Td>
-                                                            <Td>
-                                                                <Badge colorScheme={l.videoUri ? 'green' : 'gray'}>
-                                                                    {l.videoUri ? 'Tak' : 'Nie'}
-                                                                </Badge>
-                                                            </Td>
-                                                            <Td>
-                                                                <Badge colorScheme={l.textUri ? 'green' : 'gray'}>
-                                                                    {l.textUri ? 'Tak' : 'Nie'}
-                                                                </Badge>
-                                                            </Td>
-                                                            <Td>
-                                                                <HStack spacing={1}>
-                                                                    <IconButton
-                                                                        icon={<EditIcon />}
-                                                                        colorScheme="blue"
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() => navigate(`/edit-lesson/${l.id}`)}
-                                                                        aria-label="Edytuj"
-                                                                    />
-                                                                    <IconButton
-                                                                        icon={<DeleteIcon />}
-                                                                        colorScheme="red"
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() => handleDeleteClick(l, 'lesson')}
-                                                                        aria-label="Usuń"
-                                                                    />
-                                                                </HStack>
-                                                            </Td>
-                                                        </Tr>
-                                                    ))}
-                                                </Tbody>
-                                            </Table>
-                                        </Box>
-                                    </Box>
-                                </TabPanel>
-
-                                <TabPanel>
-                                    <Box
-                                        bg={bgColor}
-                                        p={6}
-                                        borderRadius="xl"
-                                        borderWidth="1px"
-                                        borderColor={borderColor}
-                                    >
-                                        <HStack justify="space-between" mb={4}>
-                                            <Heading size="md">Zadania ({exercises.length})</Heading>
-                                        </HStack>
-
-                                        <Box overflowX="auto">
-                                            <Table variant="simple" size="sm">
-                                                <Thead>
-                                                    <Tr>
-                                                        <Th>Opis</Th>
-                                                        <Th>Kod początkowy</Th>
-                                                        <Th>Akcje</Th>
-                                                    </Tr>
-                                                </Thead>
-                                                <Tbody>
-                                                    {exercises.map((e) => (
-                                                        <Tr key={e.id}>
-                                                            <Td maxW="400px" isTruncated>{e.description || '—'}</Td>
-                                                            <Td>
-                                                                <Badge colorScheme={e.initialContent ? 'green' : 'gray'}>
-                                                                    {e.initialContent ? 'Tak' : 'Nie'}
-                                                                </Badge>
-                                                            </Td>
-                                                            <Td>
-                                                                <HStack spacing={1}>
-                                                                    <IconButton
-                                                                        icon={<EditIcon />}
-                                                                        colorScheme="blue"
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() => navigate(`/edit-exercise/${e.id}`)}
-                                                                        aria-label="Edytuj"
-                                                                    />
-                                                                    <IconButton
-                                                                        icon={<DeleteIcon />}
-                                                                        colorScheme="red"
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() => handleDeleteClick(e, 'exercise')}
-                                                                        aria-label="Usuń"
-                                                                    />
-                                                                </HStack>
-                                                            </Td>
-                                                        </Tr>
-                                                    ))}
-                                                </Tbody>
-                                            </Table>
-                                        </Box>
-                                    </Box>
-                                </TabPanel>
-
-                                <TabPanel>
-                                    <Box
-                                        bg={bgColor}
-                                        p={6}
-                                        borderRadius="xl"
-                                        borderWidth="1px"
-                                        borderColor={borderColor}
-                                    >
-                                        <HStack justify="space-between" mb={4}>
-                                            <Heading size="md">Testy ({tests.length})</Heading>
-                                        </HStack>
-
-                                        <Box overflowX="auto">
-                                            <Table variant="simple" size="sm">
-                                                <Thead>
-                                                    <Tr>
-                                                        <Th>ID</Th>
-                                                        <Th>Przypadki testowe</Th>
-                                                        <Th>Akcje</Th>
-                                                    </Tr>
-                                                </Thead>
-                                                <Tbody>
-                                                    {tests.map((t) => (
-                                                        <Tr key={t.id}>
-                                                            <Td fontFamily="mono" fontSize="xs">{t.id.substring(0, 8)}...</Td>
-                                                            <Td>
-                                                                <Badge>
-                                                                    {t.inputData?.length || 0} test(ów)
-                                                                </Badge>
-                                                            </Td>
-                                                            <Td>
-                                                                <HStack spacing={1}>
-                                                                    <IconButton
-                                                                        icon={<EditIcon />}
-                                                                        colorScheme="blue"
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() => navigate(`/edit-test/${t.id}`)}
-                                                                        aria-label="Edytuj"
-                                                                    />
-                                                                    <IconButton
-                                                                        icon={<DeleteIcon />}
-                                                                        colorScheme="red"
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() => handleDeleteClick(t, 'test')}
-                                                                        aria-label="Usuń"
-                                                                    />
-                                                                </HStack>
-                                                            </Td>
-                                                        </Tr>
-                                                    ))}
-                                                </Tbody>
-                                            </Table>
-                                        </Box>
-                                    </Box>
-                                </TabPanel>
-
-                                <TabPanel>
-                                    <Box
-                                        bg={bgColor}
-                                        p={6}
-                                        borderRadius="xl"
-                                        borderWidth="1px"
-                                        borderColor={borderColor}
-                                    >
-                                        <HStack justify="space-between" mb={4}>
-                                            <Heading size="md">Przykładowe rozwiązania ({solutionExamples.length})</Heading>
-                                        </HStack>
-
-                                        <Box overflowX="auto">
-                                            <Table variant="simple" size="sm">
-                                                <Thead>
-                                                    <Tr>
-                                                        <Th>ID</Th>
-                                                        <Th>Wyjaśnienie</Th>
-                                                        <Th>Akcje</Th>
-                                                    </Tr>
-                                                </Thead>
-                                                <Tbody>
-                                                    {solutionExamples.map((s) => (
-                                                        <Tr key={s.id}>
-                                                            <Td fontFamily="mono" fontSize="xs">{s.id.substring(0, 8)}...</Td>
-                                                            <Td maxW="400px" isTruncated>{s.explanation || '—'}</Td>
-                                                            <Td>
-                                                                <HStack spacing={1}>
-                                                                    <IconButton
-                                                                        icon={<EditIcon />}
-                                                                        colorScheme="blue"
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() => navigate(`/edit-solution/${s.id}`)}
-                                                                        aria-label="Edytuj"
-                                                                    />
-                                                                    <IconButton
-                                                                        icon={<DeleteIcon />}
-                                                                        colorScheme="red"
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() => handleDeleteClick(s, 'solution')}
-                                                                        aria-label="Usuń"
-                                                                    />
-                                                                </HStack>
-                                                            </Td>
-                                                        </Tr>
-                                                    ))}
-                                                </Tbody>
-                                            </Table>
-                                        </Box>
-                                    </Box>
-                                </TabPanel>
                             </TabPanels>
                         </Tabs>
                     </VStack>
                 </Container>
             </Box>
-
             <AlertDialog
                 isOpen={isOpen}
                 onClose={onClose}

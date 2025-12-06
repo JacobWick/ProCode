@@ -11,21 +11,18 @@ namespace Application.Courses.CommandHandlers;
 public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, CourseDto>
 {
     private readonly IRepository<Course> _courseRepository;
-    private readonly IRepository<Lesson> _lessonRepository;
     private readonly IRepository<User> _userRepository;
     private readonly INotificationService _notificationService;
 
-    public CreateCourseCommandHandler(INotificationService notificationService, IRepository<Course> courseRepository, IRepository<Lesson> lessonRepository, IRepository<User> userRepository)
+    public CreateCourseCommandHandler(INotificationService notificationService, IRepository<Course> courseRepository, IRepository<User> userRepository)
     {
         _courseRepository = courseRepository;
-        _lessonRepository = lessonRepository;
         _userRepository = userRepository;
         _notificationService = notificationService;
     }
 
     public async Task<CourseDto> Handle(CreateCourseCommand request, CancellationToken cancellationToken)
     {
-        var lessons = await _lessonRepository.GetAsync(l => request.Lessons.Contains(l.Id), cancellationToken);
         var user = await _userRepository.GetByIdAsync(request.CreatedBy, cancellationToken: cancellationToken);
         var course = new Course
         {
@@ -34,8 +31,7 @@ public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, C
             Creator = user,
             DifficultyLevel = request.DifficultyLevel,
             CreatedOn = DateTime.Now,
-            Rating = 0,
-            Lessons = lessons,
+            Rating = 0
         };
         await _courseRepository.CreateAsync(course, cancellationToken);
         await _notificationService.NotifyUserAsync(request.CreatedBy, $"Twój kurs '{course.Title}' został utworzony pomyślnie!", NotificationType.Success);

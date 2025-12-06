@@ -91,7 +91,6 @@ const EditProfile = () => {
             if (formData.githubLink.trim()) dataToSend.githubLink = formData.githubLink.trim();
             if (formData.linkedinLink.trim()) dataToSend.linkedinLink = formData.linkedinLink.trim();
 
-            console.log('Sending data:', dataToSend);
 
             const response = await editProfile(dataToSend);
             

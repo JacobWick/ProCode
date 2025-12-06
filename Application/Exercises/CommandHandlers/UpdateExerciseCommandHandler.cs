@@ -19,12 +19,10 @@ namespace Application.Exercises.CommandHandlers
             var exercise = await _exerciseRepository.GetByIdAsync(request.Id, cancellationToken: cancellationToken);
 
             if (exercise == null) return false;
-
-            if (request.Description != "")
-                exercise.Description = request.Description;
-
-            if (request.InitialContent != "")
-                exercise.InitialContent = request.InitialContent;
+            
+            exercise.Description = request.Description;
+            
+            exercise.InitialContent = request.InitialContent;
 
             await _exerciseRepository.UpdateAsync(exercise, cancellation: cancellationToken);
 

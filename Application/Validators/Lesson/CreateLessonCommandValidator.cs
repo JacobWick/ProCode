@@ -11,6 +11,15 @@ public class CreateLessonCommandValidator : AbstractValidator<CreateLessonComman
             .NotEmpty().WithMessage("Lesson title is required.")
             .MinimumLength(5).WithMessage("Lesson title must be at least 5 characters long")
             .MaximumLength(200).WithMessage("Lesson title must not exceed 200 characters.");
+        RuleFor(x => x.Description)
+            .NotEmpty().WithMessage("Lesson description is required.")
+            .MinimumLength(10).WithMessage("Lesson description must be at least 10 characters long")
+            .MaximumLength(1000).WithMessage("Lesson description must not exceed 1000 characters.");
+        RuleFor(x => x.VideoUri)
+            .Must(BeValidHttpUri).WithMessage("Video URI must start with http or https.");
+
+        RuleFor(x => x.TextUri)
+            .Must(BeValidHttpUri).WithMessage("Text URI must start with http or https.");
     }
 
     private bool BeValidHttpUri(Uri uri)

@@ -23,21 +23,11 @@ public class UpdateLessonCommandHandler : IRequestHandler<UpdateLessonCommand, b
         {
             return false;
         }
-
-        if (request.Title != "")
-        {
-            lesson.Title = request.Title;
-        }
-
-        if (request.VideoUri != lesson.VideoUri)
-        {
-            lesson.VideoUri = request.VideoUri;
-        }
-
-        if (request.TextUri != lesson.VideoUri)
-        {
-            lesson.TextUri = request.TextUri;
-        }
+        lesson.Title = request.Title;
+        lesson.Description = request.Description;
+        lesson.VideoUri = request.VideoUri;
+        lesson.TextUri = request.TextUri;
+        
 
         if (request.Exercises.Count > 0)
         {

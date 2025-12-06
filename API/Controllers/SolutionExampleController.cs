@@ -53,9 +53,10 @@ public class SolutionExampleController : ControllerBase
         return Ok(result);
     }
     [MapToApiVersion(1)]
-    [HttpPatch()]
-    public async Task<IActionResult> Update([FromBody] UpdateSolutionExampleCommand command, CancellationToken cancellationToken)
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSolutionExampleCommand command, CancellationToken cancellationToken)
     {
+        command.Id = id;
         var result = await _mediator.Send(command, cancellationToken);
         if (!result)
         {

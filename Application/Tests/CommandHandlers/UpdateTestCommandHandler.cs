@@ -19,15 +19,9 @@ public class UpdateTestCommandHandler : IRequestHandler<UpdateTestCommand, bool>
         var test = await _testRepository.GetByIdAsync(request.Id, cancellationToken: cancellationToken);
         if (test is null) 
             return false;
-        if (request.InputData is not null)
-        {
-            test.InputData = request.InputData;
-        }
-
-        if (request.OutputData is not null)
-        {
-            test.OutputData = request.OutputData;
-        }
+       
+        test.InputData = request.InputData;
+        test.OutputData = request.OutputData;
 
         await _testRepository.UpdateAsync(test, cancellationToken);
         return true;

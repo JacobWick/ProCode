@@ -10,7 +10,7 @@ import {
     HStack,
     useColorModeValue,
     Icon,
-    Flex, Progress,
+    Progress,
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import { getCourses, getCourseProgress } from "../../api.js";

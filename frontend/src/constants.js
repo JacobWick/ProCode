@@ -37,3 +37,4 @@ export const NOTIFICATION_TYPE_LABELS = {
     2: 'Sukces',
     3: 'Błąd',
 };
+

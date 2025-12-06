@@ -41,9 +41,10 @@ public class CourseController : ControllerBase
         return result is not null ? Ok(result) : NotFound();
     }
     [MapToApiVersion(1)]
-    [HttpPatch()]
-    public async Task<IActionResult> Update([FromBody] UpdateCourseCommand command, CancellationToken cancellationToken)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCourseCommand command, CancellationToken cancellationToken)
     {
+        command.Id = id;
         var updated = await _mediator.Send(command, cancellationToken);
         return updated ?  NoContent() : NotFound();
     }
