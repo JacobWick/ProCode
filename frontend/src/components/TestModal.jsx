@@ -8,7 +8,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { testSchema } from "../validationSchemas.js";
 
-export default function TestCreationModal({ isOpen, onClose, initialTests, onSave }) {
+export default function TestModal({ isOpen, onClose, initialTests, onSave }) {
 
     const {
         register,
@@ -29,10 +29,16 @@ export default function TestCreationModal({ isOpen, onClose, initialTests, onSav
     });
 
     useEffect(() => {
+        console.log("=== TestModal useEffect ===");
+        console.log("isOpen:", isOpen);
+        console.log("initialTests:", initialTests);
+
         if (isOpen) {
             const values = (initialTests && initialTests.length > 0)
-                ? initialTests
+                ? initialTests.map(t => ({ input: t.input ?? '', output: t.output ?? '' }))
                 : [{ input: '', output: '' }];
+
+            console.log("Resetting form with values:", values);
             reset({ testCases: values });
         }
     }, [isOpen, initialTests, reset]);

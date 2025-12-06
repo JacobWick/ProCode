@@ -1,7 +1,7 @@
 ﻿import { useEffect } from 'react';
 import {
     Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
-    Button, Tabs, TabList, TabPanels, Tab, TabPanel, FormControl, FormLabel, Select, Textarea, Box, HStack, Text,
+    Button, Tabs, TabList, TabPanels, Tab, TabPanel, FormControl, FormLabel, Textarea, Box, Text,
     FormHelperText, FormErrorMessage
 } from '@chakra-ui/react';
 import { Editor } from '@monaco-editor/react';
@@ -9,16 +9,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { solutionSchema } from "../validationSchemas.js";
 
-const LANGUAGES = [
-    { value: 'javascript', label: 'JavaScript' },
-    { value: 'python', label: 'Python' },
-    { value: 'java', label: 'Java' },
-    { value: 'cpp', label: 'C++' },
-    { value: 'csharp', label: 'C#' },
-];
-
-export default function SolutionCreationModal({ isOpen, onClose, initialSolution, onSave }) {
-
+export default function SolutionModal({ isOpen, onClose, initialSolution, onSave }) {
     const {
         register,
         handleSubmit,
@@ -29,14 +20,21 @@ export default function SolutionCreationModal({ isOpen, onClose, initialSolution
         resolver: zodResolver(solutionSchema),
         defaultValues: {
             code: '',
-            explanation: '',
-            language: 'javascript'
+            explanation: ''
         }
     });
 
     useEffect(() => {
         if (isOpen) {
-            reset(initialSolution || { code: '', explanation: '', language: 'javascript' });
+            if (initialSolution) {
+                const resetData = {
+                    code: initialSolution.Code || initialSolution.code || '',
+                    explanation: initialSolution.Explanation || initialSolution.explanation || ''
+                };
+                reset(resetData);
+            } else {
+                reset({ code: '', explanation: '' });
+            }
         }
     }, [isOpen, initialSolution, reset]);
 
@@ -52,20 +50,14 @@ export default function SolutionCreationModal({ isOpen, onClose, initialSolution
                 <ModalHeader>Wzorcowe rozwiązanie</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Tabs isLazy>
+                    <Tabs variant="enclosed">
                         <TabList>
                             <Tab>Kod <Text as="span" color="red.500" ml={1}>*</Text></Tab>
                             <Tab>Wyjaśnienie <Text as="span" color="red.500" ml={1}>*</Text></Tab>
                         </TabList>
                         <TabPanels>
+                            {/* Panel Kodu */}
                             <TabPanel>
-                                <HStack mb={4}>
-                                    <Text>Język:</Text>
-                                    <Select w="200px" {...register("language")}>
-                                        {LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
-                                    </Select>
-                                </HStack>
-
                                 <FormControl isInvalid={!!errors.code}>
                                     <Box border="1px solid" borderColor={errors.code ? "red.300" : "gray.200"} borderRadius="md" overflow="hidden">
                                         <Controller
@@ -75,7 +67,7 @@ export default function SolutionCreationModal({ isOpen, onClose, initialSolution
                                                 <Editor
                                                     height="300px"
                                                     language="javascript"
-                                                    value={value}
+                                                    value={value || ''}
                                                     onChange={onChange}
                                                     options={{ minimap: { enabled: false } }}
                                                 />
@@ -86,6 +78,7 @@ export default function SolutionCreationModal({ isOpen, onClose, initialSolution
                                 </FormControl>
                             </TabPanel>
 
+                            {/* Panel Wyjaśnienia */}
                             <TabPanel>
                                 <FormControl isRequired isInvalid={!!errors.explanation}>
                                     <FormLabel>Wyjaśnienie</FormLabel>

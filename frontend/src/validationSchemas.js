@@ -33,17 +33,20 @@ export const exerciseSchema = z.object({
         .or(z.literal("")),
 });
 export const solutionSchema = z.object({
-    language: z.string(),
     code: z.string()
         .min(5, "Kod musi mieć przynajmniej 5 znaków")
         .max(1000, "Kod może mieć maksymalnie 1000 znaków"),
     explanation: z.string()
-        .min(10, "Wyjaśnienie musi mieć przynajmniej 10 znaków") // C# Code: MinLength(10)
+        .min(10, "Wyjaśnienie musi mieć przynajmniej 10 znaków")
         .max(1000, "Wyjaśnienie może mieć maksymalnie 1000 znaków"),
 });
 
 
-const testSchema = z.object({
-    input: z.string().min(1, "Wymagane"),
-    output: z.string().min(1, "Wymagane"),
+export const testSchema = z.object({
+    testCases: z.array(
+        z.object({
+            input: z.string().min(1, "Wymagane"),
+            output: z.string().min(1, "Wymagane"),
+        })
+    ).min(1, "Musisz podać przynajmniej jeden przypadek testowy"),
 });

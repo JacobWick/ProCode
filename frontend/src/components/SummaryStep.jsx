@@ -102,14 +102,6 @@ export default function SummaryStep({ data, lessons, exercises }) {
                 </Box>
             </HStack>
 
-            <Box bg={infoBg} p={4} borderRadius="md" borderLeftWidth="4px" borderLeftColor="blue.500">
-                <HStack>
-                    <InfoIcon color="blue.500" />
-                    <Text fontSize="sm" color="blue.800">
-                        <strong>Gotowe!</strong> Kliknij przycisk <strong>"Utwórz kurs"</strong> poniżej, aby zapisać całą strukturę w bazie danych.
-                    </Text>
-                </HStack>
-            </Box>
         </VStack>
     );
 }

@@ -15,7 +15,8 @@ public static class ExerciseMapper
             InputData = exercise.Test?.InputData ?? new List<string>(),
             OutputData = exercise.Test?.OutputData ?? new List<string>(),
             LessonId = exercise.Lesson?.Id ?? Guid.Empty,
-            SolutionExampleId = exercise.SolutionExample?.Id ?? Guid.Empty
+            SolutionExampleId = exercise.SolutionExample?.Id,
+            TestId =  exercise.Test?.Id ?? Guid.Empty,
         };
     }
 

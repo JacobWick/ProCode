@@ -14,9 +14,7 @@ public class Exercise : IEntity
     public Lesson? Lesson { get; set; }
     public Guid? LessonId { get; set; }
 
-    public Test Test { get; set; }
-
-    public ValidationMethod ValidationMethod { get; set; }
+    public Test? Test { get; set; }
 
     public string Description { get; set; } = string.Empty;
     public string InitialContent { get; set; } = string.Empty;

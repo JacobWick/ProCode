@@ -10,6 +10,7 @@ public static class LessonMapper
         return new LessonDto
         {
             Id = lesson.Id,
+            CourseId = lesson.CourseId,
             Title = lesson.Title,
             Description = lesson.Description,
             VideoUri = lesson.VideoUri,

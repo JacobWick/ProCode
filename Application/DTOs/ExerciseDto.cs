@@ -8,6 +8,7 @@
         public List<string> InputData { get; set; }
         public List<string> OutputData { get; set; }
         public Guid LessonId { get; set; }
-        public Guid SolutionExampleId { get; set; }
+        public Guid? SolutionExampleId { get; set; }
+        public Guid? TestId { get; set; }
     }
 }

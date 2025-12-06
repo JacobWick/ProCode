@@ -56,7 +56,7 @@ public class LessonsController : ControllerBase
     }
 
     [MapToApiVersion(1)]
-    [HttpPatch("{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateLessonCommand command, CancellationToken cancellationToken)
     {
         command.Id = id;

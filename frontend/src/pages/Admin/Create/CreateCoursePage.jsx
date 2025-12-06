@@ -9,12 +9,19 @@ import {
 import { ArrowBackIcon } from '@chakra-ui/icons';
 
 import CourseInfoStep from '../../../components/CourseInfoStep.jsx';
-import LessonsStep from '../../../components/CreateLessonsStep.jsx';
-import ExercisesStep from '../../../components/CreateExercisesStep.jsx';
+import LessonsStep from '../../../components/LessonsStep.jsx';
+import ExercisesStep from '../../../components/ExercisesStep.jsx';
 import SummaryStep from '../../../components/SummaryStep.jsx';
-import TestCreationModal from '../../../components/TestCreationModal.jsx';
-import SolutionCreationModal from '../../../components/SolutionCreationModal.jsx';
-import {createCourse, createExercise, createLesson, createSolutionExample, createTest} from "../../../api.js";
+import TestModal from '../../../components/TestModal.jsx';
+import SolutionModal from '../../../components/SolutionModal.jsx';
+import {
+    createCourse,
+    createExercise,
+    createLesson,
+    createSolutionExample,
+    createTest,
+    updateExercise
+} from "../../../api.js";
 import {jwtDecode} from "jwt-decode";
 
 const steps = [
@@ -36,7 +43,19 @@ export default function CreateCoursePage() {
     const [lessons, setLessons] = useState([]);
     const [exercises, setExercises] = useState([]);
     const [activeExerciseId, setActiveExerciseId] = useState(null);
+    const updateLessonInState = (updatedLessonData) => {
+        setLessons(prev => prev.map(lesson =>
+            lesson.id === updatedLessonData.id ? { ...lesson, ...updatedLessonData } : lesson
+        ));
+        toast({ title: "Zaktualizowano lekcję", status: "info", duration: 1000 });
+    };
 
+    const updateExerciseInState = (updatedExerciseData) => {
+        setExercises(prev => prev.map(ex =>
+            ex.id === updatedExerciseData.id ? { ...ex, ...updatedExerciseData } : ex
+        ));
+        toast({ title: "Zaktualizowano zadanie", status: "info", duration: 1000 });
+    };
     const handleCourseChange = (e) => {
         const { name, value } = e.target;
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: undefined }));
@@ -193,12 +212,13 @@ export default function CreateCoursePage() {
                         </Stepper>
 
                         {activeStep === 0 && <CourseInfoStep data={courseData} onChange={handleCourseChange} errors={errors} />}
-                        {activeStep === 1 && <LessonsStep lessons={lessons} onAdd={addLesson} onRemove={removeLesson} />}
+                        {activeStep === 1 && <LessonsStep lessons={lessons} onAdd={addLesson} onRemove={removeLesson} onUpdate={updateLessonInState}/>}
                         {activeStep === 2 && <ExercisesStep
                             lessons={lessons}
                             exercises={exercises}
                             onAdd={addExercise}
                             onRemove={(id) => setExercises(prev => prev.filter(e => e.id !== id))}
+                            onUpdate={updateExerciseInState}
                             onOpenTest={(id) => { setActiveExerciseId(id); onTestOpen(); }}
                             onOpenSolution={(id) => { setActiveExerciseId(id); onSolOpen(); }}
                         />}
@@ -229,13 +249,13 @@ export default function CreateCoursePage() {
                 </VStack>
             </Container>
 
-            <TestCreationModal
+            <TestModal
                 isOpen={isTestOpen}
                 onClose={onTestClose}
                 initialTests={exercises.find(e => e.id === activeExerciseId)?.testCases}
                 onSave={updateExerciseWithTests}
             />
-            <SolutionCreationModal
+            <SolutionModal
                 isOpen={isSolOpen}
                 onClose={onSolClose}
                 initialSolution={exercises.find(e => e.id === activeExerciseId)?.solution}

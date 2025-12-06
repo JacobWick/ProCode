@@ -1,380 +1,610 @@
 ﻿import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-    Box,
-    Container,
-    Heading,
-    Text,
-    Button,
-    VStack,
-    FormControl,
-    FormLabel,
-    Input,
-    Textarea,
-    Select,
-    FormHelperText,
-    useColorModeValue,
-    useToast,
-    HStack,
-    Checkbox,
-    Stack,
-    Badge,
-    IconButton,
-    Spinner,
-    Alert,
-    AlertIcon,
+    Box, Container, Button, VStack, HStack, useToast, useColorModeValue,
+    Stepper, Step, StepIndicator, StepStatus, StepIcon, StepNumber,
+    StepTitle, StepDescription, StepSeparator, useDisclosure, Spinner, Center, Text
 } from '@chakra-ui/react';
-import { ArrowBackIcon, DeleteIcon } from '@chakra-ui/icons';
-import Navbar from '../../../components/Navbar.jsx';
-import Footer from '../../../components/Footer.jsx';
-import { getLessons, getCourseById, updateCourse } from '../../../api.js';
+import { ArrowBackIcon } from '@chakra-ui/icons';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { courseSchema } from "../../../validationSchemas.js";
 
-const DIFFICULTY_LEVELS = [
-    { value: 0, label: 'Początkujący' },
-    { value: 1, label: 'Średniozaawansowany' },
-    { value: 2, label: 'Zaawansowany' },
+import CourseInfoStep from '../../../components/CourseInfoStep.jsx';
+import LessonsStep from '../../../components/LessonsStep';
+import ExercisesStep from '../../../components/ExercisesStep';
+import SummaryStep from '../../../components/SummaryStep';
+import TestModal from '../../../components/TestModal';
+import SolutionModal from '../../../components/SolutionModal';
+
+import {
+    getCourseById, getLessons, getExercises,
+    updateCourse, updateLesson, updateExercise,
+    createLesson, createExercise,
+    deleteLesson, deleteExercise,
+    createTest, updateTest, getTestById,
+    createSolutionExample, getSolutionExampleById, updateSolutionExample
+} from '../../../api';
+
+const STEPS = [
+    { title: 'Edycja Kursu', description: 'Informacje' },
+    { title: 'Lekcje', description: 'Struktura' },
+    { title: 'Zadania', description: 'Praktyka' },
+    { title: 'Zapisz', description: 'Podsumowanie' }
 ];
+
+const generateTempId = () => `temp_${Date.now()}_${Math.random()}`;
 
 export default function EditCoursePage() {
     const { courseId } = useParams();
     const navigate = useNavigate();
     const toast = useToast();
-    const [isLoading, setIsLoading] = useState(false);
-    const [isFetching, setIsFetching] = useState(true);
-    const [allLessons, setAllLessons] = useState([]);
-    const [selectedLessons, setSelectedLessons] = useState([]);
-    const [courseData, setCourseData] = useState({
-        title: '',
-        description: '',
-        difficultyLevel: 0,
-    });
-    const [originalCourseData, setOriginalCourseData] = useState(null);
-    const [error, setError] = useState(null);
-
-    const bgColor = useColorModeValue('white', 'gray.800');
-    const borderColor = useColorModeValue('gray.200', 'gray.700');
     const pageBg = useColorModeValue('gray.50', 'gray.900');
+
+    // Modals
+    const { isOpen: isTestOpen, onOpen: onTestOpen, onClose: onTestClose } = useDisclosure();
+    const { isOpen: isSolOpen, onOpen: onSolOpen, onClose: onSolClose } = useDisclosure();
+
+    // Application State
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+    const [activeStep, setActiveStep] = useState(0);
+
+    // Data State
+    const [courseData, setCourseData] = useState({ title: '', description: '', difficultyLevel: 0 });
+    const [lessons, setLessons] = useState([]);
+    const [exercises, setExercises] = useState([]);
+    const [activeExercise, setActiveExercise] = useState(null);
+
+    // Change Tracking
+    const [modifiedCourse, setModifiedCourse] = useState(false);
+    const [deletedLessonIds, setDeletedLessonIds] = useState([]);
+    const [deletedExerciseIds, setDeletedExerciseIds] = useState([]);
+
+    // Form Configuration
+    const { setValue, getValues, trigger, formState: { errors } } = useForm({
+        resolver: zodResolver(courseSchema),
+        mode: "onBlur",
+        defaultValues: { title: '', description: '', difficultyLevel: 0 }
+    });
+
+    // ==================== DATA FETCHING ====================
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setIsFetching(true);
-
-                const courseResponse = await getCourseById(courseId);
-                const course = courseResponse.data;
+                // Fetch Course
+                const courseRes = await getCourseById(courseId);
+                const course = courseRes.data;
 
                 setCourseData({
                     title: course.title,
                     description: course.description,
-                    difficultyLevel: course.difficultyLevel,
+                    difficultyLevel: course.difficultyLevel
                 });
+                setValue("title", course.title);
+                setValue("description", course.description);
+                setValue("difficultyLevel", course.difficultyLevel);
 
-                setOriginalCourseData({
-                    title: course.title,
-                    description: course.description,
-                    difficultyLevel: course.difficultyLevel,
-                    lessons: course.lessons?.map(l => typeof l === 'object' ? l.id : l) || [],
-                });
+                // Fetch Lessons
+                const lessonsRes = await getLessons();
+                const courseLessons = lessonsRes.data.filter(l => l.courseId === courseId);
+                setLessons(courseLessons);
 
-                const lessonsResponse = await getLessons();
-                setAllLessons(lessonsResponse.data);
+                // Fetch Exercises with Tests and Solutions
+                const exercisesRes = await getExercises();
+                const allExercises = exercisesRes.data;
 
-                const lessonIds = course.lessons?.map(l => typeof l === 'object' ? l.id : l) || [];
-                setSelectedLessons(lessonIds);
+                const mappedExercises = await Promise.all(
+                    allExercises
+                        .filter(ex => courseLessons.some(l => (l.id || l.Id) === (ex.lessonId || ex.LessonId)))
+                        .map(async (ex) => {
+                            const lessonIndex = courseLessons.findIndex(l => (l.id || l.Id) === (ex.lessonId || ex.LessonId));
+                            const lesson = courseLessons[lessonIndex];
+
+                            // Map Test Data from InputData/OutputData (case-sensitive!)
+                            let testCases = [];
+                            const inputArr = ex.InputData || ex.inputData || [];
+                            const outputArr = ex.OutputData || ex.outputData || [];
+                            const len = Math.min(inputArr.length, outputArr.length);
+
+                            for (let i = 0; i < len; i++) {
+                                testCases.push({
+                                    input: inputArr[i],
+                                    output: outputArr[i]
+                                });
+                            }
+
+                            // Get TestId (case-sensitive!)
+                            const testId = ex.TestId || ex.testId || null;
+
+                            // Fetch Solution Data if SolutionExampleId exists and is not empty GUID
+                            let solution = null;
+                            const solutionId = ex.SolutionExampleId || ex.solutionExampleId || null;
+                            const emptyGuid = "00000000-0000-0000-0000-000000000000";
+
+                            if (solutionId && solutionId !== emptyGuid) {
+                                try {
+                                    const solutionRes = await getSolutionExampleById(solutionId);
+                                    // Extract only the fields we need
+                                    solution = {
+                                        code: solutionRes.data.Code || solutionRes.data.code,
+                                        explanation: solutionRes.data.explanation || solutionRes.data.explanation,
+                                    };
+                                } catch (err) {
+                                    console.error(`Error fetching solution for exercise ${ex.Id || ex.id}:`, err);
+                                }
+                            }
+
+                            return {
+                                ...ex,
+                                id: ex.Id || ex.id,
+                                lessonId: ex.LessonId || ex.lessonId,
+                                description: ex.Description || ex.description,
+                                initialContent: ex.InitialContent || ex.initialContent,
+                                lessonIndex,
+                                lessonTitle: lesson.title || lesson.Title,
+                                testId,
+                                solutionId,
+                                testCases,
+                                solution
+                            };
+                        })
+                );
+
+                setExercises(mappedExercises);
 
             } catch (error) {
-                console.error(error);
-                setError(error.message || "Błąd podczas pobierania danych kursu");
+                console.error("Fetch error:", error);
+                toast({
+                    title: "Błąd pobierania danych",
+                    description: error.message,
+                    status: "error",
+                    duration: 5000
+                });
             } finally {
-                setIsFetching(false);
+                setIsLoading(false);
             }
         };
 
-        fetchData();
-    }, [courseId]);
+        if (courseId) fetchData();
+    }, [courseId, toast, setValue]);
 
-    const handleChange = (e) => {
+    // ==================== EVENT HANDLERS ====================
+
+    const handleCourseChange = (e) => {
         const { name, value } = e.target;
-        setCourseData(prev => ({
-            ...prev,
-            [name]: name === 'difficultyLevel' ? parseInt(value) : value
+        const finalValue = name === 'difficultyLevel' ? parseInt(value) : value;
+        setCourseData(prev => ({ ...prev, [name]: finalValue }));
+        setValue(name, finalValue, { shouldValidate: true });
+        setModifiedCourse(true);
+    };
+
+    // ==================== LESSON OPERATIONS ====================
+
+    const addLesson = (lessonForm) => {
+        const newLesson = {
+            ...lessonForm,
+            id: generateTempId(),
+            isNew: true
+        };
+        setLessons(prev => [...prev, newLesson]);
+        toast({ title: "Dodano lekcję", status: "success", duration: 1000 });
+    };
+
+    const updateLessonInState = (updatedLessonData) => {
+        setLessons(prev => prev.map(lesson =>
+            lesson.id === updatedLessonData.id
+                ? { ...lesson, ...updatedLessonData, isNew: lesson.isNew }
+                : lesson
+        ));
+        toast({ title: "Zaktualizowano lekcję", status: "info", duration: 1000 });
+    };
+
+    const removeLesson = (id) => {
+        // Track deletion if lesson exists in DB
+        if (typeof id === 'string' && !id.startsWith('temp_')) {
+            setDeletedLessonIds(prev => [...prev, id]);
+
+            // Track all exercises from this lesson that exist in DB
+            const exercisesToDelete = exercises
+                .filter(e => e.lessonId === id && typeof e.id === 'string' && !e.id.startsWith('temp_'))
+                .map(e => e.id);
+
+            if (exercisesToDelete.length > 0) {
+                setDeletedExerciseIds(prev => [...prev, ...exercisesToDelete]);
+            }
+        }
+
+        setLessons(prev => prev.filter(l => l.id !== id));
+        setExercises(prev => prev.filter(e => e.lessonId !== id));
+        toast({ title: "Usunięto lekcję i powiązane zadania", status: "info", duration: 1000 });
+    };
+
+    // ==================== EXERCISE OPERATIONS ====================
+
+    const addExercise = (exerciseForm) => {
+        const lesson = lessons[exerciseForm.lessonIndex];
+        const newExercise = {
+            ...exerciseForm,
+            id: generateTempId(),
+            isNew: true,
+            lessonId: lesson.id,
+            lessonTitle: lesson.title,
+            testCases: [],
+            solution: null,  // Explicitly null, no extra fields
+            testId: null,
+            solutionId: null
+        };
+        setExercises(prev => [...prev, newExercise]);
+        toast({ title: "Dodano zadanie", status: "success", duration: 1000 });
+    };
+
+    const updateExerciseInState = (updatedExerciseData) => {
+        setExercises(prev => prev.map(ex => {
+            if (ex.id === updatedExerciseData.id) {
+                return {
+                    ...ex,
+                    ...updatedExerciseData,
+                    testCases: updatedExerciseData.testCases ?? ex.testCases,
+                    solution: updatedExerciseData.solution ?? ex.solution,
+                    testId: updatedExerciseData.testId ?? ex.testId,
+                    solutionId: updatedExerciseData.solutionId ?? ex.solutionId
+                };
+            }
+            return ex;
         }));
+        toast({ title: "Zaktualizowano zadanie", status: "info", duration: 1000 });
     };
 
-    const handleLessonToggle = (lessonId) => {
-        setSelectedLessons(prev =>
-            prev.includes(lessonId)
-                ? prev.filter(id => id !== lessonId)
-                : [...prev, lessonId]
-        );
+    const removeExercise = (id) => {
+        if (typeof id === 'string' && !id.startsWith('temp_')) {
+            setDeletedExerciseIds(prev => [...prev, id]);
+        }
+        setExercises(prev => prev.filter(e => e.id !== id));
+        toast({ title: "Usunięto zadanie", status: "info", duration: 1000 });
     };
 
-    const handleRemoveLesson = (lessonId) => {
-        setSelectedLessons(prev => prev.filter(id => id !== lessonId));
+    // ==================== MODAL OPERATIONS ====================
+
+    const handleOpenTest = (exerciseId) => {
+        const exercise = exercises.find(e => e.id === exerciseId);
+        console.log("=== Opening Test Modal ===");
+        console.log("Exercise ID:", exerciseId);
+        console.log("Found Exercise:", exercise);
+        console.log("Test Cases:", exercise?.testCases);
+        console.log("Test ID:", exercise?.testId);
+        setActiveExercise(exercise);
+        onTestOpen();
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleOpenSolution = (exerciseId) => {
+        const exercise = exercises.find(e => e.id === exerciseId);
+        console.log("=== Opening Solution Modal ===");
+        console.log("Exercise ID:", exerciseId);
+        console.log("Found Exercise:", exercise);
+        console.log("Solution:", exercise?.solution);
+        console.log("Solution ID:", exercise?.solutionId);
+        setActiveExercise(exercise);
+        onSolOpen();
+    };
 
+    const updateExerciseWithTests = (tests) => {
+        setExercises(prev => prev.map(ex =>
+            ex.id === activeExercise?.id ? { ...ex, testCases: tests } : ex
+        ));
+        toast({ title: "Zaktualizowano testy", status: "info", duration: 1000 });
+    };
+
+    const updateExerciseWithSolution = (solution) => {
+        // Only store the fields we need, strip out id, exerciseId, exercise
+        const cleanSolution = {
+            code: solution.code,
+            explanation: solution.explanation
+        };
+
+        setExercises(prev => prev.map(ex =>
+            ex.id === activeExercise?.id ? { ...ex, solution: cleanSolution } : ex
+        ));
+        toast({ title: "Zaktualizowano rozwiązanie", status: "info", duration: 1000 });
+    };
+
+    // ==================== NAVIGATION ====================
+
+    const handleNextStep = async () => {
+        if (activeStep === 0) {
+            const isValid = await trigger();
+            if (!isValid) {
+                toast({ title: "Popraw błędy w formularzu", status: "warning" });
+                return;
+            }
+        }
+        setActiveStep(prev => prev + 1);
+    };
+
+    const handlePrevStep = () => {
+        setActiveStep(prev => prev - 1);
+    };
+
+    // ==================== SAVE LOGIC ====================
+
+    const handleSaveChanges = async () => {
+        setIsSaving(true);
         try {
-            setIsLoading(true);
+            const formValues = getValues();
+            const emptyGuid = "00000000-0000-0000-0000-000000000000";
 
-            const updateCourseData = {
-                id: courseId,
-                title: courseData.title !== originalCourseData.title ? courseData.title : "",
-                description: courseData.description !== originalCourseData.description ? courseData.description : "",
-                difficultyLevel: courseData.difficultyLevel !== originalCourseData.difficultyLevel ? courseData.difficultyLevel : originalCourseData.difficultyLevel,
-                lessons: null,
-            };
-
-            const lessonsChanged = selectedLessons.sort() !==
-                originalCourseData.lessons.sort();
-
-            if (lessonsChanged) {
-                updateCourseData.lessons = selectedLessons;
+            // 1. Update Course if modified
+            if (modifiedCourse) {
+                await updateCourse(courseId, {
+                    id: courseId,
+                    title: formValues.title,
+                    description: formValues.description,
+                    difficultyLevel: formValues.difficultyLevel
+                });
             }
 
-            console.log('Updating course:', updateCourseData);
+            // 2. Delete removed items (exercises first due to foreign key constraints)
+            if (deletedExerciseIds.length > 0) {
+                await Promise.all(deletedExerciseIds.map(id => deleteExercise(id)));
+            }
+            if (deletedLessonIds.length > 0) {
+                await Promise.all(deletedLessonIds.map(id => deleteLesson(id)));
+            }
 
-            const response = await updateCourse(updateCourseData);
-            console.log('Updated course: ', response.data);
+            // 3. Process Lessons (create new, update existing)
+            const lessonIdMap = {};
+            for (const lesson of lessons) {
+                if (lesson.isNew) {
+                    const res = await createLesson({
+                        courseId,
+                        title: lesson.title,
+                        description: lesson.description,
+                        videoUri: lesson.videoUri || null,
+                        textUri: lesson.textUri || null
+                    });
+                    lessonIdMap[lesson.id] = res.data?.id || res.id;
+                } else {
+                    await updateLesson(lesson.id, {
+                        title: lesson.title,
+                        description: lesson.description,
+                        videoUri: lesson.videoUri || null,
+                        textUri: lesson.textUri || null,
+                        exercises: []
+                    });
+                    lessonIdMap[lesson.id] = lesson.id;
+                }
+            }
 
-            toast({
-                title: "Kurs zaktualizowany!",
-                description: "Zmiany zostały pomyślnie zapisane",
-                status: "success",
-                duration: 5000,
-            });
+            // 4. Process Exercises with Tests and Solutions
+            for (const exercise of exercises) {
+                const realLessonId = lessonIdMap[exercise.lessonId] || exercise.lessonId;
+                let currentExerciseId = exercise.id;
 
-            navigate('/my-courses');
+                // Create or Update Exercise
+                if (exercise.isNew) {
+                    const res = await createExercise({
+                        lessonId: realLessonId,
+                        description: exercise.description,
+                        initialContent: exercise.initialContent
+                    });
+                    currentExerciseId = res.data?.id || res.id;
+                } else {
+                    await updateExercise(exercise.id, {
+                        id: exercise.id,
+                        lessonId: realLessonId,
+                        description: exercise.description,
+                        initialContent: exercise.initialContent
+                    });
+                }
+
+                // Handle Tests
+                if (exercise.testCases?.length > 0) {
+                    const inputData = exercise.testCases.map(tc => tc.input);
+                    const outputData = exercise.testCases.map(tc => tc.output);
+
+                    // Check if testId exists and is not empty GUID
+                    if (exercise.testId && exercise.testId !== emptyGuid) {
+                        await updateTest(exercise.testId, {
+                            id: exercise.testId,
+                            inputData,
+                            outputData
+                        });
+                    } else {
+                        await createTest({
+                            exerciseId: currentExerciseId,
+                            inputData,
+                            outputData
+                        });
+                    }
+                }
+
+                // Handle Solutions
+                // Handle Solutions
+                if (exercise.solution) {
+                    // 1. Pobierz wartości (obsługa camelCase i PascalCase)
+                    const solCode = exercise.solution.code || exercise.solution.Code || '';
+                    const solExplanation = exercise.solution.explanation || exercise.solution.Explanation || '';
+
+                    // 2. Sprawdź ID
+                    const hasValidId = exercise.solutionId &&
+                        exercise.solutionId !== emptyGuid;
+
+                    if (hasValidId) {
+                        // UPDATE
+                        console.log("UPDATING solution:", exercise.solutionId);
+
+                        // ✅ POPRAWKA: Tworzymy jawny obiekt (payload) TYLKO z wymaganymi polami.
+                        // Ignorujemy 'exerciseId', 'exercise', 'language' itd. ze stanu.
+                        const cleanPayload = {
+                            id: exercise.solutionId,
+                            code: solCode,
+                            explanation: solExplanation
+                        };
+
+                        await updateSolutionExample(exercise.solutionId, cleanPayload);
+                    } else {
+                        // CREATE
+                        console.log("CREATING solution for exercise:", currentExerciseId);
+
+                        // Tutaj exerciseId JEST potrzebne
+                        await createSolutionExample({
+                            exerciseId: currentExerciseId,
+                            code: solCode,
+                            explanation: solExplanation
+                        });
+                    }
+                }
+            }
+            toast({ title: "Zmiany zapisane pomyślnie!", status: "success" });
+            navigate('/courses');
+
         } catch (error) {
-            console.error(error);
+            console.error("Save Error:", error);
             toast({
-                title: "Błąd aktualizacji kursu",
-                description: error.message || "Nie udało się zaktualizować kursu",
+                title: "Błąd zapisu",
+                description: error.response?.data?.message || error.message,
                 status: "error",
-                duration: 6000,
+                duration: 5000
             });
         } finally {
-            setIsLoading(false);
+            setIsSaving(false);
         }
     };
 
-    if (isFetching) {
-        return (
-            <Box minH="100vh" bg={pageBg}>
-                <Navbar />
-                <Box py={20} textAlign="center">
-                    <Spinner size="xl" color="purple.500" />
-                    <Text mt={4} color="gray.500">Ładowanie danych kursu...</Text>
-                </Box>
-                <Footer />
-            </Box>
-        );
-    }
+    // ==================== RENDER ====================
 
-    if (error) {
+    if (isLoading) {
         return (
-            <Box minH="100vh" bg={pageBg}>
-                <Navbar />
-                <Container maxW="container.lg" py={10}>
-                    <Alert status="error" borderRadius="md">
-                        <AlertIcon />
-                        {error}
-                    </Alert>
-                    <Button
-                        mt={4}
-                        leftIcon={<ArrowBackIcon />}
-                        onClick={() => navigate('/my-courses')}
-                    >
-                        Powrót do moich kursów
-                    </Button>
-                </Container>
-                <Footer />
-            </Box>
+            <Center minH="100vh" bg={pageBg}>
+                <VStack>
+                    <Spinner size="xl" color="purple.500" />
+                    <Text mt={4}>Ładowanie danych...</Text>
+                </VStack>
+            </Center>
         );
     }
 
     return (
-        <Box minH="100vh" bg={pageBg}>
-            <Navbar />
-
-            <Box py={10}>
-                <Container maxW="container.lg">
-                    <VStack spacing={8} align="stretch">
-                        <HStack>
-                            <Button
-                                leftIcon={<ArrowBackIcon />}
-                                variant="ghost"
-                                onClick={() => navigate('/my-courses')}
-                            >
-                                Powrót
-                            </Button>
-                        </HStack>
-
-                        <Box>
-                            <Heading size="xl" mb={2}>Edytuj kurs</Heading>
-                            <Text color="gray.500">
-                                Zaktualizuj informacje o kursie i zarządzaj lekcjami
-                            </Text>
-                        </Box>
-
-                        <Box
-                            bg={bgColor}
-                            p={8}
-                            borderRadius="xl"
-                            borderWidth="1px"
-                            borderColor={borderColor}
-                            boxShadow="sm"
+        <Box minH="100vh" bg={pageBg} py={10}>
+            <Container maxW="container.lg">
+                <VStack spacing={8} align="stretch">
+                    {/* Header */}
+                    <HStack justify="space-between">
+                        <Button
+                            leftIcon={<ArrowBackIcon />}
+                            variant="ghost"
+                            onClick={() => navigate('/courses')}
                         >
-                            <form onSubmit={handleSubmit}>
-                                <VStack spacing={6} align="stretch">
-                                    <FormControl>
-                                        <FormLabel>Tytuł kursu</FormLabel>
-                                        <Input
-                                            name="title"
-                                            placeholder="np. Kompletny kurs React od podstaw"
-                                            value={courseData.title}
-                                            onChange={handleChange}
-                                            size="lg"
+                            Anuluj
+                        </Button>
+                        <HStack spacing={4}>
+                            <Text fontSize="sm" color="gray.500">
+                                Lekcje: {lessons.length} | Zadania: {exercises.length}
+                            </Text>
+                            <Text fontSize="sm" color="gray.500">Tryb Edycji</Text>
+                        </HStack>
+                    </HStack>
+
+                    {/* Main Content */}
+                    <Box bg="white" p={8} borderRadius="xl" shadow="sm">
+                        {/* Stepper */}
+                        <Stepper index={activeStep} mb={8} colorScheme="purple">
+                            {STEPS.map((step, index) => (
+                                <Step key={index}>
+                                    <StepIndicator>
+                                        <StepStatus
+                                            complete={<StepIcon />}
+                                            incomplete={<StepNumber />}
+                                            active={<StepNumber />}
                                         />
-                                        <FormHelperText>
-                                            Podaj atrakcyjny i opisowy tytuł kursu
-                                        </FormHelperText>
-                                    </FormControl>
-
-                                    <FormControl>
-                                        <FormLabel>Opis kursu</FormLabel>
-                                        <Textarea
-                                            name="description"
-                                            placeholder="Opisz czego uczestnicy nauczą się w tym kursie..."
-                                            value={courseData.description}
-                                            onChange={handleChange}
-                                            rows={6}
-                                            resize="vertical"
-                                        />
-                                        <FormHelperText>
-                                            Szczegółowy opis pomoże uczestnikom zrozumieć wartość kursu
-                                        </FormHelperText>
-                                    </FormControl>
-
-                                    <FormControl isRequired>
-                                        <FormLabel>Poziom trudności</FormLabel>
-                                        <Select
-                                            name="difficultyLevel"
-                                            value={courseData.difficultyLevel}
-                                            onChange={handleChange}
-                                            size="lg"
-                                        >
-                                            {DIFFICULTY_LEVELS.map(level => (
-                                                <option key={level.value} value={level.value}>
-                                                    {level.label}
-                                                </option>
-                                            ))}
-                                        </Select>
-                                        <FormHelperText>
-                                            Wybierz odpowiedni poziom dla grupy docelowej
-                                        </FormHelperText>
-                                    </FormControl>
-
-                                    <FormControl>
-                                        <FormLabel>Lekcje w kursie ({selectedLessons.length})</FormLabel>
-                                        <Box
-                                            maxH="300px"
-                                            overflowY="auto"
-                                            borderWidth="1px"
-                                            borderColor={borderColor}
-                                            borderRadius="md"
-                                            p={4}
-                                        >
-                                            <Stack spacing={3}>
-                                                {allLessons.map(lesson => (
-                                                    <Checkbox
-                                                        key={lesson.id}
-                                                        isChecked={selectedLessons.includes(lesson.id)}
-                                                        onChange={() => handleLessonToggle(lesson.id)}
-                                                    >
-                                                        {lesson.title}
-                                                    </Checkbox>
-                                                ))}
-                                            </Stack>
-                                        </Box>
-                                        <FormHelperText>
-                                            Wybierz przynajmniej jedną lekcję dla kursu
-                                        </FormHelperText>
-                                    </FormControl>
-
-                                    {selectedLessons.length > 0 && (
-                                        <Box>
-                                            <Text fontSize="sm" fontWeight="semibold" mb={2}>
-                                                Wybrane lekcje:
-                                            </Text>
-                                            <Stack spacing={2}>
-                                                {selectedLessons.map((lessonId, index) => {
-                                                    const lesson = allLessons.find(l => l.id === lessonId);
-                                                    return (
-                                                        <HStack
-                                                            key={lessonId}
-                                                            bg={useColorModeValue('purple.50', 'purple.900')}
-                                                            p={2}
-                                                            borderRadius="md"
-                                                            justify="space-between"
-                                                        >
-                                                            <HStack>
-                                                                <Badge colorScheme="purple">{index + 1}</Badge>
-                                                                <Text fontSize="sm">{lesson?.title}</Text>
-                                                            </HStack>
-                                                            <IconButton
-                                                                icon={<DeleteIcon />}
-                                                                size="sm"
-                                                                variant="ghost"
-                                                                colorScheme="red"
-                                                                onClick={() => handleRemoveLesson(lessonId)}
-                                                                aria-label="Usuń lekcję"
-                                                            />
-                                                        </HStack>
-                                                    );
-                                                })}
-                                            </Stack>
-                                        </Box>
-                                    )}
-
-                                    <Box
-                                        bg="blue.50"
-                                        borderLeftWidth="4px"
-                                        borderLeftColor="blue.500"
-                                        p={4}
-                                        borderRadius="md"
-                                    >
-                                        <Text fontSize="sm" color="blue.800">
-                                            <strong>Informacja:</strong> Zmiany w lekcjach kursu zostaną
-                                            natychmiast zapisane i będą widoczne dla wszystkich uczestników.
-                                        </Text>
+                                    </StepIndicator>
+                                    <Box flexShrink="0" display={{ base: 'none', md: 'block' }}>
+                                        <StepTitle>{step.title}</StepTitle>
+                                        <StepDescription>{step.description}</StepDescription>
                                     </Box>
+                                    <StepSeparator />
+                                </Step>
+                            ))}
+                        </Stepper>
 
-                                    <HStack justify="flex-end" spacing={3}>
-                                        <Button
-                                            variant="ghost"
-                                            onClick={() => navigate('/my-courses')}
-                                        >
-                                            Anuluj
-                                        </Button>
-                                        <Button
-                                            type="submit"
-                                            colorScheme="purple"
-                                            isLoading={isLoading}
-                                        >
-                                            Zapisz zmiany
-                                        </Button>
-                                    </HStack>
-                                </VStack>
-                            </form>
+                        {/* Step Content */}
+                        {activeStep === 0 && (
+                            <CourseInfoStep
+                                data={courseData}
+                                onChange={handleCourseChange}
+                                errors={errors}
+                            />
+                        )}
+
+                        {activeStep === 1 && (
+                            <LessonsStep
+                                lessons={lessons}
+                                onAdd={addLesson}
+                                onRemove={removeLesson}
+                                onUpdate={updateLessonInState}
+                            />
+                        )}
+
+                        {activeStep === 2 && (
+                            <ExercisesStep
+                                lessons={lessons}
+                                exercises={exercises}
+                                onAdd={addExercise}
+                                onRemove={removeExercise}
+                                onUpdate={updateExerciseInState}
+                                onOpenTest={handleOpenTest}
+                                onOpenSolution={handleOpenSolution}
+                            />
+                        )}
+
+                        {activeStep === 3 && (
+                            <SummaryStep
+                                data={courseData}
+                                lessons={lessons}
+                                exercises={exercises}
+                            />
+                        )}
+
+                        {/* Footer */}
+                        <Box mt={10} pt={4} borderTopWidth="1px" borderColor="gray.200">
+                            <Text fontSize="xs" color="gray.500" textAlign="right" mb={3}>
+                                Pola oznaczone (<Box as="span" color="red.500">*</Box>) są wymagane
+                            </Text>
+                            <HStack justify="space-between">
+                                <Button
+                                    onClick={handlePrevStep}
+                                    isDisabled={activeStep === 0}
+                                    variant="ghost"
+                                >
+                                    Wstecz
+                                </Button>
+                                <Button
+                                    colorScheme="purple"
+                                    onClick={activeStep === 3 ? handleSaveChanges : handleNextStep}
+                                    isLoading={isSaving}
+                                >
+                                    {activeStep === 3 ? "Zapisz zmiany" : "Dalej"}
+                                </Button>
+                            </HStack>
                         </Box>
-                    </VStack>
-                </Container>
-            </Box>
+                    </Box>
+                </VStack>
+            </Container>
 
-            <Footer />
+            {/* Modals */}
+            <TestModal
+                isOpen={isTestOpen}
+                onClose={onTestClose}
+                initialTests={activeExercise?.testCases || []}
+                onSave={updateExerciseWithTests}
+            />
+            <SolutionModal
+                isOpen={isSolOpen}
+                onClose={onSolClose}
+                initialSolution={activeExercise?.solution || null}
+                onSave={updateExerciseWithSolution}
+            />
         </Box>
     );
 }
