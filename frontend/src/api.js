@@ -1,4 +1,4 @@
-import axios from 'axios'
+﻿import axios from 'axios'
 import {LANGUAGE_VERSIONS} from "./constants.js";
 
 const pistonAPI = axios.create({
@@ -211,4 +211,7 @@ export const getAllTags = async () => {
 }
 export const completeLesson = async (id) => {
     return await backendAPI.post(`/lessons/${id}/complete`);
+}
+export const enrollInCourse = async (id) => {
+    return await backendAPI.post(`/courses/${id}/enroll`);
 }
