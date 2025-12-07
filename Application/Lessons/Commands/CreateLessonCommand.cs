@@ -9,6 +9,6 @@ public class CreateLessonCommand : IRequest<LessonDto>
     public Guid CourseId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public Uri? VideoUri { get; set; }
-    public Uri? TextUri { get; set; }
+    public string? VideoUri { get; set; }
+    public string? TextUri { get; set; }
 }

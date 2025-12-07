@@ -16,15 +16,18 @@ public class CreateLessonCommandValidator : AbstractValidator<CreateLessonComman
             .MinimumLength(10).WithMessage("Lesson description must be at least 10 characters long")
             .MaximumLength(1000).WithMessage("Lesson description must not exceed 1000 characters.");
         RuleFor(x => x.VideoUri)
-            .Must(BeValidHttpUri).WithMessage("Video URI must start with http or https.");
+            .Must(url => string.IsNullOrWhiteSpace(url) || BeValidHttpUri(url))
+            .WithMessage("Video URI must start with http or https.");
 
         RuleFor(x => x.TextUri)
-            .Must(BeValidHttpUri).WithMessage("Text URI must start with http or https.");
+            .Must(url => string.IsNullOrWhiteSpace(url) || BeValidHttpUri(url))
+            .WithMessage("Text URI must start with http or https.");
     }
 
-    private bool BeValidHttpUri(Uri uri)
+    private bool BeValidHttpUri(string? url)
     {
-        return uri.IsAbsoluteUri && 
+        if (string.IsNullOrWhiteSpace(url)) return true;
+        return Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
                (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
     }
 }
