@@ -45,6 +45,7 @@ const Navbar = () => {
                     role: decoded.role,
                     username: decoded.username
                 });
+                console.log(decoded)
             } catch (error) {
                 console.error('Błąd dekodowania tokenu:', error);
                 localStorage.removeItem('token');
@@ -68,7 +69,7 @@ const Navbar = () => {
 
                     <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
                         {user && (<Link as={RouterLink} to="/courses">Kursy</Link>)}
-                        {user?.role === "Mentor" || user?.role === "Admin" && (<Link as={RouterLink} to="/create-course">Stwórz</Link>)}
+                        {(user?.role === "Mentor" || user?.role === "Admin" )&& (<Link as={RouterLink} to="/create-course">Stwórz</Link>)}
                         {user && (<Link as={RouterLink} to="/courses/recommended">Ścieżki nauki</Link>)}
                     </HStack>
 
