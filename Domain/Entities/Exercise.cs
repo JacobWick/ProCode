@@ -13,7 +13,7 @@ public class Exercise : IEntity
     
     public Lesson? Lesson { get; set; }
 
-    public Test Test { get; set; }
+    public ICollection<Test> Tests { get; set; } = new List<Test>();
 
     public ValidationMethod ValidationMethod { get; set; }
 
