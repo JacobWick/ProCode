@@ -29,12 +29,6 @@ namespace Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
             
-            modelBuilder.Entity<Exercise>()
-                .HasOne(e => e.Test)
-                .WithOne(t => t.Exercise)
-                .HasForeignKey<Test>(t => t.ExerciseId)
-                .IsRequired(); 
-            
             modelBuilder.Entity<Test>()
                 .HasIndex(t => t.ExerciseId)
                 .IsUnique();

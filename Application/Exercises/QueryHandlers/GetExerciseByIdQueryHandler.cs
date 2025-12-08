@@ -19,7 +19,7 @@ namespace Application.Exercises.QueryHandlers
 
         public async Task<ExerciseDto> Handle(GetExerciseByIdQuery request, CancellationToken cancellationToken)
         {
-            var exercise = await _exerciseRepository.GetByIdAsync(request.Id, includes: new Expression<Func<Exercise, object>>[] {e => e.Lesson, e => e.Test}, cancellationToken: cancellationToken);
+            var exercise = await _exerciseRepository.GetByIdAsync(request.Id, cancellationToken: cancellationToken);
 
             if (exercise == null)
                 return null!;

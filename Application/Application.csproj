@@ -19,8 +19,6 @@
     <ItemGroup>
       <Folder Include="Lessons\Queries\" />
       <Folder Include="Lessons\QueryHandlers\" />
-      <Folder Include="Exercises\CommandHandlers\" />
-      <Folder Include="Exercises\Commands\" />
       <Folder Include="Exercises\Queries\" />
       <Folder Include="Exercises\QueryHandlers\" />
       <Folder Include="UserProfiles\Nowy folder\" />

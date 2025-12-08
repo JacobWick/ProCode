@@ -40,7 +40,7 @@ namespace API.Controllers
         }
         [MapToApiVersion(1)]
         [HttpPatch()]
-        public async Task<IActionResult> Update( [FromBody] UpdateExerciseCommand command, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update([FromBody] UpdateExerciseCommand command, CancellationToken cancellationToken)
         {
             var updated = await _mediator.Send(command, cancellationToken);
             return updated ? NoContent() : NotFound();
@@ -51,6 +51,24 @@ namespace API.Controllers
         {
             var deleted = await _mediator.Send(new DeleteExerciseCommand { Id = id }, cancellationToken);
             return deleted ? NoContent() : NotFound();
+        }
+
+        [MapToApiVersion(1)]
+        [HttpPost("run")]
+        public async Task<IActionResult> RunCode([FromBody] RunCodeCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return Ok(result);
+        }
+
+        [MapToApiVersion(1)]
+        [HttpPost("{id}/attempt")]
+        public async Task<IActionResult> AttemptExercise(Guid id, [FromBody] AttemptExerciseCommand command, CancellationToken cancellationToken)
+        {
+            command.ExerciseId = id;
+
+            var result = await _mediator.Send(command, cancellationToken);
+            return Ok(result);
         }
     }
 }
