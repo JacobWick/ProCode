@@ -70,5 +70,13 @@ namespace API.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return Ok(result);
         }
+
+        [MapToApiVersion(1)]
+        [HttpGet("runtimes")]
+        public async Task<IActionResult> GetRuntimes(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetRuntimesQuery(), cancellationToken);
+            return Ok(result);
+        }
     }
 }

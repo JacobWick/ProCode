@@ -13,4 +13,13 @@
         public string? RunStderr { get; set; }
         public int? ExitCode { get; set; }
     }
+
+    public class PistonRuntimeResponse
+    {
+        public string language { get; set; }
+        public string version { get; set; }
+        public string[] aliases { get; set; }
+        public string? runtime { get; set; }
+    }
+
 }

@@ -14,5 +14,8 @@ namespace Application.Interfaces
             string language,
             string version,
             CancellationToken cancellationToken = default);
+
+        Task<List<PistonRuntimeResponse>> GetSupportedRuntimes(
+            CancellationToken cancellationToken);
     }
 }

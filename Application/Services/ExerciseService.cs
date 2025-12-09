@@ -153,5 +153,12 @@ namespace Application.Services
                 ExitCode = response.ExitCode
             };
         }
+
+        public async Task<List<PistonRuntimeResponse>> GetSupportedRuntimes(CancellationToken cancellationToken)
+        {
+            var runtimes = await _pistonApiClient.GetSupportedLanguagesAsync(cancellationToken);
+
+            return runtimes;
+        }
     }
 }
