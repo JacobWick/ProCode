@@ -42,5 +42,24 @@ namespace Infrastructure.Clients
                 ExitCode = result.GetProperty("run").GetProperty("code").GetInt32()
             };
         }
+
+        public async Task<List<PistonRuntimeResponse>> GetSupportedLanguagesAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync("/api/v2/piston/runtimes", cancellationToken);
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to fetch supported languages: {response.StatusCode}");
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<List<PistonRuntimeResponse>>(cancellationToken);
+
+            if (result is null)
+            {
+                throw new Exception("Failed to parse supported languages response.");
+            }
+
+            return result;
+        }
     }
 }

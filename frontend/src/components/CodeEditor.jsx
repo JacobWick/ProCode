@@ -5,7 +5,7 @@ import LanguageSelector from "./LanguageSelector.jsx";
 import { CODE_DEFAULT_CODE } from "../constants.js";
 import Output from "./Output.jsx";
 
-const CodeEditor = ({ initialContent, inputData, outputData, exerciseId }) => {
+const CodeEditor = ({ initialContent, inputData, outputData, exerciseId, onExerciseComplete }) => {
     const editorRef = useRef();
     const [value, setValue] = useState("");
     const [language, setLanguage] = useState("javascript");
@@ -13,8 +13,7 @@ const CodeEditor = ({ initialContent, inputData, outputData, exerciseId }) => {
 
     useEffect(() => {
         if (initialContent) {
-            const commentedContent = `// ${initialContent}\n\n${CODE_DEFAULT_CODE[language]}`;
-            setValue(commentedContent);
+            setValue(initialContent);
         } else {
             setValue(CODE_DEFAULT_CODE[language]);
         }
@@ -28,8 +27,7 @@ const CodeEditor = ({ initialContent, inputData, outputData, exerciseId }) => {
     const onSelect = (newLanguage) => {
         setLanguage(newLanguage);
         if (initialContent) {
-            const commentedContent = `// ${initialContent}\n\n${CODE_DEFAULT_CODE[newLanguage]}`;
-            setValue(commentedContent);
+            setValue(initialContent);
         } else {
             setValue(CODE_DEFAULT_CODE[newLanguage]);
         }
@@ -55,6 +53,7 @@ const CodeEditor = ({ initialContent, inputData, outputData, exerciseId }) => {
                     inputData={inputData}
                     outputData={outputData}
                     exerciseId={exerciseId}
+                    onExerciseComplete={onExerciseComplete}
                 />
             </HStack>
         </Box>

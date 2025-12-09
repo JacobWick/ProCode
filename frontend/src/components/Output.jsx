@@ -1,9 +1,9 @@
 ﻿import { Box, Button, Text, useToast, VStack, useColorModeValue, HStack, Badge } from "@chakra-ui/react";
 import { CheckIcon, WarningIcon } from "@chakra-ui/icons";
-import {execute, executeSolution} from "../api.js";
+import {execute, executeSolution, submitExerciseSolution} from "../api.js";
 import { useState } from "react";
 
-const Output = ({ editorRef, language, inputData, outputData}) => {
+const Output = ({ editorRef, language, inputData, outputData, exerciseId, onExerciseComplete }) => {
     const toast = useToast();
     const [output, setOutput] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -53,41 +53,11 @@ const Output = ({ editorRef, language, inputData, outputData}) => {
             return false;
         }
 
-        if (!inputData || inputData.length === 0 || !outputData || outputData.length === 0) {
-            return true;
-        }
-
         try {
-            const results = [];
-
-            for (let i = 0; i < inputData.length; i++) {
-                const input = inputData[i];
-                const expectedOutput = outputData[i];
-                const result = await executeSolution(language, code, input);
-
-                const actualOutput = result.run.stdout.trim();
-                const hasError = result.run.stderr && result.run.stderr.length > 0;
-
-                const isCorrect = !hasError && actualOutput === expectedOutput.trim();
-
-                results.push({
-                    input,
-                    expected: expectedOutput,
-                    actual: actualOutput,
-                    passed: isCorrect,
-                    error: hasError ? result.run.stderr : null
-                });
-            }
-
-            const allPassed = results.every(r => r.passed);
-            setTestsPassed(allPassed);
-
-            if (!allPassed) {
-                const failedTests = results.filter(r => !r.passed);
-                console.log("Nieudane testy:", failedTests);
-            }
-
-            return allPassed;
+            const response = await submitExerciseSolution(exerciseId, code);
+            const isSuccessful = response.data.isSuccessful;
+            setTestsPassed(isSuccessful);
+            return isSuccessful;
         } catch (error) {
             console.error(error);
             toast({
@@ -113,9 +83,10 @@ const Output = ({ editorRef, language, inputData, outputData}) => {
                     status: "success",
                     duration: 5000,
                 });
-
-
-                await submitExerciseSolution(exerciseId, editorRef.current?.getValue(), true);
+                
+                if (onExerciseComplete) {
+                    onExerciseComplete();
+                }
             } else {
                 toast({
                     title: "Rozwiązanie niepoprawne",
