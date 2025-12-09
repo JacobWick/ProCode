@@ -2,5 +2,6 @@
 
 public enum ValidationMethod
 {
-    
+    ExampleSolution,
+    UnitTests
 }
