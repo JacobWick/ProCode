@@ -60,5 +60,26 @@ namespace API.Controllers
             var result = await _mediator.Send(new GetActiveChallengesQuery(), cancellationToken);
             return Ok(result);
         }
+
+        [HttpGet("{id}/status")]
+        public async Task<IActionResult> GetChallengeStatus(Guid id, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(
+                new GetChallengeStatusQuery
+                {
+                    Id = id
+                }, cancellationToken);
+            
+            return Ok(result);
+        }
+
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> SetChallengeStatus(Guid id, [FromBody] SetChallengeStatusCommand command, CancellationToken cancellationToken)
+        {
+            command.Id = id;
+
+            var result = await _mediator.Send(command, cancellationToken);
+            return result ? Ok() : BadRequest("Setting challenge status failed");
+        }
     }
 }
