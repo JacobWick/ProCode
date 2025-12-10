@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Container, Heading, Text, Button, VStack, HStack, Badge } from '@chakra-ui/react';
+import { Box, Container, Heading, Text, Button, VStack, HStack, Badge, useToast } from '@chakra-ui/react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import CodeEditor from '../../components/CodeEditor';
-import { getChallengeById } from '../../api.js';
+import { getChallengeById, getChallengeStatus, setChallengeStatus } from '../../api.js';
 
 const ExerciseCard = ({ exercise, index, isActive, isCompleted, onClick }) => {
     return (
@@ -45,14 +45,65 @@ export default function ChallengePage() {
     const [challenge, setChallenge] = useState(null);
     const [selectedExerciseIndex, setSelectedExerciseIndex] = useState(0);
     const [completedExercises, setCompletedExercises] = useState(new Set());
+    const [isChallengeCompleted, setIsChallengeCompleted] = useState(false);
+
+    const toast = useToast();
 
     useEffect(() => {
         const fetchChallenge = async () => {
-            const response = await getChallengeById(id);
-            setChallenge(response.data);
+            try {
+                const response = await getChallengeById(id);
+                setChallenge(response.data);
+            } catch (error) {
+                console.error('Failed to fetch challenge:', error);
+                toast({
+                    title: 'Błąd ładowania wyzwania',
+                    description: error?.response?.data || error.message || 'Nie można pobrać danych wyzwania',
+                    status: 'error',
+                    duration: 6000,
+                });
+            }
         };
         fetchChallenge();
-    }, [id]);
+    }, [id, toast]);
+
+    useEffect(() => {
+        const fetchChallengeStatus = async () => {
+            try {
+                const response = await getChallengeStatus(id);
+                const data = response.data || {};
+                const isCompleted = data.isCompleted ?? data.IsCompleted ?? false;
+                setIsChallengeCompleted(isCompleted);
+            } catch (error) {
+                console.error('Failed to fetch challenge status:', error);
+                toast({
+                    title: 'Błąd ładowania statusu',
+                    description: error?.response?.data || error.message || 'Nie można pobrać statusu wyzwania',
+                    status: 'error',
+                    duration: 6000,
+                });
+            }
+        };
+        fetchChallengeStatus();
+    }, [id, toast]);
+
+    useEffect(() => {
+        if (!challenge) return;
+        if (isChallengeCompleted) return;
+
+        const total = challenge.exercises ? challenge.exercises.length : 0;
+        if (total > 0 && completedExercises.size === total) {
+            const setStatus = async () => {
+                try {
+                    await setChallengeStatus(id, true);
+                    setIsChallengeCompleted(true);
+                } catch (error) {
+                    console.error("Failed to set challenge status:", error);
+                }
+            };
+            setStatus();
+        }
+    }, [completedExercises, challenge, id, isChallengeCompleted]);
 
     if (!challenge) {
         return null;
@@ -75,6 +126,9 @@ export default function ChallengePage() {
                             <Badge colorScheme={daysRemaining > 3 ? 'green' : 'red'}>
                                 {daysRemaining} dni pozostało
                             </Badge>
+                            {isChallengeCompleted && (
+                                <Badge colorScheme="green">✓ Ukończone</Badge>
+                            )}
                         </HStack>
 
                         <Heading size="xl">{challenge.title}</Heading>
@@ -121,8 +175,12 @@ export default function ChallengePage() {
                                         inputData={challenge.exercises[selectedExerciseIndex].inputData || []}
                                         outputData={challenge.exercises[selectedExerciseIndex].outputData || []}
                                         exerciseId={challenge.exercises[selectedExerciseIndex].id}
-                                        onExerciseComplete={() => {
-                                            setCompletedExercises(new Set([...completedExercises, challenge.exercises[selectedExerciseIndex].id]));
+                                        onExerciseComplete={(completedExerciseId) => {
+                                            setCompletedExercises(prev => {
+                                                const s = new Set(prev);
+                                                s.add(completedExerciseId);
+                                                return s;
+                                            });
                                         }}
                                     />
                                 </Box>

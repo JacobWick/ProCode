@@ -46,6 +46,11 @@ namespace Infrastructure.Data
             modelBuilder.Entity<User>()
                 .HasMany(u => u.TagsIntrestedIn)
                 .WithMany(t => t.InterestedUsers);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.CompletedChallenges)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("UserCompletedChallenges"));
         }
 
     }

@@ -85,7 +85,11 @@ const Output = ({ editorRef, language, inputData, outputData, exerciseId, onExer
                 });
                 
                 if (onExerciseComplete) {
-                    onExerciseComplete();
+                    try {
+                        onExerciseComplete(exerciseId);
+                    } catch (err) {
+                        console.error('onExerciseComplete callback error:', err);
+                    }
                 }
             } else {
                 toast({

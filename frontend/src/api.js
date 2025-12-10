@@ -216,6 +216,14 @@ export const getChallengeById = async (id) => {
     return await backendAPI.get(`/challenges/${id}`);
 }
 
+export const getChallengeStatus = async (id) => {
+    return await backendAPI.get(`/challenges/${id}/status`);
+}
+
+export const setChallengeStatus = async (id, isCompleted) => {
+    return await backendAPI.patch(`/challenges/${id}/status`, { isCompleted });
+}
+
 export const submitExerciseSolution = async (exerciseId, code) => {
     return await backendAPI.post(`/exercises/${exerciseId}/attempt`, {codeSubmission: code});
 }
