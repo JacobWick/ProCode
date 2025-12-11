@@ -5,7 +5,7 @@ import LanguageSelector from "./LanguageSelector.jsx";
 import { CODE_DEFAULT_CODE } from "../constants.js";
 import Output from "./Output.jsx";
 
-const CodeEditor = ({ initialContent, inputData, outputData, exerciseId, onExerciseComplete }) => {
+const CodeEditor = ({ initialContent, inputData, outputData, exerciseId, onExerciseComplete, courseId, lessonId, solutionExampleId }) => {
     const editorRef = useRef();
     const [value, setValue] = useState("");
     const [language, setLanguage] = useState("python");
@@ -54,6 +54,10 @@ const CodeEditor = ({ initialContent, inputData, outputData, exerciseId, onExerc
                     outputData={outputData}
                     exerciseId={exerciseId}
                     onExerciseComplete={onExerciseComplete}
+                    courseId={courseId}
+                    lessonId={lessonId}
+                    lesson={lesson}
+                    solutionExampleId={solutionExampleId}
                 />
             </HStack>
         </Box>

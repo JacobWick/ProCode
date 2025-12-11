@@ -13,7 +13,7 @@ import {
     useColorModeValue,
     Stack,
 } from "@chakra-ui/react";
-import { getCourseById } from "../../api.js";
+import { getCourseById, enrollInCourse } from "../../api.js";
 import { COURSE_DIFFICULTY } from "../../constants.js";
 import Navbar from "../../components/Navbar.jsx";
 import Footer from "../../components/Footer.jsx";
@@ -49,11 +49,13 @@ function CourseDetailPage() {
         fetchCourse();
     }, [id]);
 
-    const startCourse = () => {
+    const startCourse = async () => {
         if (!course?.lessons || course.lessons.length === 0) {
             alert("Ten kurs nie posiada lekcji.");
             return;
         }
+        await enrollInCourse(course.id);
+
         const lessonId = course.lessons[0];
         navigate(`/courses/${course.id}/lessons/${lessonId}`);
     };
@@ -107,7 +109,7 @@ function CourseDetailPage() {
                                                 {course.title}
                                             </Heading>
                                             <Text fontSize="sm" color={metaColor}>
-                                                {course.createdBy ?? "Autor nieznany"}
+                                                {course.creatorUsername ?? "Autor nieznany"}
                                             </Text>
                                         </Box>
                                     </HStack>

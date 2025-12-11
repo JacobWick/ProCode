@@ -23,21 +23,11 @@ public class UpdateLessonCommandHandler : IRequestHandler<UpdateLessonCommand, b
         {
             return false;
         }
-
-        if (request.Title != "")
-        {
-            lesson.Title = request.Title;
-        }
-
-        if (request.VideoUri != lesson.VideoUri)
-        {
-            lesson.VideoUri = request.VideoUri;
-        }
-
-        if (request.TextUri != lesson.VideoUri)
-        {
-            lesson.TextUri = request.TextUri;
-        }
+        lesson.Title = request.Title;
+        lesson.Description = request.Description;
+        lesson.VideoUri = ParseUri(request.VideoUri);
+        lesson.TextUri = ParseUri(request.TextUri);
+        
 
         if (request.Exercises.Count > 0)
         {
@@ -54,5 +44,15 @@ public class UpdateLessonCommandHandler : IRequestHandler<UpdateLessonCommand, b
         }
         await _lessonRepository.UpdateAsync(lesson, cancellationToken);
         return true;
+    }
+    Uri? ParseUri(string? raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw)) return null;
+        if (Uri.TryCreate(raw, UriKind.Absolute, out var uri) &&
+            (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+        {
+            return uri;
+        }
+        return null;
     }
 }

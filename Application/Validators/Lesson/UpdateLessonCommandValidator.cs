@@ -20,19 +20,18 @@ public class UpdateLessonCommandValidator : AbstractValidator<UpdateLessonComman
             .WithMessage("All exercise IDs must be valid (non-empty).");
 
         RuleFor(x => x.VideoUri)
-            .Must(BeValidHttpUri)
-            .When(x => x.VideoUri != null)
+            .Must(url => string.IsNullOrWhiteSpace(url) || BeValidHttpUrl(url))
             .WithMessage("Video URI must be a valid http or https link.");
 
         RuleFor(x => x.TextUri)
-            .Must(BeValidHttpUri)
-            .When(x => x.TextUri != null)
+            .Must(url => string.IsNullOrWhiteSpace(url) || BeValidHttpUrl(url))
             .WithMessage("Text URI must be a valid http or https link.");
     }
 
-    private bool BeValidHttpUri(Uri uri)
+    private bool BeValidHttpUrl(string? url)
     {
-        return uri.IsAbsoluteUri &&
+        if (string.IsNullOrWhiteSpace(url)) return true;
+        return Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
                (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
     }
 }

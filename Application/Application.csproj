@@ -19,7 +19,10 @@
     <ItemGroup>
       <Folder Include="Lessons\Queries\" />
       <Folder Include="Lessons\QueryHandlers\" />
-      <Folder Include="UserProfiles\Nowy folder\" />
+      <Folder Include="Exercises\CommandHandlers\" />
+      <Folder Include="Exercises\Commands\" />
+      <Folder Include="Exercises\Queries\" />
+      <Folder Include="Exercises\QueryHandlers\" />
     </ItemGroup>
 
 </Project>

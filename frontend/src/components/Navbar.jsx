@@ -45,6 +45,7 @@ const Navbar = () => {
                     role: decoded.role,
                     username: decoded.username
                 });
+                console.log(decoded)
             } catch (error) {
                 console.error('Błąd dekodowania tokenu:', error);
                 localStorage.removeItem('token');
@@ -67,8 +68,8 @@ const Navbar = () => {
                     </RouterLink>
 
                     <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
-                        <Link as={RouterLink} to="/courses">Kursy</Link>
-                        {user?.role === "Mentor" || user?.role === "Admin" && (<Link as={RouterLink} to="/create">Stwórz</Link>)}
+                        {user && (<Link as={RouterLink} to="/courses">Kursy</Link>)}
+                        {(user?.role === "Mentor" || user?.role === "Admin" )&& (<Link as={RouterLink} to="/create-course">Stwórz</Link>)}
                         {user && (<Link as={RouterLink} to="/courses/recommended">Ścieżki nauki</Link>)}
                     </HStack>
 
@@ -79,7 +80,7 @@ const Navbar = () => {
                             variant="ghost"
                             aria-label="Toggle color mode"
                         />
-                        <NotificationBell/>
+                        {user && (<NotificationBell/>)}
                         {user ? (
                             <Menu>
                                 <MenuButton
@@ -94,20 +95,15 @@ const Navbar = () => {
                                             bg="purple.500"
                                         />
                                         <Text display={{ base: 'none', md: 'block' }}>
-                                            {user.name || user.surname}
+                                            Witaj, {user.username}
                                         </Text>
                                     </HStack>
                                 </MenuButton>
                                 <MenuList>
                                     <MenuItem isDisabled>
-                                        <VStack align="start" spacing={0}>
-                                            <Text fontWeight="semibold">
-                                                {user.name} {user.surname}
-                                            </Text>
-                                            <Text fontSize="sm" color="gray.500">
-                                                @{user.username}
-                                            </Text>
-                                        </VStack>
+                                        <Text>
+                                            @{user.username}
+                                        </Text>
                                     </MenuItem>
                                     <MenuDivider />
                                     {user?.role == "Admin" && (
@@ -119,9 +115,6 @@ const Navbar = () => {
                                     </MenuItem>
                                     <MenuItem onClick={() => navigate('/my-courses')}>
                                         Moje kursy
-                                    </MenuItem>
-                                    <MenuItem onClick={() => navigate('/settings')}>
-                                        Ustawienia
                                     </MenuItem>
                                     <MenuDivider />
                                     <MenuItem onClick={handleLogout} color="red.500">

@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
     Box,
     Container,
@@ -8,15 +8,20 @@ import {
     Text,
     VStack,
     Heading,
+    Button,
+    HStack,
 } from '@chakra-ui/react';
+import { ArrowBackIcon } from '@chakra-ui/icons';
 import Navbar from '../../components/Navbar.jsx';
 import Footer from '../../components/Footer.jsx';
 import CodeEditor from '../../components/CodeEditor.jsx';
-import { getExerciseById } from '../../api.js';
+import { getExerciseById, getLessonById } from '../../api.js';
 
 export default function ExercisePage() {
-    const { exerciseId } = useParams();
+    const { courseId, lessonId, exerciseId } = useParams();
+    const navigate = useNavigate();
     const [exercise, setExercise] = useState(null);
+    const [lesson, setLesson] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -26,11 +31,15 @@ export default function ExercisePage() {
     const textColor = useColorModeValue('gray.800', 'white');
 
     useEffect(() => {
-        const fetchExercise = async () => {
+        const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await getExerciseById(exerciseId);
-                setExercise(response.data);
+                const [exerciseRes, lessonRes] = await Promise.all([
+                    getExerciseById(exerciseId),
+                    lessonId ? getLessonById(lessonId) : Promise.resolve({ data: null })
+                ]);
+                setExercise(exerciseRes.data);
+                setLesson(lessonRes.data);
             } catch (err) {
                 console.error(err);
                 setError(err?.message || "Błąd podczas pobierania zadania");
@@ -40,9 +49,13 @@ export default function ExercisePage() {
         };
 
         if (exerciseId) {
-            fetchExercise();
+            fetchData();
         }
-    }, [exerciseId]);
+    }, [exerciseId, lessonId]);
+
+    const handleBackToLesson = () => {
+        navigate(`/courses/${courseId}/lessons/${lessonId}`);
+    };
 
     if (loading) {
         return (
@@ -76,10 +89,19 @@ export default function ExercisePage() {
     return (
         <Box minH="100vh" bg={pageBg}>
             <Navbar />
-
             <Box py={6}>
                 <Container maxW="container.xl">
                     <VStack spacing={6} align="stretch">
+                        <HStack>
+                            <Button
+                                leftIcon={<ArrowBackIcon />}
+                                variant="ghost"
+                                onClick={handleBackToLesson}
+                            >
+                                Powrót do lekcji
+                            </Button>
+                        </HStack>
+
                         <Box
                             bg={cardBg}
                             p={6}
@@ -98,9 +120,13 @@ export default function ExercisePage() {
 
                         <CodeEditor
                             initialContent={exercise.initialContent}
-                            inputData={exercise.inputData}
-                            outputData={exercise.outputData}
+                            inputData={exercise.test?.inputData || []}
+                            outputData={exercise.test?.outputData || []}
                             exerciseId={exercise.id}
+                            solutionExampleId={exercise.solutionExampleId || exercise.solutionExample?.id}
+                            courseId={courseId}
+                            lessonId={lessonId}
+                            lesson={lesson}
                         />
                     </VStack>
                 </Container>

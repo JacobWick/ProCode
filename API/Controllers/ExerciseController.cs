@@ -39,9 +39,10 @@ namespace API.Controllers
             return result is not null ? Ok(result) : NotFound();
         }
         [MapToApiVersion(1)]
-        [HttpPatch()]
-        public async Task<IActionResult> Update([FromBody] UpdateExerciseCommand command, CancellationToken cancellationToken)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateExerciseCommand command, CancellationToken cancellationToken)
         {
+            command.Id = id;
             var updated = await _mediator.Send(command, cancellationToken);
             return updated ? NoContent() : NotFound();
         }

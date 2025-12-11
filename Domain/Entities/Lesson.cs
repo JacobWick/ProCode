@@ -5,16 +5,17 @@ namespace Domain.Entities;
 
 public class Lesson  : IEntity
 {
-    [Key]
     public Guid Id { get; set; }
     
     public Progress? Progress { get; set; }
 
-    public Course? Course { get; set; } = null!;
+    public Course? Course { get; set; }
+    public Guid CourseId { get; set; }
 
     public ICollection<Exercise> Exercises { get; set; } = new List<Exercise>();
 
-    public string? Title { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
     public Uri? VideoUri { get; set; }
     public Uri? TextUri { get; set; }
     public DateTime CreatedAt { get; set; }

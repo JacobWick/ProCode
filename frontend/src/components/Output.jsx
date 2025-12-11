@@ -1,15 +1,48 @@
-﻿import { Box, Button, Text, useToast, VStack, useColorModeValue, HStack, Badge } from "@chakra-ui/react";
+import { Box, Button, Text, useToast, VStack, useColorModeValue, HStack, Badge } from "@chakra-ui/react";
 import { CheckIcon, WarningIcon } from "@chakra-ui/icons";
 import {execute, executeSolution, submitExerciseSolution} from "../api.js";
+import {
+    Box,
+    Button,
+    Text,
+    useToast,
+    VStack,
+    useColorModeValue,
+    HStack,
+    Badge,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    useDisclosure,
+    Tabs,
+    TabList,
+    TabPanels,
+    Tab,
+    TabPanel,
+    Code,
+} from "@chakra-ui/react";
+import { CheckIcon, WarningIcon, ViewIcon } from "@chakra-ui/icons";
+import { execute, executeSolution, getSolutionExampleById, completeLesson } from "../api.js";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
-const Output = ({ editorRef, language, inputData, outputData, exerciseId, onExerciseComplete }) => {
+const Output = ({ editorRef, language, inputData, outputData, exerciseId, onExerciseComplete, solutionExampleId, courseId, lessonId, lesson }) => {
     const toast = useToast();
+    const navigate = useNavigate();
     const [output, setOutput] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [codeError, setCodeError] = useState(false);
     const [testsPassed, setTestsPassed] = useState(null);
+    const [solutionExample, setSolutionExample] = useState(null);
+    const [loadingSolution, setLoadingSolution] = useState(false);
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const bg = useColorModeValue("gray.50", "gray.800");
     const border = useColorModeValue("gray.200", "gray.700");
@@ -70,6 +103,33 @@ const Output = ({ editorRef, language, inputData, outputData, exerciseId, onExer
         }
     };
 
+    const checkIfLessonComplete = () => {
+        if (!lesson || !lesson.exercises) return false;
+        const exercises = Array.isArray(lesson.exercises) ? lesson.exercises : [];
+        const currentIndex = exercises.findIndex(e => {
+            const eId = typeof e === 'object' ? (e.id || e.Id) : e;
+            return String(eId) === String(exerciseId);
+        });
+
+        return currentIndex === exercises.length - 1;
+    };
+
+    const handleCompleteLessonAndNavigate = async () => {
+        try {
+                await completeLesson(lessonId);
+                toast({
+                    title: "Lekcja ukończona!",
+                    description: "Gratulacje! Ukończyłeś wszystkie zadania w tej lekcji.",
+                    status: "success",
+                    duration: 5000,
+                });
+        } catch (error) {
+            console.error('Error completing lesson:', error);
+        } finally {
+            navigate(`/courses/${courseId}/lessons/${lessonId}`);
+        }
+    };
+
     const handleSubmitSolution = async () => {
         try {
             setIsSubmitting(true);
@@ -83,13 +143,13 @@ const Output = ({ editorRef, language, inputData, outputData, exerciseId, onExer
                     status: "success",
                     duration: 5000,
                 });
-                
-                if (onExerciseComplete) {
-                    try {
-                        onExerciseComplete(exerciseId);
-                    } catch (err) {
-                        console.error('onExerciseComplete callback error:', err);
-                    }
+                const isLastExercise = checkIfLessonComplete();
+                if (isLastExercise) {
+                    await handleCompleteLessonAndNavigate();
+                } else {
+                    setTimeout(() => {
+                        navigate(`/courses/${courseId}/lessons/${lessonId}`);
+                    }, 2000);
                 }
             } else {
                 toast({
@@ -109,6 +169,35 @@ const Output = ({ editorRef, language, inputData, outputData, exerciseId, onExer
             });
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleViewSolution = async () => {
+        if (!solutionExampleId) {
+            toast({
+                title: "Brak rozwiązania",
+                description: "Dla tego zadania nie ma przykładowego rozwiązania",
+                status: "info",
+                duration: 3000,
+            });
+            return;
+        }
+
+        try {
+            setLoadingSolution(true);
+            const response = await getSolutionExampleById(solutionExampleId);
+            setSolutionExample(response.data);
+            onOpen();
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Błąd",
+                description: "Nie udało się pobrać rozwiązania",
+                status: "error",
+                duration: 3000,
+            });
+        } finally {
+            setLoadingSolution(false);
         }
     };
 
@@ -141,33 +230,49 @@ const Output = ({ editorRef, language, inputData, outputData, exerciseId, onExer
                     )}
                 </HStack>
 
-                <HStack spacing={3} w="100%">
-                    <Button
-                        colorScheme="purple"
-                        variant="solid"
-                        rounded="xl"
-                        shadow="md"
-                        isLoading={isLoading}
-                        onClick={runCode}
-                        flex={1}
-                        _hover={{ transform: "scale(1.02)", shadow: "lg" }}
-                    >
-                        Uruchom kod
-                    </Button>
+                <VStack spacing={3} w="100%">
+                    <HStack spacing={3} w="100%">
+                        <Button
+                            colorScheme="purple"
+                            variant="solid"
+                            rounded="xl"
+                            shadow="md"
+                            isLoading={isLoading}
+                            onClick={runCode}
+                            flex={1}
+                            _hover={{ transform: "scale(1.02)", shadow: "lg" }}
+                        >
+                            Uruchom kod
+                        </Button>
 
-                    <Button
-                        colorScheme="teal"
-                        variant="solid"
-                        rounded="xl"
-                        shadow="md"
-                        isLoading={isSubmitting}
-                        onClick={handleSubmitSolution}
-                        flex={1}
-                        _hover={{ transform: "scale(1.02)", shadow: "lg" }}
-                    >
-                        Prześlij rozwiązanie
-                    </Button>
-                </HStack>
+                        <Button
+                            colorScheme="teal"
+                            variant="solid"
+                            rounded="xl"
+                            shadow="md"
+                            isLoading={isSubmitting}
+                            onClick={handleSubmitSolution}
+                            flex={1}
+                            _hover={{ transform: "scale(1.02)", shadow: "lg" }}
+                        >
+                            Prześlij rozwiązanie
+                        </Button>
+                    </HStack>
+
+                    {solutionExampleId && (
+                        <Button
+                            leftIcon={<ViewIcon />}
+                            colorScheme="blue"
+                            variant="outline"
+                            rounded="xl"
+                            w="100%"
+                            isLoading={loadingSolution}
+                            onClick={handleViewSolution}
+                        >
+                            Zobacz przykładowe rozwiązanie
+                        </Button>
+                    )}
+                </VStack>
 
                 <Box
                     w="100%"
@@ -196,6 +301,67 @@ const Output = ({ editorRef, language, inputData, outputData, exerciseId, onExer
                     )}
                 </Box>
             </VStack>
+            <Modal isOpen={isOpen} onClose={onClose} size="4xl">
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Przykładowe rozwiązanie</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {solutionExample ? (
+                            <Tabs colorScheme="purple">
+                                <TabList>
+                                    <Tab>Kod</Tab>
+                                    <Tab>Wyjaśnienie</Tab>
+                                </TabList>
+
+                                <TabPanels>
+                                    <TabPanel>
+                                        <Box
+                                            p={4}
+                                            bg={bg}
+                                            borderRadius="md"
+                                            borderWidth="1px"
+                                            borderColor={border}
+                                            maxH="500px"
+                                            overflowY="auto"
+                                        >
+                                            <Code
+                                                display="block"
+                                                whiteSpace="pre"
+                                                fontFamily="mono"
+                                                fontSize="sm"
+                                            >
+                                                {solutionExample.code}
+                                            </Code>
+                                        </Box>
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <Box
+                                            p={4}
+                                            bg={bg}
+                                            borderRadius="md"
+                                            borderWidth="1px"
+                                            borderColor={border}
+                                            maxH="500px"
+                                            overflowY="auto"
+                                        >
+                                            <Text whiteSpace="pre-line">
+                                                {solutionExample.explanation}
+                                            </Text>
+                                        </Box>
+                                    </TabPanel>
+                                </TabPanels>
+                            </Tabs>
+                        ) : (
+                            <Text>Ładowanie rozwiązania...</Text>
+                        )}
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button onClick={onClose}>Zamknij</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </Box>
     );
 };

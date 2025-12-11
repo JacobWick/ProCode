@@ -72,8 +72,8 @@ backendAPI.interceptors.response.use(
 export const createCourse = async (courseData) => {
     return await backendAPI.post("/courses", courseData);
 }
-export const updateCourse = async (courseData) => {
-    return await backendAPI.patch("/courses", courseData);
+export const updateCourse = async (courseId, courseData) => {
+    return await backendAPI.put(`/courses/${courseId}`, courseData);
 }
 export const deleteCourse = async (courseId) => {
     return await backendAPI.delete(`/courses/${courseId}`);
@@ -81,14 +81,14 @@ export const deleteCourse = async (courseId) => {
 export const getCourses = async () => {
     return await backendAPI.get("/courses");
 }
-export const getCourseById = async (id) => {
-    return await backendAPI.get(`/courses/${id}`);
+export const getCourseById = async (courseId) => {
+    return await backendAPI.get(`/courses/${courseId}`);
 }
 export const createLesson = async (lessonData) => {
     return await backendAPI.post("/lessons", lessonData);
 }
 export const updateLesson = async (lessonId, lessonData) => {
-    return await backendAPI.patch(`/lessons/${lessonId}`, lessonData);
+    return await backendAPI.put(`/lessons/${lessonId}`, lessonData);
 }
 export const deleteLesson = async (lessonId) => {
     return await backendAPI.delete(`/lessons/${lessonId}`);
@@ -105,8 +105,8 @@ export const getExercises = async () => {
 export const createExercise = async (exerciseData) => {
     return await backendAPI.post("/exercises", exerciseData);
 }
-export const updateExercise = async (exerciseData) => {
-    return await backendAPI.patch(`/exercises`, exerciseData);
+export const updateExercise = async (exerciseId, exerciseData) => {
+    return await backendAPI.put(`/exercises/${exerciseId}`, exerciseData);
 }
 export const deleteExercise = async (id) => {
     return await backendAPI.delete(`/exercises/${id}`);
@@ -117,8 +117,8 @@ export const getExerciseById = async (id) => {
 export const getTestById = async (id) => {
     return await backendAPI.get(`/tests/${id}`);
 }
-export const updateTest = async (testData) => {
-    return await backendAPI.patch(`/tests`, testData);
+export const updateTest = async (testId, testData) => {
+    return await backendAPI.put(`/tests/${testId}`, testData);
 }
 export const login = async (data) => {
     return await backendAPI.post(`/auth/login`, data)
@@ -148,8 +148,8 @@ export const getSolutionExampleById = async (id) => {
 export const getSolutionExamples = async () => {
     return await backendAPI.get("/solutionexamples");
 }
-export const updateSolutionExample = async (solutionExampleData) => {
-    return await backendAPI.patch(`/solutionexamples`, solutionExampleData);
+export const updateSolutionExample = async (solutionExampleId, solutionExampleData) => {
+    return await backendAPI.patch(`/solutionexamples/${solutionExampleId}`, solutionExampleData);
 }
 export const getMyProfile = async () => {
     return await backendAPI.get(`/profiles/me`)
@@ -226,4 +226,10 @@ export const setChallengeStatus = async (id, isCompleted) => {
 
 export const submitExerciseSolution = async (exerciseId, code) => {
     return await backendAPI.post(`/exercises/${exerciseId}/attempt`, {codeSubmission: code});
+}
+export const completeLesson = async (id) => {
+    return await backendAPI.post(`/lessons/${id}/complete`);
+}
+export const enrollInCourse = async (id) => {
+    return await backendAPI.post(`/courses/${id}/enroll`);
 }
