@@ -1,6 +1,7 @@
+import { CheckIcon, WarningIcon } from "@chakra-ui/icons";
+import {execute, executeSolution, submitExerciseSolution} from "../api.js";
 import {
     Box,
-    Button,
     Text,
     useToast,
     VStack,
@@ -22,13 +23,13 @@ import {
     TabPanel,
     Code,
 } from "@chakra-ui/react";
-import { CheckIcon, WarningIcon, ViewIcon } from "@chakra-ui/icons";
-import { execute, executeSolution, getSolutionExampleById, completeLesson } from "../api.js";
+
+import { ViewIcon } from "@chakra-ui/icons";
+import { getSolutionExampleById, completeLesson } from "../api.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 
-const Output = ({ editorRef, language, inputData, outputData, exerciseId, solutionExampleId, courseId, lessonId, lesson }) => {
+const Output = ({ editorRef, language, exerciseId, solutionExampleId, courseId, lessonId, lesson }) => {
     const toast = useToast();
     const navigate = useNavigate();
     const [output, setOutput] = useState(null);
@@ -83,41 +84,11 @@ const Output = ({ editorRef, language, inputData, outputData, exerciseId, soluti
             return false;
         }
 
-        if (!inputData || inputData.length === 0 || !outputData || outputData.length === 0) {
-            return true;
-        }
-
         try {
-            const results = [];
-
-            for (let i = 0; i < inputData.length; i++) {
-                const input = inputData[i];
-                const expectedOutput = outputData[i];
-                const result = await executeSolution(language, code, input);
-
-                const actualOutput = result.run.stdout.trim();
-                const hasError = result.run.stderr && result.run.stderr.length > 0;
-
-                const isCorrect = !hasError && actualOutput === expectedOutput.trim();
-
-                results.push({
-                    input,
-                    expected: expectedOutput,
-                    actual: actualOutput,
-                    passed: isCorrect,
-                    error: hasError ? result.run.stderr : null
-                });
-            }
-
-            const allPassed = results.every(r => r.passed);
-            setTestsPassed(allPassed);
-
-            if (!allPassed) {
-                const failedTests = results.filter(r => !r.passed);
-                console.log("Nieudane testy:", failedTests);
-            }
-
-            return allPassed;
+            const response = await submitExerciseSolution(exerciseId, code);
+            const isSuccessful = response.data.isSuccessful;
+            setTestsPassed(isSuccessful);
+            return isSuccessful;
         } catch (error) {
             console.error(error);
             toast({

@@ -209,6 +209,24 @@ export const updateUserTags = async (tags) => {
 export const getAllTags = async () => {
     return await backendAPI.get(`/tags`);
 }
+export const getActiveChallenges = async () => {
+    return await backendAPI.get(`/challenges/active`);
+}
+export const getChallengeById = async (id) => {
+    return await backendAPI.get(`/challenges/${id}`);
+}
+
+export const getChallengeStatus = async (id) => {
+    return await backendAPI.get(`/challenges/${id}/status`);
+}
+
+export const setChallengeStatus = async (id, isCompleted) => {
+    return await backendAPI.patch(`/challenges/${id}/status`, { isCompleted });
+}
+
+export const submitExerciseSolution = async (exerciseId, code) => {
+    return await backendAPI.post(`/exercises/${exerciseId}/attempt`, {codeSubmission: code});
+}
 export const completeLesson = async (id) => {
     return await backendAPI.post(`/lessons/${id}/complete`);
 }

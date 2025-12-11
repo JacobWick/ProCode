@@ -17,8 +17,10 @@ namespace Infrastructure.Data
         public DbSet<SolutionExample> SolutionExamples { get; set; }
         public DbSet<Test> Tests { get; set; }
         public new DbSet<User> Users { get; set; }
-        public DbSet<UserProfile> userProfiles { get; set; }
-        public DbSet<UserCourse> userCourses { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<UserCourse> UserCourses { get; set; }
+        public DbSet<Challenge> Challenges { get; set; }
+
         public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options)
         {
             
@@ -29,7 +31,7 @@ namespace Infrastructure.Data
             
             modelBuilder.Entity<Course>()
                 .HasOne(c => c.Creator)
-                .WithMany()
+                .WithMany(u => u.Courses)
                 .HasForeignKey(c => c.CreatorId)
                 .OnDelete(DeleteBehavior.Cascade);
             
@@ -47,9 +49,8 @@ namespace Infrastructure.Data
                 .OnDelete(DeleteBehavior.Cascade);
             
             modelBuilder.Entity<Exercise>()
-                .HasOne(e => e.Test)
+                .HasMany(e => e.Tests)
                 .WithOne(t => t.Exercise)
-                .HasForeignKey<Test>(t => t.ExerciseId)
                 .OnDelete(DeleteBehavior.Cascade);
             
             modelBuilder.Entity<Exercise>()
@@ -75,6 +76,11 @@ namespace Infrastructure.Data
             modelBuilder.Entity<User>()
                 .HasMany(u => u.TagsIntrestedIn)
                 .WithMany(t => t.InterestedUsers);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.CompletedChallenges)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("UserCompletedChallenges"));
         }
 
     }

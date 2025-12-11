@@ -18,6 +18,7 @@ import {
 import { SearchIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ActiveChallenges from '../components/Challenges.jsx';
 
 const Hero = ({ onSearch }) => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -175,6 +176,7 @@ const Categories = () => {
     );
 };
 
+
 export default function HomePage() {
     const navigate = useNavigate();
 
@@ -188,6 +190,8 @@ export default function HomePage() {
             <Navbar />
             <Hero onSearch={handleSearch} />
             <FeaturedCourses />
+            <ActiveChallenges />
+
             <Categories />
             <Footer />
         </Box>

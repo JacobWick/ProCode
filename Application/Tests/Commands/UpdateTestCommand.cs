@@ -1,10 +1,12 @@
-﻿using MediatR;
+﻿using Application.DTOs;
+using MediatR;
+using System.Text.Json;
 
 namespace Application.Tests.Commands;
 
 public class UpdateTestCommand : IRequest<bool>
 {
     public Guid Id { get; set; }
-    public List<string> InputData { get; set; }
-    public List<string> OutputData { get; set; }
+    public VariableSetDto InputData { get; set; }
+    public VariableSetDto OutputData { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Clients;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -30,6 +31,12 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext>(provider =>
             provider.GetRequiredService<PostgresDbContext>());
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IChallengeRepository, ChallengeRepository>();
+        services.AddHttpClient<IPistonApiClient, PistonApiClient>(client =>
+        {
+            client.BaseAddress = new Uri("https://emkc.org/");
+        });
+
         return services;
     }
 }

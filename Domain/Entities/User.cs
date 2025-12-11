@@ -12,6 +12,7 @@ public class User : IdentityUser<Guid>, IEntity
     public ICollection<UserCourse> CoursesEnrolledIn { get; set; } = new List<UserCourse>();
     public ICollection<Progress> Progresses { get; set; } = new List<Progress>();
     public ICollection<Tag> TagsIntrestedIn { get; set; } = new List<Tag>();
+    public ICollection<Challenge> CompletedChallenges { get; set; } = new List<Challenge>();
 
     public UserProfile Profile { get; set; } = null!;
 }

@@ -33,8 +33,8 @@ public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, L
             TextUri = textUri,
             CreatedAt = DateTime.Now,
             Exercises = exercises.ToList()
-
         };
+
         await _lessonRepository.CreateAsync(lesson, cancellationToken);
         return LessonMapper.MapToDto(lesson);
     }

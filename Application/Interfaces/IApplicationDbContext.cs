@@ -13,7 +13,7 @@ namespace Application.Interfaces
         public DbSet<Progress> Progresses { get; set; }
         public DbSet<SolutionExample> SolutionExamples { get; set; }
         public DbSet<Test> Tests { get; set; }
-        public DbSet<UserProfile> userProfiles { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
 
     }
 }
