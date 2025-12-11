@@ -16,7 +16,7 @@ import EditCoursePage from "./pages/Admin/Edit/EditCoursePage.jsx";
 import MyCoursesPage from "./pages/Profile/MyCoursesPage.jsx";
 import './index.css'
 import NotificationsPage from "./pages/Profile/NotificationsPage.jsx";
-import RoadmapPage from "./pages/RoadmapPage.jsx";
+import RoadmapPage from "./pages/Profile/RoadmapPage.jsx";
 import ChallengePage from "./pages/Learning/ChallengePage.jsx";
 
 function App() {

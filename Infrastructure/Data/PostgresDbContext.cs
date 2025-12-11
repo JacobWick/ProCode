@@ -31,7 +31,7 @@ namespace Infrastructure.Data
             
             modelBuilder.Entity<Course>()
                 .HasOne(c => c.Creator)
-                .WithMany()
+                .WithMany(u => u.Courses)
                 .HasForeignKey(c => c.CreatorId)
                 .OnDelete(DeleteBehavior.Cascade);
             
@@ -49,9 +49,8 @@ namespace Infrastructure.Data
                 .OnDelete(DeleteBehavior.Cascade);
             
             modelBuilder.Entity<Exercise>()
-                .HasOne(e => e.Test)
+                .HasMany(e => e.Tests)
                 .WithOne(t => t.Exercise)
-                .HasForeignKey<Test>(t => t.ExerciseId)
                 .OnDelete(DeleteBehavior.Cascade);
             
             modelBuilder.Entity<Exercise>()

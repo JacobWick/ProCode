@@ -1,9 +1,7 @@
-import { Box, Button, Text, useToast, VStack, useColorModeValue, HStack, Badge } from "@chakra-ui/react";
 import { CheckIcon, WarningIcon } from "@chakra-ui/icons";
 import {execute, executeSolution, submitExerciseSolution} from "../api.js";
 import {
     Box,
-    Button,
     Text,
     useToast,
     VStack,
@@ -25,13 +23,13 @@ import {
     TabPanel,
     Code,
 } from "@chakra-ui/react";
-import { CheckIcon, WarningIcon, ViewIcon } from "@chakra-ui/icons";
-import { execute, executeSolution, getSolutionExampleById, completeLesson } from "../api.js";
+
+import { ViewIcon } from "@chakra-ui/icons";
+import { getSolutionExampleById, completeLesson } from "../api.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 
-const Output = ({ editorRef, language, inputData, outputData, exerciseId, onExerciseComplete, solutionExampleId, courseId, lessonId, lesson }) => {
+const Output = ({ editorRef, language, exerciseId, solutionExampleId, courseId, lessonId, lesson }) => {
     const toast = useToast();
     const navigate = useNavigate();
     const [output, setOutput] = useState(null);
