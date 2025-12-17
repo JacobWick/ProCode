@@ -9,14 +9,14 @@ namespace Application.Courses.CommandHandlers
     public class EnrollInCourseCommandHandler : IRequestHandler<EnrollInCourseCommand, bool>
     {
         private readonly IRepository<Course> _courseRepo;
-        private readonly UserManager<User> _userManager;
+        private readonly IRepository<User> _userRepo;
         private readonly IUserContextService _userContext;
 
-        public EnrollInCourseCommandHandler(IRepository<Course> courseRepo, UserManager<User> userManager, IUserContextService userContext)
+        public EnrollInCourseCommandHandler(IRepository<Course> courseRepo, IRepository<User> userRepo, IUserContextService userContext)
         {
             _courseRepo = courseRepo;
             _userContext = userContext;
-            _userManager = userManager;
+            _userRepo = userRepo;
         }
 
         public async Task<bool> Handle(EnrollInCourseCommand request, CancellationToken cancellationToken)
@@ -28,7 +28,10 @@ namespace Application.Courses.CommandHandlers
                 throw new Exception("You have to be logged in");
             }
 
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var user = await _userRepo.GetByIdAsync(
+                userId,
+                includes: u => u.CoursesEnrolledIn,
+                cancellationToken: cancellationToken);
 
             if (user == null)
             {
@@ -38,6 +41,11 @@ namespace Application.Courses.CommandHandlers
             var course = await _courseRepo.GetByIdAsync(request.CourseId, cancellationToken: cancellationToken);
 
             if (course == null)
+            {
+                return false;
+            }
+
+            if (user.CoursesEnrolledIn.Any(u => u.CourseId == course.Id))
             {
                 return false;
             }

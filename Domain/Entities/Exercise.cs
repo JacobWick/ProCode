@@ -14,9 +14,13 @@ public class Exercise : IEntity
     public Lesson? Lesson { get; set; }
     public Guid? LessonId { get; set; }
 
-    public Test? Test { get; set; }
+    public ICollection<Test> Tests { get; set; } = new List<Test>();
+
+    public ValidationMethod ValidationMethod { get; set; }
 
     public string Description { get; set; } = string.Empty;
     public string InitialContent { get; set; } = string.Empty;
-    
+
+    public Guid? ChallengeId { get; set; }
+    public Challenge? Challenge { get; set; }
 }

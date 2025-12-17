@@ -65,4 +65,17 @@ public class UserController : ControllerBase
         }
         return Ok(result);
     }
+
+    [MapToApiVersion(1)]
+    [HttpGet("me/courses/{courseId}/is-enrolled")]
+    public async Task<IActionResult> IsUserEnrolledInCourse(Guid courseId, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new IsUserEnrolledInCourseQuery
+        {
+            CourseId = courseId
+        }, cancellationToken);
+
+        return Ok(result);
+    }
+
 }

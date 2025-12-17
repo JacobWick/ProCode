@@ -67,7 +67,4 @@ public class NotificationController: ControllerBase
         var count = await _mediator.Send(query);
         return Ok(count);
     }
-    
-
-    
 }

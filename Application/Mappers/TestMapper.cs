@@ -10,9 +10,7 @@ public static class TestMapper
         return new TestDto
         {
             Id = test.Id,
-            ExerciseId = test.Exercise?.Id ??  Guid.Empty,
-            InputData = test.InputData.ToList(),
-            OutputData = test.OutputData.ToList()
+            ExerciseId = test.Exercise?.Id ?? Guid.Empty,
         };
     }
     public static List<TestDto> MapListToDto(ICollection<Test> tests)

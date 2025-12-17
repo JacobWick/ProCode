@@ -29,7 +29,7 @@ namespace Application.Courses.QueriesHandlers
         public async Task<RoadmapDto> Handle(GetPersonalizedRoadmapsQuery request, CancellationToken cancellationToken)
         {
             var userId = _userContext.UserId;
-
+            
             if (userId == Guid.Empty)
                 throw new UnauthorizedAccessException("You are not authorized to access this resource.");
 
@@ -43,6 +43,7 @@ namespace Application.Courses.QueriesHandlers
                 includes: new Expression<Func<Course, object>>[]
                 {
                     c => c.UsersEnrolled,
+                    c => c.Creator
                 },
                 cancellationToken: cancellationToken); 
 

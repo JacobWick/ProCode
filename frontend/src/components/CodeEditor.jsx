@@ -1,20 +1,19 @@
-﻿import { Box, HStack, useColorModeValue } from '@chakra-ui/react';
+﻿import { Button, Box, HStack, useColorModeValue } from '@chakra-ui/react';
 import { Editor } from '@monaco-editor/react';
 import { useRef, useState, useEffect } from "react";
 import LanguageSelector from "./LanguageSelector.jsx";
 import { CODE_DEFAULT_CODE } from "../constants.js";
 import Output from "./Output.jsx";
 
-const CodeEditor = ({initialContent, inputData, outputData, exerciseId, courseId, lessonId, lesson, solutionExampleId}) => {
+const CodeEditor = ({ initialContent, inputData, outputData, exerciseId, onExerciseComplete, courseId, lessonId, solutionExampleId }) => {
     const editorRef = useRef();
     const [value, setValue] = useState("");
-    const [language, setLanguage] = useState("javascript");
+    const [language, setLanguage] = useState("python");
     const monacoTheme = useColorModeValue("vs", "vs-dark");
 
     useEffect(() => {
         if (initialContent) {
-            const commentedContent = `// ${initialContent}\n\n${CODE_DEFAULT_CODE[language]}`;
-            setValue(commentedContent);
+            setValue(initialContent);
         } else {
             setValue(CODE_DEFAULT_CODE[language]);
         }
@@ -28,8 +27,7 @@ const CodeEditor = ({initialContent, inputData, outputData, exerciseId, courseId
     const onSelect = (newLanguage) => {
         setLanguage(newLanguage);
         if (initialContent) {
-            const commentedContent = `// ${initialContent}\n\n${CODE_DEFAULT_CODE[newLanguage]}`;
-            setValue(commentedContent);
+            setValue(initialContent);
         } else {
             setValue(CODE_DEFAULT_CODE[newLanguage]);
         }
@@ -55,9 +53,9 @@ const CodeEditor = ({initialContent, inputData, outputData, exerciseId, courseId
                     inputData={inputData}
                     outputData={outputData}
                     exerciseId={exerciseId}
+                    onExerciseComplete={onExerciseComplete}
                     courseId={courseId}
                     lessonId={lessonId}
-                    lesson={lesson}
                     solutionExampleId={solutionExampleId}
                 />
             </HStack>

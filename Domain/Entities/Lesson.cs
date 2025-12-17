@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 
 namespace Domain.Entities;
 
@@ -9,7 +8,7 @@ public class Lesson  : IEntity
     
     public Progress? Progress { get; set; }
 
-    public Course? Course { get; set; }
+    public Course Course { get; set; } = null!;
     public Guid CourseId { get; set; }
 
     public ICollection<Exercise> Exercises { get; set; } = new List<Exercise>();

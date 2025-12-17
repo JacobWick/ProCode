@@ -2,7 +2,6 @@
 using Application.Lessons.Commands;
 using Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Application.Lessons.CommandHandlers
 {
@@ -22,6 +21,9 @@ namespace Application.Lessons.CommandHandlers
         public async Task<bool> Handle(CompleteLessonCommand request, CancellationToken cancellationToken)
         {
             var userId = _userContextService.UserId;
+
+            if (userId == Guid.Empty)
+                throw new Exception("User not logged in");
 
             var progressExists = await _progressRepo.GetAsync(
                 p => p.User.Id == userId && p.Lesson.Id == request.LessonId,

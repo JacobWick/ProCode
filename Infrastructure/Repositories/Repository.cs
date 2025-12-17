@@ -46,8 +46,8 @@ namespace Infrastructure.Repositories;
         public async Task<E?> GetByIdAsync (
             Guid id, 
             Expression<Func<E, E>>? selector = null, 
-            Expression<Func<E, object>>[]? includes = null, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            params Expression<Func<E, object>>[]? includes )
         {
             IQueryable<E> query = context.Set<E>().Where(e => e.Id == id);
             if (includes != null)
