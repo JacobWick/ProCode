@@ -19,12 +19,17 @@ import {
     ListItem,
     Avatar,
     AspectRatio,
-    Progress
+    Progress,
+    useToast,
+    IconButton,
+    Wrap,
+    WrapItem,
+    Divider
 } from "@chakra-ui/react";
-import { getLessonById, getCourseById, getCourseProgress } from "../../api.js";
+import { getLessonById, getCourseById, getCourseProgress, completeLesson } from "../../api.js";
 import Navbar from "../../components/Navbar.jsx";
 import Footer from "../../components/Footer.jsx";
-import { ExternalLinkIcon, CheckCircleIcon } from "@chakra-ui/icons";
+import { ExternalLinkIcon, CheckCircleIcon, ArrowBackIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 function LessonPage() {
     const { courseId, lessonId } = useParams();
@@ -34,6 +39,8 @@ function LessonPage() {
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [completing, setCompleting] = useState(false);
+    const toast = useToast();
     const progressPercent = progress?.percentage || 0
     const bg = useColorModeValue("gray.50", "gray.900");
     const cardBg = useColorModeValue("white", "gray.800");
@@ -48,11 +55,17 @@ function LessonPage() {
             setLoading(true);
             setError(null);
             try {
+                console.log("[LessonPage] Fetching data for lessonId:", lessonId, "courseId:", courseId);
                 const [lessonRes, courseRes, progressRes] = await Promise.all([
                     getLessonById(lessonId),
                     courseId ? getCourseById(courseId) : Promise.resolve({ data: null }),
                     courseId ? getCourseProgress(courseId) : Promise.resolve({ data: null }),
                 ]);
+
+                console.log("[LessonPage] Raw lesson response:", lessonRes?.data);
+                console.log("[LessonPage] lesson.exercises (camelCase):", lessonRes?.data?.exercises);
+                console.log("[LessonPage] lesson.Exercises (PascalCase):", lessonRes?.data?.Exercises);
+                console.log("[LessonPage] All lesson keys:", Object.keys(lessonRes?.data || {}));
 
                 setLesson(lessonRes?.data ?? null);
                 setCourse(courseRes?.data ?? null);
@@ -89,17 +102,37 @@ function LessonPage() {
     const prevLessonId = currentIndex > 0 ? lessonsList[currentIndex - 1]?.id : null;
     const nextLessonId = currentIndex >= 0 && currentIndex < lessonsList.length - 1 ? lessonsList[currentIndex + 1]?.id : null;
 
-    const firstExerciseId =
-        Array.isArray(lesson?.exercises) && lesson.exercises.length > 0
-            ? normalizeId(lesson.exercises[0])
-            : null;
 
     const handleStartExercise = () => {
-        if (!firstExerciseId) {
+        if (!lesson.exercises.length) {
             alert("Ta lekcja nie zawiera jeszcze ćwiczeń.");
             return;
         }
-        navigate(`/courses/${courseId}/lessons/${lesson.id ?? lesson.Id}/exercises/${firstExerciseId}`);
+
+        navigate(`/courses/${courseId}/lessons/${lessonId}/exercises/${lesson.exercises[0]}`);
+    };
+
+    const handleMarkLessonCompleted = async () => {
+        if (!lesson?.id && !lesson?.Id) return;
+        const id = lesson?.id ?? lesson?.Id;
+        if (progress?.completedLessonIds?.some(cid => String(cid) === String(id))) {
+            toast({ title: 'Już oznaczona', description: 'Ta lekcja jest już oznaczona jako wykonana.', status: 'info' });
+            return;
+        }
+        try {
+            setCompleting(true);
+            await completeLesson(id);
+            toast({ title: 'Gotowe', description: 'Lekcja została oznaczona jako wykonana.', status: 'success' });
+            if (courseId) {
+                const resp = await getCourseProgress(courseId);
+                setProgress(resp.data);
+            }
+        } catch (err) {
+            console.error('complete lesson error:', err);
+            toast({ title: 'Błąd', description: 'Nie udało się oznaczyć lekcji jako wykonanej.', status: 'error' });
+        } finally {
+            setCompleting(false);
+        }
     };
     const toEmbedUrl = (url) => {
         if (!url) return null;
@@ -167,33 +200,99 @@ function LessonPage() {
 
             <Box flex="1" py={10}>
                 <Container maxW="container.xl">
-                    <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
-                        <Box gridColumn={{ base: "1 / -1", md: "1 / 3" }}>
-                            <VStack align="start" spacing={4}>
-                                <HStack spacing={4} mb={2} w="100%">
-                                    <Button variant="ghost" onClick={() => navigate(`/courses/${courseId}`)}>
-                                        ← Powrót do kursu
-                                    </Button>
+                    {/* Nawigacja górna */}
+                    <HStack spacing={2} mb={6} flexWrap="wrap">
+                        <Button 
+                            leftIcon={<ArrowBackIcon />}
+                            variant="ghost" 
+                            onClick={() => navigate(`/courses/${courseId}`)}
+                            size={{ base: "sm", md: "md" }}
+                        >
+                            Powrót
+                        </Button>
+                        
+                        <Box flex="1" />
+                        
+                        <IconButton
+                            icon={<ChevronLeftIcon />}
+                            onClick={() => prevLessonId && navigate(`/courses/${courseId}/lessons/${prevLessonId}`)}
+                            isDisabled={!prevLessonId}
+                            aria-label="Poprzednia lekcja"
+                            size={{ base: "sm", md: "md" }}
+                        />
+                        
+                        <IconButton
+                            icon={<ChevronRightIcon />}
+                            onClick={() => nextLessonId && navigate(`/courses/${courseId}/lessons/${nextLessonId}`)}
+                            isDisabled={!nextLessonId}
+                            aria-label="Następna lekcja"
+                            size={{ base: "sm", md: "md" }}
+                        />
+                    </HStack>
 
-                                    <Button
-                                        onClick={() => prevLessonId && navigate(`/courses/${courseId}/lessons/${prevLessonId}`)}
-                                        isDisabled={!prevLessonId}
+                    <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={6}>
+                        {/* Główna zawartość */}
+                        <Box gridColumn={{ base: "1 / -1", lg: "1 / 3" }}>
+                            <VStack align="stretch" spacing={6}>
+                                {/* Nagłówek lekcji */}
+                                <Box
+                                    bg={cardBg}
+                                    borderRadius="lg"
+                                    borderWidth="1px"
+                                    borderColor={useColorModeValue("gray.200", "gray.700")}
+                                    p={6}
+                                    shadow="sm"
+                                >
+                                    <VStack align="start" spacing={3}>
+                                        <Heading size="lg" color={titleColor}>
+                                            {lesson.title ?? "Brak tytułu lekcji"}
+                                        </Heading>
+
+                                        {course?.title && (
+                                            <Text fontSize="sm" color={metaColor}>
+                                                Kurs: <Text as="span" color={linkColor} fontWeight="semibold">{course.title}</Text>
+                                            </Text>
+                                        )}
+
+                                        <Text fontSize="sm" color={metaColor}>
+                                            Liczba ćwiczeń: <Text as="span" color={titleColor} fontWeight="semibold">
+                                                {Array.isArray(lesson.exercises) ? lesson.exercises.length : 0}
+                                            </Text>
+                                        </Text>
+
+                                        {lesson.description && (
+                                            <>
+                                                <Divider />
+                                                <Text color={titleColor} fontSize="md" lineHeight="tall">
+                                                    {lesson.description}
+                                                </Text>
+                                            </>
+                                        )}
+                                    </VStack>
+                                </Box>
+
+                                {/* Wideo */}
+                                {embedUrl && (
+                                    <Box
+                                        bg={cardBg}
+                                        borderRadius="lg"
+                                        borderWidth="1px"
+                                        borderColor={useColorModeValue("gray.200", "gray.700")}
+                                        overflow="hidden"
+                                        shadow="sm"
                                     >
-                                        Poprzednia lekcja
-                                    </Button>
+                                        <AspectRatio ratio={16 / 9} w="100%">
+                                            <Box as="iframe" src={embedUrl} title={lesson.title} allowFullScreen />
+                                        </AspectRatio>
+                                        <Box p={3} borderTopWidth="1px" borderColor={useColorModeValue("gray.200", "gray.700")}>
+                                            <ChakraLink href={lesson.videoUri} isExternal color={linkColor} fontSize="sm">
+                                                Otwórz w osobnej karcie <ExternalLinkIcon mx="2px" />
+                                            </ChakraLink>
+                                        </Box>
+                                    </Box>
+                                )}
 
-                                    <Button
-                                        onClick={() => nextLessonId && navigate(`/courses/${courseId}/lessons/${nextLessonId}`)}
-                                        isDisabled={!nextLessonId}
-                                    >
-                                        Następna lekcja
-                                    </Button>
-
-                                    <Button colorScheme="purple" ml="auto" onClick={handleStartExercise}>
-                                        Przystąp do rozwiązania zadania
-                                    </Button>
-                                </HStack>
-
+                                {/* Materiały */}
                                 <Box
                                     bg={cardBg}
                                     borderRadius="lg"
@@ -203,56 +302,65 @@ function LessonPage() {
                                     shadow="sm"
                                 >
                                     <VStack align="start" spacing={4}>
-                                        <Heading size="lg" color={titleColor}>
-                                            {lesson.title ?? "Brak tytułu lekcji"}
+                                        <Heading size="sm" color={titleColor}>
+                                            Materiały do lekcji
                                         </Heading>
-
-                                        {course?.title && (
-                                            <Text fontSize="sm" color={metaColor}>
-                                                Kurs: <Text as="span" color={titleColor} fontWeight="semibold">{course.title}</Text>
+                                        
+                                        {!embedUrl && (
+                                            <Text color={metaColor} fontSize="sm">
+                                                Brak materiału wideo
                                             </Text>
-                                        )}
-
-                                        {embedUrl ? (
-                                            <>
-                                                <AspectRatio ratio={16 / 9} w="100%" borderRadius="md" overflow="hidden" bg="blackAlpha.200">
-                                                    <Box as="iframe" src={embedUrl} title={lesson.title} allowFullScreen />
-                                                </AspectRatio>
-
-                                                <Text mt={2} fontSize="sm" color={metaColor}>
-                                                    <ChakraLink href={lesson.videoUri} isExternal color={linkColor}>
-                                                        Otwórz w osobnej karcie <ExternalLinkIcon mx="2px" />
-                                                    </ChakraLink>
-                                                </Text>
-                                            </>
-                                        ) : (
-                                            <Text color={metaColor}>Brak materiału wideo</Text>
                                         )}
 
                                         {lesson.textUri ? (
-                                            <Text>
-                                                Materiały tekstowe:{" "}
+                                            <Text fontSize="sm">
                                                 <ChakraLink href={lesson.textUri} isExternal color={linkColor}>
-                                                    Otwórz tekst <ExternalLinkIcon mx="2px" />
+                                                    📄 Materiały tekstowe <ExternalLinkIcon mx="2px" />
                                                 </ChakraLink>
                                             </Text>
                                         ) : (
-                                            <Text color={metaColor}>Brak materiałów tekstowych</Text>
-                                        )}
-
-                                        <Box pt={4} w="100%">
-                                            <Text fontSize="sm" color={metaColor}>
-                                                Liczba ćwiczeń:{" "}
-                                                <Text as="span" color={titleColor} fontWeight="semibold">
-                                                    {Array.isArray(lesson.exercises) ? lesson.exercises.length : 0}
-                                                </Text>
+                                            <Text color={metaColor} fontSize="sm">
+                                                Brak materiałów tekstowych
                                             </Text>
-                                        </Box>
+                                        )}
+                                    </VStack>
+                                </Box>
+
+                                {/* Akcje */}
+                                <Box
+                                    bg={cardBg}
+                                    borderRadius="lg"
+                                    borderWidth="1px"
+                                    borderColor={useColorModeValue("gray.200", "gray.700")}
+                                    p={6}
+                                    shadow="sm"
+                                >
+                                    <VStack align="stretch" spacing={3}>
+                                        <Button 
+                                            colorScheme="purple" 
+                                            size="lg"
+                                            onClick={handleStartExercise}
+                                            w="100%"
+                                        >
+                                            Przystąp do rozwiązania zadania
+                                        </Button>
+
+                                        <Button
+                                            variant="outline"
+                                            colorScheme="green"
+                                            size="lg"
+                                            onClick={handleMarkLessonCompleted}
+                                            isLoading={completing}
+                                            w="100%"
+                                        >
+                                            Oznacz jako wykonane
+                                        </Button>
                                     </VStack>
                                 </Box>
                             </VStack>
                         </Box>
 
+                        {/* Sidebar z lekcjami */}
                         <Box>
                             <Box
                                 bg={cardBg}
@@ -261,41 +369,47 @@ function LessonPage() {
                                 borderColor={useColorModeValue("gray.200", "gray.700")}
                                 p={4}
                                 shadow="sm"
-                                position="sticky"
-                                top="20"
-                                maxH="70vh"
+                                position={{ base: "relative", lg: "sticky" }}
+                                top={{ base: "0", lg: "20" }}
+                                maxH={{ base: "auto", lg: "80vh" }}
                                 overflowY="auto"
                             >
-                                <VStack align="start" spacing={3}>
-                                    <HStack w="100%" justify="space-between">
+                                <VStack align="stretch" spacing={4}>
+                                    <HStack justify="space-between">
                                         <Heading size="sm" color={titleColor}>
                                             Lekcje
                                         </Heading>
-                                        <Text fontSize="sm" color={metaColor}>
+                                        <Badge colorScheme="purple" fontSize="xs">
                                             {lessonsList.length}
-                                        </Text>
+                                        </Badge>
                                     </HStack>
+
                                     {progress && (
-                                        <Box w="100%" py={2}>
-                                            <HStack justify="space-between" mb={2}>
-                                                <Text fontSize="xs" fontWeight="bold" color="purple.500">
-                                                    Postęp kursu
-                                                </Text>
-                                                <Text fontSize="xs" color={metaColor}>
-                                                    {Math.round(progressPercent)}%
-                                                </Text>
-                                            </HStack>
-                                            <Progress
-                                                value={progressPercent}
-                                                size="sm"
-                                                colorScheme="purple"
-                                                borderRadius="full"
-                                                hasStripe={progressPercent === 100}
-                                                isAnimated={progressPercent === 100}
-                                            />
-                                        </Box>
+                                        <>
+                                            <Divider />
+                                            <Box>
+                                                <HStack justify="space-between" mb={2}>
+                                                    <Text fontSize="xs" fontWeight="bold" color="purple.500">
+                                                        Postęp kursu
+                                                    </Text>
+                                                    <Text fontSize="xs" color={metaColor} fontWeight="semibold">
+                                                        {Math.round(progressPercent)}%
+                                                    </Text>
+                                                </HStack>
+                                                <Progress
+                                                    value={progressPercent}
+                                                    size="sm"
+                                                    colorScheme="purple"
+                                                    borderRadius="full"
+                                                    hasStripe={progressPercent === 100}
+                                                    isAnimated={progressPercent === 100}
+                                                />
+                                            </Box>
+                                            <Divider />
+                                        </>
                                     )}
-                                    <List w="100%" spacing={2}>
+
+                                    <List spacing={2}>
                                         {lessonsList.map((l, idx) => {
                                             const isActive = String(l.id) === String(lesson.id ?? lesson.Id);
                                             const isCompleted = progress?.completedLessonIds?.some(completedLessonId => String(completedLessonId) === String(l.id));
@@ -305,19 +419,30 @@ function LessonPage() {
                                                     p={3}
                                                     borderRadius="md"
                                                     bg={isActive ? activeBg : "transparent"}
-                                                    borderWidth={isActive ? "1px" : "0"}
+                                                    borderWidth={isActive ? "2px" : "1px"}
                                                     borderColor={isActive ? activeBorder : "transparent"}
-                                                    _hover={{ bg: useColorModeValue("gray.50", "gray.700"), cursor: "pointer" }}
+                                                    _hover={{ 
+                                                        bg: isActive ? activeBg : useColorModeValue("gray.100", "gray.700"), 
+                                                        cursor: "pointer",
+                                                        transform: "translateX(2px)",
+                                                        transition: "all 0.2s"
+                                                    }}
                                                     onClick={() => {
                                                         if (l.id) navigate(`/courses/${courseId}/lessons/${l.id}`);
                                                     }}
                                                     display="flex"
                                                     alignItems="center"
                                                     gap={3}
+                                                    transition="all 0.2s"
                                                 >
-                                                    <Avatar size="sm" name={l.title} />
+                                                    <Avatar size="sm" name={l.title} bg={isActive ? "purple.500" : "gray.400"} />
                                                     <Box flex="1" minW={0}>
-                                                        <Text fontSize="sm" color={isActive ? titleColor : titleColor} fontWeight={isActive ? "semibold" : "normal"} noOfLines={1}>
+                                                        <Text 
+                                                            fontSize="sm" 
+                                                            color={titleColor} 
+                                                            fontWeight={isActive ? "bold" : "normal"} 
+                                                            noOfLines={2}
+                                                        >
                                                             {l.title}
                                                         </Text>
                                                         <Text fontSize="xs" color={metaColor}>
@@ -325,15 +450,17 @@ function LessonPage() {
                                                         </Text>
                                                     </Box>
                                                     {isActive ? (
-                                                        <Badge colorScheme="purple">Aktualna</Badge>
+                                                        <Badge colorScheme="purple" fontSize="xs">Aktualna</Badge>
                                                     ) : isCompleted ? (
-                                                        <CheckCircleIcon color="green.500" boxSize={4} />
+                                                        <CheckCircleIcon color="green.500" boxSize={5} />
                                                     ) : null}
                                                 </ListItem>
                                             );
                                         })}
                                         {lessonsList.length === 0 && (
-                                            <Text fontSize="sm" color={metaColor}>Brak listy lekcji w kursie.</Text>
+                                            <Text fontSize="sm" color={metaColor} textAlign="center" py={4}>
+                                                Brak listy lekcji w kursie.
+                                            </Text>
                                         )}
                                     </List>
                                 </VStack>

@@ -45,8 +45,20 @@ export const solutionSchema = z.object({
 export const testSchema = z.object({
     testCases: z.array(
         z.object({
-            input: z.string().min(1, "Wymagane"),
-            output: z.string().min(1, "Wymagane"),
+            inputs: z.array(
+                z.object({
+                    varName: z.string().min(1, "Nazwa zmiennej jest wymagana"),
+                    value: z.string().min(1, "Wartość jest wymagana"),
+                    type: z.enum(["int", "string", "float", "bool"])
+                })
+            ).min(1, "Wymagana co najmniej jedna zmienna wejściowa"),
+            outputs: z.array(
+                z.object({
+                    varName: z.string().min(1, "Nazwa zmiennej jest wymagana"),
+                    value: z.string().min(1, "Wartość jest wymagana"),
+                    type: z.enum(["int", "string", "float", "bool"])
+                })
+            ).min(1, "Wymagana co najmniej jedna zmienna wyjściowa")
         })
-    ).min(1, "Musisz podać przynajmniej jeden przypadek testowy"),
+    ).min(1, "Musisz podać przynajmniej jeden przypadek testowy")
 });

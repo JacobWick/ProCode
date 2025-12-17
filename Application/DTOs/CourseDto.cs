@@ -13,5 +13,5 @@ public class CourseDto
     public List<Guid> Lessons { get; set; }
     public DifficultyLevel DifficultyLevel { get; set; }
     public int Rating { get; set; }
-    
+
 }

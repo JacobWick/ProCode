@@ -143,11 +143,7 @@ export default function CreateCoursePage() {
                     const exerciseId = createdExerciseResponse.data.id;
 
                     if (exercise.testCases && exercise.testCases.length > 0) {
-                        await createTest({
-                            exerciseId: exerciseId,
-                            inputData: exercise.testCases.map(tc => tc.input),
-                            outputData: exercise.testCases.map(tc => tc.output),
-                        });
+                        await createTest(exercise.testCases, exerciseId);
                     }
 
                     if (exercise.solution) {

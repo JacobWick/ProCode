@@ -84,6 +84,10 @@ export const getCourses = async () => {
 export const getCourseById = async (courseId) => {
     return await backendAPI.get(`/courses/${courseId}`);
 }
+
+export const getCourseDetails = async (courseId) => {
+    return await backendAPI.get(`/courses/${courseId}/details`);
+}
 export const createLesson = async (lessonData) => {
     return await backendAPI.post("/lessons", lessonData);
 }
@@ -126,8 +130,42 @@ export const login = async (data) => {
 export const register = async (data) => {
     return await backendAPI.post(`/auth/register`, data)
 }
-    export const createTest = async (testData) => {
-        return await backendAPI.post("/tests", testData);
+    export const createTest = async (testCases, exerciseId) => {
+        let inputData = {};
+        let outputData = {};
+
+        if (Array.isArray(testCases)) {
+            testCases.forEach((tc) => {
+                if (Array.isArray(tc.inputs)) {
+                    tc.inputs.forEach((inp) => {
+                        if (inp.varName && inp.value !== undefined) {
+                            inputData[inp.varName] = {
+                                value: inp.value,
+                                type: inp.type || 'int'
+                            };
+                        }
+                    });
+                }
+                if (Array.isArray(tc.outputs)) {
+                    tc.outputs.forEach((out) => {
+                        if (out.varName && out.value !== undefined) {
+                            outputData[out.varName] = {
+                                value: out.value,
+                                type: out.type || 'int'
+                            };
+                        }
+                    });
+                }
+            });
+        }
+
+        const payload = {
+            inputData: inputData,
+            outputData: outputData,
+            exerciseId: exerciseId
+        };
+
+        return await backendAPI.post("/tests", payload);
     }
     export const deleteTest = async (id) => {
     return await backendAPI.delete(`/tests/${id}`);
@@ -156,6 +194,11 @@ export const getMyProfile = async () => {
 }
 export const getCourseProgress = async (id) => {
     return await backendAPI.get(`/courses/${id}/progress`)
+}
+
+// Check if a user is enrolled in a course
+export const isUserEnrolled = async (userId, courseId) => {
+    return await backendAPI.get(`/user/${userId}/courses/${courseId}/is-enrolled`);
 }
 export const getUsers = async () => {
     return await backendAPI.get("/user");
@@ -232,4 +275,8 @@ export const completeLesson = async (id) => {
 }
 export const enrollInCourse = async (id) => {
     return await backendAPI.post(`/courses/${id}/enroll`);
+}
+
+export const isUserEnrolledInCourse = async (courseId) => {
+    return await backendAPI.get(`/user/me/courses/${courseId}/is-enrolled`);
 }

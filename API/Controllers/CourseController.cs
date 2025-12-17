@@ -104,4 +104,12 @@ public class CourseController : ControllerBase
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
+
+    [MapToApiVersion(1)]
+    [HttpGet("{id}/details")]
+    public async Task<IActionResult> GetCourseDetails(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetCourseDetailsQuery { CourseId = id }, cancellationToken);
+        return result is not null ? Ok(result) : NotFound();
+    }
 }

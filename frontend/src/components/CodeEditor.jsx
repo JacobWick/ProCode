@@ -1,4 +1,4 @@
-﻿import { Box, HStack, useColorModeValue } from '@chakra-ui/react';
+﻿import { Button, Box, HStack, useColorModeValue } from '@chakra-ui/react';
 import { Editor } from '@monaco-editor/react';
 import { useRef, useState, useEffect } from "react";
 import LanguageSelector from "./LanguageSelector.jsx";
@@ -56,7 +56,6 @@ const CodeEditor = ({ initialContent, inputData, outputData, exerciseId, onExerc
                     onExerciseComplete={onExerciseComplete}
                     courseId={courseId}
                     lessonId={lessonId}
-                    lesson={lesson}
                     solutionExampleId={solutionExampleId}
                 />
             </HStack>
