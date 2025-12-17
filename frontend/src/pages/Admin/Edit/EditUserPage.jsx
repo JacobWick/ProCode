@@ -264,7 +264,7 @@ export default function EditUserPage() {
                                     <HStack justify="flex-end" spacing={3} pt={4}>
                                         <Button
                                             variant="ghost"
-                                            onClick={() => navigate('/admin')}
+                                            onClick={() => navigate('/administrator')}
                                         >
                                             Anuluj
                                         </Button>

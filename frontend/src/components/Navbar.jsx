@@ -110,9 +110,9 @@ const Navbar = () => {
                                         <MenuItem onClick={() => navigate('/administrator')}>
                                             Panel Administratora
                                     </MenuItem>)}
-                                    <MenuItem onClick={() => navigate('/my-profile')}>
+                                    {user?.role != "Admin" && (<MenuItem onClick={() => navigate('/my-profile')}>
                                         Mój profil
-                                    </MenuItem>
+                                    </MenuItem>)}
                                     <MenuItem onClick={() => navigate('/my-courses')}>
                                         Moje kursy
                                     </MenuItem>
