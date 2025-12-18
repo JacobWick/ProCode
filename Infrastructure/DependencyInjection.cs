@@ -32,6 +32,8 @@ public static class DependencyInjection
             provider.GetRequiredService<PostgresDbContext>());
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IChallengeRepository, ChallengeRepository>();
+        services.AddScoped<ICourseRepository, CourseRepository>();
+
         services.AddHttpClient<IPistonApiClient, PistonApiClient>(client =>
         {
             client.BaseAddress = new Uri("https://emkc.org/");
