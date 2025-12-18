@@ -81,6 +81,17 @@ export const deleteCourse = async (courseId) => {
 export const getCourses = async () => {
     return await backendAPI.get("/courses");
 }
+export const getPaginatedCourses = async (params = {}) => {
+    const { pageSize = 20, page = 1, query = "", sortBy = "CreatedOn" } = params;
+    return await backendAPI.get("/courses/paginated", {
+        params: {
+            pageSize,
+            page,
+            query,
+            sortBy
+        }
+    });
+}
 export const getCourseById = async (courseId) => {
     return await backendAPI.get(`/courses/${courseId}`);
 }

@@ -239,16 +239,7 @@ function CourseDetailPage() {
                                                 </Text>
                                             </Box>
                                         )}
-                                        {duration && (
-                                            <Box>
-                                                <Text fontSize="xs" color={metaColor} mb={1}>
-                                                    Czas trwania
-                                                </Text>
-                                                <Text fontSize="lg" fontWeight="bold" color={titleColor}>
-                                                    {duration} min
-                                                </Text>
-                                            </Box>
-                                        )}
+
                                     </SimpleGrid>
 
                                     {/* CTA Button */}
@@ -353,20 +344,6 @@ function CourseDetailPage() {
                                                 </Text>
                                                 <Text fontSize="sm" fontWeight="semibold" color={titleColor}>
                                                     {new Date(course.createdOn).toLocaleDateString("pl-PL")}
-                                                </Text>
-                                            </VStack>
-                                        </HStack>
-                                    )}
-
-                                    {duration && (
-                                        <HStack spacing={3}>
-                                            <Icon as={TimeIcon} color={metaColor} />
-                                            <VStack align="start" spacing={0}>
-                                                <Text fontSize="xs" color={metaColor}>
-                                                    Szacowany czas
-                                                </Text>
-                                                <Text fontSize="sm" fontWeight="semibold" color={titleColor}>
-                                                    {duration} minut
                                                 </Text>
                                             </VStack>
                                         </HStack>
