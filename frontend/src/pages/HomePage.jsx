@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Box,
@@ -14,17 +14,19 @@ import {
     VStack,
     HStack,
     useColorModeValue,
+    Spinner,
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ActiveChallenges from '../components/Challenges.jsx';
+import { getPaginatedCourses } from '../api.js';
 
-const Hero = ({ onSearch }) => {
-    const [searchQuery, setSearchQuery] = useState('');
-
+const Hero = ({ onSearch, searchQuery, setSearchQuery }) => {
     const handleSearch = () => {
-        onSearch(searchQuery);
+        if (searchQuery.trim()) {
+            onSearch(searchQuery);
+        }
     };
 
     return (
@@ -62,137 +64,70 @@ const Hero = ({ onSearch }) => {
     );
 };
 
-const CourseCard = ({ title, instructor, rating, students, category, image }) => {
+const WhyProCode = () => {
+    const bgColor = useColorModeValue('white', 'gray.900');
+    const textColor = useColorModeValue('gray.600', 'gray.400');
+    const iconBg = useColorModeValue('purple.50', 'gray.800');
+
+    const features = [
+        { icon: '🎯', text: 'Praktyczne projekty' },
+        { icon: '🏆', text: 'Wyzwania programistyczne' },
+        { icon: '📈', text: 'Śledź swój progres' },
+        { icon: '💡', text: 'Uczenie przez działanie' },
+    ];
+
     return (
-        <Box
-            bg={useColorModeValue('white', 'gray.800')}
-            borderWidth="1px"
-            borderColor={useColorModeValue('gray.200', 'gray.700')}
-            borderRadius="lg"
-            overflow="hidden"
-            transition="transform 0.2s"
-            _hover={{ transform: 'translateY(-4px)', shadow: 'lg' }}
-            cursor="pointer"
-        >
-            <Box h="140px" bg="gray.200" display="flex" alignItems="center" justifyContent="center">
-                <Text fontSize="4xl">{image}</Text>
-            </Box>
-
-            <Box p={4}>
-                <Badge colorScheme="purple" mb={2}>{category}</Badge>
-                <Heading size="sm" mb={2} noOfLines={2}>{title}</Heading>
-                <Text fontSize="sm" color="gray.500" mb={2}>{instructor}</Text>
-
-                <HStack mb={2}>
-                    <Text fontWeight="bold" color="orange.400">{rating}</Text>
-                    <Text fontSize="sm" color="gray.500">({students} uczniów)</Text>
+        <Box bg={bgColor} py={12} borderBottomWidth="1px" borderColor={useColorModeValue('gray.200', 'gray.700')}>
+            <Container maxW="container.xl">
+                <HStack spacing={8} justify="center" flexWrap="wrap">
+                    {features.map((feature, index) => (
+                        <HStack key={index} spacing={2}>
+                            <Box
+                                bg={iconBg}
+                                w="32px"
+                                h="32px"
+                                fontSize="24px"
+                                borderRadius="md"
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                            >
+                                {feature.icon}
+                            </Box>
+                            <Text fontSize="sm" color={textColor} fontWeight="medium">
+                                {feature.text}
+                            </Text>
+                        </HStack>
+                    ))}
                 </HStack>
-            </Box>
-        </Box>
-    );
-};
-
-const FeaturedCourses = () => {
-    const courses = [
-        {
-            title: 'Kompletny kurs React od podstaw',
-            instructor: 'Jan Kowalski',
-            rating: '4.8',
-            students: '12,453',
-            category: 'React',
-            image: '⚛️'
-        },
-        {
-            title: 'Python dla początkujących',
-            instructor: 'Anna Nowak',
-            rating: '4.9',
-            students: '23,891',
-            category: 'Python',
-            image: '🐍'
-        },
-        {
-            title: 'JavaScript - kompletny przewodnik',
-            instructor: 'Piotr Wiśniewski',
-            rating: '4.7',
-            students: '18,234',
-            category: 'JavaScript',
-            image: '📜'
-        },
-        {
-            title: 'Node.js i Express - Backend',
-            instructor: 'Marek Lewandowski',
-            rating: '4.6',
-            students: '9,876',
-            category: 'Backend',
-            image: '🟢'
-        },
-    ];
-
-    return (
-        <Box py={16}>
-            <Container maxW="container.xl">
-                <Heading mb={8}>Popularne kursy</Heading>
-                <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
-                    {courses.map((course, index) => (
-                        <CourseCard key={index} {...course} />
-                    ))}
-                </SimpleGrid>
             </Container>
         </Box>
     );
 };
-
-const Categories = () => {
-    const categories = [
-        { name: 'Frontend', icon: '💻', count: '234 kursy' },
-        { name: 'Backend', icon: '⚙️', count: '189 kursów' },
-        { name: 'Mobile', icon: '📱', count: '145 kursów' },
-        { name: 'Data Science', icon: '📊', count: '198 kursów' },
-        { name: 'DevOps', icon: '🚀', count: '112 kursów' },
-        { name: 'AI/ML', icon: '🤖', count: '167 kursów' },
-    ];
-
-    return (
-        <Box bg={useColorModeValue('gray.50', 'gray.900')} py={16}>
-            <Container maxW="container.xl">
-                <Heading mb={8}>Kategorie</Heading>
-                <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={4}>
-                    {categories.map((cat, index) => (
-                        <Box
-                            key={index}
-                            p={6}
-                            bg={useColorModeValue('white', 'gray.800')}
-                            borderRadius="lg"
-                            textAlign="center"
-                            cursor="pointer" transition="all 0.2s" _hover={{ transform: 'scale(1.05)', shadow: 'md' }}>
-                            <Text fontSize="3xl" mb={2}>{cat.icon}</Text>
-                            <Text fontWeight="bold" mb={1}>{cat.name}</Text>
-                            <Text fontSize="sm" color="gray.500">{cat.count}</Text>
-                        </Box>
-                    ))}
-                </SimpleGrid>
-            </Container>
-        </Box>
-    );
-};
-
 
 export default function HomePage() {
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
 
     const handleSearch = (query) => {
-        console.log('Searching for:', query);
         navigate('/courses', { state: { searchQuery: query } });
+    };
+
+    const handleCategoryClick = (categoryName) => {
+        navigate('/courses', { state: { searchQuery: categoryName } });
     };
 
     return (
         <Box minH="100vh">
             <Navbar />
-            <Hero onSearch={handleSearch} />
-            <FeaturedCourses />
             <ActiveChallenges />
 
-            <Categories />
+            <Hero 
+                onSearch={handleSearch} 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+            />
+            <WhyProCode />
             <Footer />
         </Box>
     );

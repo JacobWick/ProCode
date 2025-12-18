@@ -1,61 +1,79 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Box,
     Container,
     Heading,
     Text,
-    SimpleGrid,
     Badge,
     HStack,
     useColorModeValue,
     VStack,
+    Collapse,
+    Button,
+    Icon,
+    Flex,
 } from '@chakra-ui/react';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+import { Trophy, Calendar, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getActiveChallenges } from '../api.js';
 
-
-const ChallengeCard = ({ challenge }) => {
+const ChallengeItem = ({ challenge }) => {
     const navigate = useNavigate();
+    const itemBg = useColorModeValue('white', 'gray.800');
+    const borderColor = useColorModeValue('gray.200', 'gray.700');
+    const titleColor = useColorModeValue('gray.800', 'white');
+    const descColor = useColorModeValue('gray.600', 'gray.400');
+
     const timeRemaining = new Date(challenge.endTime) - new Date();
-    const daysRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
+    const daysLeft = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
+    const isActive = daysLeft > 0;
 
     return (
         <Box
-            bg={useColorModeValue('white', 'gray.800')}
+            bg={itemBg}
             borderWidth="1px"
-            borderColor={useColorModeValue('gray.200', 'gray.700')}
-            borderRadius="lg"
-            p={6}
+            borderColor={borderColor}
+            borderRadius="md"
+            p={4}
             transition="all 0.2s"
-            _hover={{ transform: 'translateY(-4px)', shadow: 'xl' }}
+            _hover={{
+                borderColor: 'orange.400',
+                shadow: 'sm'
+            }}
             cursor="pointer"
             onClick={() => navigate(`/challenges/${challenge.id}`)}
         >
-            <HStack justify="space-between" mb={3}>
-                <Badge colorScheme="orange" fontSize="sm">🏆 Wyzwanie</Badge>
-                <Badge colorScheme={daysRemaining > 3 ? 'green' : 'red'}>
-                    {daysRemaining > 0 ? `${daysRemaining} dni pozostało` : 'Zakończone'}
+            <Flex justify="space-between" align="start" gap={4}>
+                <HStack spacing={3} flex={1}>
+                    <Icon as={Trophy} boxSize={5} color="orange.500" />
+                    <VStack align="start" spacing={1} flex={1}>
+                        <Text fontWeight="semibold" color={titleColor} fontSize="sm">
+                            {challenge.title}
+                        </Text>
+                        <HStack spacing={3} fontSize="xs" color={descColor}>
+                            <HStack spacing={1}>
+                                <Icon as={FileText} boxSize={3} />
+                                <Text>{challenge.exercises?.length || 0} zadań</Text>
+                            </HStack>
+                            <HStack spacing={1}>
+                                <Icon as={Calendar} boxSize={3} />
+                                <Text>{new Date(challenge.startTime).toLocaleDateString('pl-PL')}</Text>
+                            </HStack>
+                        </HStack>
+                    </VStack>
+                </HStack>
+                <Badge
+                    colorScheme={isActive ? (daysLeft > 3 ? 'green' : 'orange') : 'gray'}
+                    fontSize="xs"
+                    px={2}
+                    py={1}
+                    borderRadius="md"
+                    flexShrink={0}
+                >
+                    {isActive ? `${daysLeft} dni` : 'Zakończone'}
                 </Badge>
-            </HStack>
-
-            <Heading size="md" mb={2} noOfLines={2}>
-                {challenge.title}
-            </Heading>
-
-            <Text color="gray.500" mb={4} noOfLines={3}>
-                {challenge.description}
-            </Text>
-
-            <HStack spacing={4} fontSize="sm" color="gray.600">
-                <HStack>
-                    <Text>📝</Text>
-                    <Text>{challenge.exercises?.length || 0} zadań</Text>
-                </HStack>
-                <HStack>
-                    <Text>📅</Text>
-                    <Text>{new Date(challenge.startTime).toLocaleDateString('pl-PL')}</Text>
-                </HStack>
-            </HStack>
+            </Flex>
         </Box>
     );
 };
@@ -63,13 +81,17 @@ const ChallengeCard = ({ challenge }) => {
 const ActiveChallenges = () => {
     const [challenges, setChallenges] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
+    
+    const borderColor = useColorModeValue('gray.200', 'gray.700');
+    const bgColor = useColorModeValue('gray.50', 'gray.800');
+    const textColor = useColorModeValue('gray.700', 'gray.300');
 
-    useState(() => {
+    useEffect(() => {
         const fetchChallenges = async () => {
             try {
                 const response = await getActiveChallenges();
-                const data = response.data;
-                setChallenges(data);
+                setChallenges(response.data || []);
             } catch (error) {
                 console.error('Error fetching challenges:', error);
             } finally {
@@ -80,31 +102,39 @@ const ActiveChallenges = () => {
         fetchChallenges();
     }, []);
 
-    if (loading) {
-        return null;
-    }
-
-    if (!challenges || challenges.length === 0) {
-        return null;
-    }
+    if (loading || !challenges.length) return null;
 
     return (
-        <Box py={16}>
-            <Container maxW="container.xl">
-                <VStack align="start" spacing={4} mb={8}>
-                    <Heading>🏆 Aktywne Wyzwania</Heading>
-                    <Text color="gray.500" fontSize="lg">
-                        Weź udział w programistycznych wyzwaniach i rywalizuj z innymi uczestnikami!
-                    </Text>
-                </VStack>
+        <Box borderTopWidth="1px" borderColor={borderColor} bg={bgColor}>
+            <Container maxW="container.xl" py={4}>
+                <VStack align="stretch" spacing={3}>
+                    <Button
+                        variant="ghost"
+                        onClick={() => setIsOpen(!isOpen)}
+                        rightIcon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                        justifyContent="space-between"
+                        fontWeight="semibold"
+                        color={textColor}
+                        _hover={{ bg: useColorModeValue('gray.100', 'gray.700') }}
+                        size="sm"
+                    >
+                        <HStack spacing={2}>
+                            <Icon as={Trophy} boxSize={4} color="orange.500" />
+                            <Text>Aktywne wyzwania ({challenges.length})</Text>
+                        </HStack>
+                    </Button>
 
-                <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-                    {challenges.map((challenge) => (
-                        <ChallengeCard key={challenge.id} challenge={challenge} />
-                    ))}
-                </SimpleGrid>
+                    <Collapse in={isOpen} animateOpacity>
+                        <VStack align="stretch" spacing={2} pt={2}>
+                            {challenges.map((challenge) => (
+                                <ChallengeItem key={challenge.id} challenge={challenge} />
+                            ))}
+                        </VStack>
+                    </Collapse>
+                </VStack>
             </Container>
         </Box>
     );
 };
+
 export default ActiveChallenges;
