@@ -21,6 +21,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ActiveChallenges from '../components/Challenges.jsx';
 import { getPaginatedCourses } from '../api.js';
+import {jwtDecode} from "jwt-decode";
 
 const Hero = ({ onSearch, searchQuery, setSearchQuery }) => {
     const handleSearch = () => {
@@ -108,7 +109,27 @@ const WhyProCode = () => {
 export default function HomePage() {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
-
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                setUser({
+                    id: decoded.nameidentifier,
+                    name: decoded.name,
+                    surname: decoded.surname,
+                    email: decoded.email,
+                    role: decoded.role,
+                    username: decoded.username
+                });
+                console.log(decoded)
+            } catch (error) {
+                console.error('Błąd dekodowania tokenu:', error);
+                localStorage.removeItem('token');
+            }
+        }
+    }, []);
     const handleSearch = (query) => {
         navigate('/courses', { state: { searchQuery: query } });
     };
@@ -120,8 +141,9 @@ export default function HomePage() {
     return (
         <Box minH="100vh">
             <Navbar />
+            {user && (
             <ActiveChallenges />
-
+                )}
             <Hero 
                 onSearch={handleSearch} 
                 searchQuery={searchQuery}
