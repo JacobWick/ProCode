@@ -1,4 +1,4 @@
-﻿import { Button, Box, HStack, useColorModeValue } from '@chakra-ui/react';
+﻿import { Box, HStack, useColorModeValue } from '@chakra-ui/react';
 import { Editor } from '@monaco-editor/react';
 import { useRef, useState, useEffect } from "react";
 import LanguageSelector from "./LanguageSelector.jsx";

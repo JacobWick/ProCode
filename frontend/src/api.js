@@ -82,15 +82,36 @@ export const getCourses = async () => {
     return await backendAPI.get("/courses");
 }
 export const getPaginatedCourses = async (params = {}) => {
+    console.log("=== getPaginatedCourses - START ===");
+    console.log("Otrzymane params:", params);
+    
     const { pageSize = 20, page = 1, query = "", sortBy = "CreatedOn" } = params;
-    return await backendAPI.get("/courses/paginated", {
-        params: {
-            pageSize,
-            page,
-            query,
-            sortBy
-        }
+    
+    console.log("Po destrukturyzacji:");
+    console.log("  pageSize:", pageSize);
+    console.log("  page:", page);
+    console.log("  query:", query);
+    console.log("  sortBy:", sortBy);
+    
+    const requestParams = {
+        PageSize: pageSize,
+        Page: page,
+        Query: query,
+        SortBy: sortBy
+    };
+    
+    console.log("Parametry do wysłania:", requestParams);
+    
+    const response = await backendAPI.get("/courses/paginated", {
+        params: requestParams
     });
+    
+    console.log("URL zapytania:", response.config.url);
+    console.log("Pełny config:", response.config);
+    console.log("Odpowiedź z backendu:", response.data);
+    console.log("=== getPaginatedCourses - END ===");
+    
+    return response;
 }
 export const getCourseById = async (courseId) => {
     return await backendAPI.get(`/courses/${courseId}`);

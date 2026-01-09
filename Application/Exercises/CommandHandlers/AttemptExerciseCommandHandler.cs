@@ -15,7 +15,7 @@ namespace Application.Exercises.CommandHandlers
         {
             _exerciseRepo = exerciseRepo;
             _exerciseService = exerciseService;
-        }
+        } 
 
         public async Task<AttemptExerciseResponse> Handle(AttemptExerciseCommand request, CancellationToken cancellationToken)
         {

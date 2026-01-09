@@ -18,7 +18,7 @@ namespace Application.Courses.QueriesHandlers
 
         public async Task<PaginatedResult<CourseResponse>> Handle(GetPaginatedCoursesQuery request, CancellationToken cancellationToken)
         {
-            var courses = await _courseRepo.GetPaginatedCoursesAsync(
+           var courses = await _courseRepo.GetPaginatedCoursesAsync(
                 request.Page, 
                 request.PageSize, 
                 request.Query, 

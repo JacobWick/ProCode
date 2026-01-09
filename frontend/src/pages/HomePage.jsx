@@ -113,13 +113,11 @@ export default function HomePage() {
         navigate('/courses', { state: { searchQuery: query } });
     };
 
-    const handleCategoryClick = (categoryName) => {
-        navigate('/courses', { state: { searchQuery: categoryName } });
-    };
-
     return (
         <Box minH="100vh">
             <Navbar />
+
+            
             <ActiveChallenges />
 
             <Hero 
