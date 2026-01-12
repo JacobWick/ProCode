@@ -23,7 +23,7 @@ import {
 import { StarIcon, SearchIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { getPaginatedCourses, getCourseProgress } from "../../api.js";
 import { COURSE_DIFFICULTY } from "../../constants.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar.jsx";
 import Footer from "../../components/Footer.jsx";
 
@@ -138,6 +138,8 @@ const CourseCard = ({ course, onClick }) => {
 };
 
 function CoursesPage() {
+    const { state } = useLocation();
+
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -145,9 +147,10 @@ function CoursesPage() {
     const [pageSize, setPageSize] = useState(12);
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
-    const [search, setSearch] = useState("");
-    const [searchInput, setSearchInput] = useState("");
+    const [search, setSearch] = useState(state?.searchQuery || "");
+    const [searchInput, setSearchInput] = useState(state?.searchQuery || "");
     const [sortBy, setSortBy] = useState("CreatedOn");
+
     const navigate = useNavigate();
 
     const pageBg = useColorModeValue("gray.50", "gray.900");
