@@ -9,8 +9,8 @@ namespace Application.Courses.Queries
     {
         public int PageSize { get; set; } = 20;
         public int Page { get; set; } = 1;
-        public string Query { get; set; } = string.Empty;
-        public string SortBy { get; set; } = string.Empty;
+        public string? Search { get; set; } = string.Empty;
+        public string? SortBy { get; set; } = string.Empty;
     }
 
     public class CourseResponse

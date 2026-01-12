@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
     Box,
     Text,
@@ -145,7 +145,7 @@ function CoursesPage() {
     const [pageSize, setPageSize] = useState(12);
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
-    const [query, setQuery] = useState("");
+    const [search, setSearch] = useState("");
     const [searchInput, setSearchInput] = useState("");
     const [sortBy, setSortBy] = useState("CreatedOn");
     const navigate = useNavigate();
@@ -162,7 +162,7 @@ function CoursesPage() {
             const res = await getPaginatedCourses({
                 page,
                 pageSize,
-                query,
+                search,
                 sortBy
             });
             
@@ -180,10 +180,10 @@ function CoursesPage() {
 
     useEffect(() => {
         fetchCourses();
-    }, [page, query, sortBy, pageSize]);
+    }, [page, search, sortBy, pageSize]);
 
     const handleSearch = () => {
-        setQuery(searchInput);
+        setSearch(searchInput);
         setPage(1);
     };
 

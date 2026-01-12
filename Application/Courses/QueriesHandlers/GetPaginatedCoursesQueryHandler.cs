@@ -21,7 +21,7 @@ namespace Application.Courses.QueriesHandlers
             var courses = await _courseRepo.GetPaginatedCoursesAsync(
                 request.Page, 
                 request.PageSize, 
-                request.Query, 
+                request.Search, 
                 request.SortBy, 
                 cancellationToken: cancellationToken);
 

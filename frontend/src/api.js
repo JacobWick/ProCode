@@ -82,13 +82,14 @@ export const getCourses = async () => {
     return await backendAPI.get("/courses");
 }
 export const getPaginatedCourses = async (params = {}) => {
-    const { pageSize = 20, page = 1, query = "", sortBy = "CreatedOn" } = params;
+    const { pageSize = 20, page = 1, search = "", sortBy = "CreatedOn" } = params;
+
     return await backendAPI.get("/courses/paginated", {
         params: {
-            pageSize,
-            page,
-            query,
-            sortBy
+            PageSize: pageSize,
+            Page: page,
+            Search: search,
+            SortBy: sortBy
         }
     });
 }
