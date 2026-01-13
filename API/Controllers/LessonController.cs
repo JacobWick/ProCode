@@ -1,7 +1,9 @@
 ﻿using Application.Lessons.Commands;
 using Application.Lessons.Queries;
 using Asp.Versioning;
+using Domain.Constants;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -27,6 +29,7 @@ public class LessonsController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
@@ -36,6 +39,7 @@ public class LessonsController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPost]
     public async Task<IActionResult> Create(CreateLessonCommand command, CancellationToken cancellationToken)
     {
@@ -44,6 +48,7 @@ public class LessonsController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
@@ -56,6 +61,7 @@ public class LessonsController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateLessonCommand command, CancellationToken cancellationToken)
     {
@@ -69,6 +75,7 @@ public class LessonsController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize]
     [HttpPost("{id}/complete")]
     public async Task<IActionResult> Complete(Guid id, CancellationToken cancellationToken)
     {

@@ -1,7 +1,9 @@
 ﻿using Application.Tests.Commands;
 using Application.Tests.Queries;
 using Asp.Versioning;
+using Domain.Constants;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -17,7 +19,9 @@ public class TestController : ControllerBase
     {
         _mediator = mediator;
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPost()]
     public async Task<IActionResult> Create([FromBody] CreateTestCommand command, CancellationToken cancellationToken)
     {
@@ -26,20 +30,25 @@ public class TestController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpGet()]
     public async Task<IActionResult> GetAll([FromQuery] GetAllTestsQuery request, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(request, cancellationToken);
         return Ok(result);
     }
+
     [MapToApiVersion(1)]
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetTestByIdQuery { Id = id }, cancellationToken);
         return result is not null ? Ok(result) : NotFound();
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTestCommand command, CancellationToken cancellationToken)
     {
@@ -47,7 +56,9 @@ public class TestController : ControllerBase
         var updated = await _mediator.Send(command, cancellationToken);
         return updated ? NoContent() : NotFound();
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {

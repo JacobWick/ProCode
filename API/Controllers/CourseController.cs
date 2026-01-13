@@ -2,7 +2,9 @@
 using Application.Courses.Queries;
 using Application.Courses.QueriesHandlers;
 using Asp.Versioning;
+using Domain.Constants;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -19,13 +21,16 @@ public class CourseController : ControllerBase
     {
         _mediator = mediator;
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPost()]
     public async Task<IActionResult> Create([FromBody] CreateCourseCommand command, CancellationToken cancellationToken)
     {
         var created = await _mediator.Send(command, cancellationToken);
         return CreatedAtAction(nameof(Create), new {id = created.Id}, created);
     }
+
     [MapToApiVersion(1)]
     [HttpGet()]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -33,6 +38,7 @@ public class CourseController : ControllerBase
         var list = await _mediator.Send(new GetAllCoursesQuery(), cancellationToken);
         return Ok(list);
     }
+
     [MapToApiVersion(1)]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
@@ -40,7 +46,9 @@ public class CourseController : ControllerBase
         var result = await _mediator.Send(new GetCourseByIdQuery { Id = id }, cancellationToken);
         return result is not null ? Ok(result) : NotFound();
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCourseCommand command, CancellationToken cancellationToken)
     {
@@ -48,7 +56,9 @@ public class CourseController : ControllerBase
         var updated = await _mediator.Send(command, cancellationToken);
         return updated ?  NoContent() : NotFound();
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -65,6 +75,7 @@ public class CourseController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize]
     [HttpGet("{id}/progress")]
     public async Task<IActionResult> GetProgress(Guid id, CancellationToken cancellationToken)
     {
@@ -73,6 +84,7 @@ public class CourseController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPatch("{id}/tags")]
     public async Task<IActionResult> AssignTagsToCourse(Guid id, [FromBody] AssignTagsToCourseCommand command, CancellationToken cancellationToken)
     {
@@ -83,6 +95,7 @@ public class CourseController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize]
     [HttpPost("{id}/enroll")]
     public async Task<IActionResult> EnrollInCourse(Guid id, CancellationToken cancellationToken)
     {
@@ -96,6 +109,7 @@ public class CourseController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize]
     [HttpGet("recommended")]
     public async Task<IActionResult> GetRecommendedCourses(CancellationToken cancellationToken)
     {
@@ -111,6 +125,7 @@ public class CourseController : ControllerBase
     {
         var result = await _mediator.Send(new GetCourseDetailsQuery { CourseId = id }, cancellationToken);
         return result is not null ? Ok(result) : NotFound();
+
     }
 
     [MapToApiVersion(1)]

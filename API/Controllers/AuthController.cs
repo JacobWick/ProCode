@@ -1,6 +1,8 @@
 ﻿using Application.Auth.Commands;
 using Asp.Versioning;
+using Domain.Constants;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -16,6 +18,7 @@ namespace API.Controllers
         {
             _mediator = mediator;
         }
+
         [MapToApiVersion(1)]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterCommand command, CancellationToken cancellationToken)
@@ -23,6 +26,7 @@ namespace API.Controllers
             var success = await _mediator.Send(command, cancellationToken);
             return success ? Ok() : BadRequest("Registration failed");
         }
+
         [MapToApiVersion(1)]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginCommand command, CancellationToken cancellationToken)

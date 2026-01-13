@@ -1,6 +1,8 @@
 ﻿using Application.Tags;
 using Asp.Versioning;
+using Domain.Constants;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -17,6 +19,8 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
+        [MapToApiVersion(1)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         public async Task<IActionResult> GetAllTags([FromQuery] GetPaginatedTagsQuery query , CancellationToken cancellationToken)
         {
@@ -24,6 +28,8 @@ namespace API.Controllers
             return Ok(tags);
         }
 
+        [MapToApiVersion(1)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreateTag([FromBody]CreateTagCommand command, CancellationToken cancellationToken)
         {
