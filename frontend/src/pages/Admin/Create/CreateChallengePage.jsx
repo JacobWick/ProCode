@@ -5,7 +5,7 @@ import { AddIcon, DeleteIcon, EditIcon, CheckIcon, CloseIcon } from '@chakra-ui/
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { challengeSchema, challengeExerciseSchema } from '../../../validationSchemas.js';
-import { createChallenge, createChallengeExercise, deleteTest, deleteExercise, deleteChallenge, createTest } from "../../../api.js";
+import { createChallenge, createChallengeExercise, createTest } from "../../../api.js";
 import TestModal from '../../../components/TestModal.jsx';
 
 export default function CreateChallengePage() {
