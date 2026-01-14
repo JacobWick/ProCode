@@ -24,7 +24,7 @@ namespace API.Controllers
         public async Task<IActionResult> CreateChallenge([FromBody] CreateChallengeCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
-            return result ? Ok() : BadRequest("Challenge completion failed");
+            return Ok(result);
         }
 
         [Authorize(Roles = Roles.Admin)]
@@ -34,7 +34,7 @@ namespace API.Controllers
             command.ChallengeId = id;
 
             var result = await _mediator.Send(command, cancellationToken);
-            return result ? Ok() : BadRequest("Exercise creation failed");
+            return Ok(result);
         }
 
         [Authorize]
