@@ -10,6 +10,13 @@ export const courseSchema = z.object({
     difficultyLevel: z.number().min(0).max(2)
 });
 
+export const challengeSchema = z.object({
+    title: z.string().min(1, "Tytuł wyzwania jest wymagany").max(200, "Maksymalnie 200 znaków"),
+    description: z.string().min(10, "Opis musi mieć przynajmniej 10 znaków").max(1000, "Opis może mieć maksymalnie 1000 znaków"),
+    startTime: z.string().refine(val => !Number.isNaN(Date.parse(val)), { message: "Nieprawidłowa data rozpoczęcia" }),
+    endTime: z.string().refine(val => !Number.isNaN(Date.parse(val)), { message: "Nieprawidłowa data zakończenia" })
+}).refine(data => Date.parse(data.startTime) < Date.parse(data.endTime), { message: "Data rozpoczęcia musi być przed datą zakończenia", path: ["endTime"] });
+
 export const lessonSchema = z.object({
     title: z.string()
         .min(5, "Tytuł lekcji musi mieć przynajmniej 5 znaków")
@@ -29,6 +36,16 @@ export const exerciseSchema = z.object({
         .max(1000, "Opis może mieć maksymalnie 1000 znaków"),
     initialContent: z.string()
         .min(10, "Początkowy kod musi mieć przynajmniej 10 znaków")
+        .max(500, "Początkowy kod może mieć co najwyżej 500 znaków")
+        .or(z.literal("")),
+});
+
+export const challengeExerciseSchema = z.object({
+    description: z.string()
+        .min(20, "Opis musi mieć przynajmniej 20 znaków")
+        .max(1000, "Opis może mieć maksymalnie 1000 znaków"),
+    initialContent: z.string()
+        .min(0)
         .max(500, "Początkowy kod może mieć co najwyżej 500 znaków")
         .or(z.literal("")),
 });

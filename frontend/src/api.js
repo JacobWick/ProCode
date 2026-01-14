@@ -176,6 +176,8 @@ export const register = async (data) => {
             outputData: outputData,
             exerciseId: exerciseId
         };
+        
+        console.log('Payload do tworzenia testu:', payload);
 
         return await backendAPI.post("/tests", payload);
     }
@@ -192,103 +194,114 @@ export const register = async (data) => {
     export const deleteSolutionExample = async (id) => {
     return await backendAPI.delete(`/solutionexamples/${id}`);
     }
-export const getSolutionExampleById = async (id) => {
-    return await backendAPI.get(`/solutionexamples/${id}`);
-}
-export const getSolutionExamples = async () => {
-    return await backendAPI.get("/solutionexamples");
-}
-export const updateSolutionExample = async (solutionExampleId, solutionExampleData) => {
-    return await backendAPI.patch(`/solutionexamples/${solutionExampleId}`, solutionExampleData);
-}
-export const getMyProfile = async () => {
-    return await backendAPI.get(`/profiles/me`)
-}
-export const getCourseProgress = async (id) => {
-    return await backendAPI.get(`/courses/${id}/progress`)
-}
-
-// Check if a user is enrolled in a course
-export const isUserEnrolled = async (userId, courseId) => {
-    return await backendAPI.get(`/user/${userId}/courses/${courseId}/is-enrolled`);
-}
-export const getUsers = async () => {
-    return await backendAPI.get("/user");
-}
-export const getUserById = async (id) => {
-    return await backendAPI.get(`/user/${id}`);
-}
-export const createUser = async (userData) => {
-    return await backendAPI.post("/user", userData);
-}
-export const updateUser = async (id, userData) => {
-    return await backendAPI.patch(`/user/${id}`, userData);
-}
-export const deleteUser = async (id) => {
-    return await backendAPI.delete(`/user/${id}`);
-} 
-export const editProfile = async (data) => {
-    return await backendAPI.patch(`/profiles/me`, data);
-}
-export const getRecommendedCourses = async (data) => {
-    return await backendAPI.get(`courses/recommended`, data);
-}
-export const getUserTags = async () => {
-    return await backendAPI.get(`/profiles/me/interests`);
-}
-export const getUserNotifications = async (userId, isRead) => {
-    return await backendAPI.get(`/notifications/${userId}`, {params: {isRead}});
-}
-export const getUnreadNotificationsCount = async (userId) => {
-    return await backendAPI.get(`/notifications/${userId}/count`);
-}
-export const sendNotification = async (notificationData) => {
-    if (notificationData.userIds.length === 1) {
-        notificationData.userId = notificationData.userIds[0];
-        notificationData.userIds = [];
+    export const getSolutionExampleById = async (id) => {
+        return await backendAPI.get(`/solutionexamples/${id}`);
     }
-    else {
-        notificationData.userId = "00000000-0000-0000-0000-000000000000";
+    export const getSolutionExamples = async () => {
+        return await backendAPI.get("/solutionexamples");
     }
-    return await backendAPI.post(`/notifications/send`, notificationData);
-}
-export const markNotificationAsRead = async (notificationId) => {
-    return await backendAPI.put(`/notifications/${notificationId}/read`, {});
-}
-export const markAllNotificationsAsRead = async (userId) => {
-    return await backendAPI.put(`/notifications/read`, {userId});
-}
-export const updateUserTags = async (tags) => {
-    return await backendAPI.put(`/profiles/me/interests`, {tags});
-}
-export const getAllTags = async () => {
-    return await backendAPI.get(`/tags`);
-}
-export const getActiveChallenges = async () => {
-    return await backendAPI.get(`/challenges/active`);
-}
-export const getChallengeById = async (id) => {
-    return await backendAPI.get(`/challenges/${id}`);
-}
+    export const updateSolutionExample = async (solutionExampleId, solutionExampleData) => {
+        return await backendAPI.patch(`/solutionexamples/${solutionExampleId}`, solutionExampleData);
+    }
+    export const getMyProfile = async () => {
+        return await backendAPI.get(`/profiles/me`)
+    }
+    export const getCourseProgress = async (id) => {
+        return await backendAPI.get(`/courses/${id}/progress`)
+    }
 
-export const getChallengeStatus = async (id) => {
-    return await backendAPI.get(`/challenges/${id}/status`);
-}
+    export const isUserEnrolled = async (userId, courseId) => {
+        return await backendAPI.get(`/user/${userId}/courses/${courseId}/is-enrolled`);
+    }
+    export const getUsers = async () => {
+        return await backendAPI.get("/user");
+    }
+    export const getUserById = async (id) => {
+        return await backendAPI.get(`/user/${id}`);
+    }
+    export const createUser = async (userData) => {
+        return await backendAPI.post("/user", userData);
+    }
+    export const updateUser = async (id, userData) => {
+        return await backendAPI.patch(`/user/${id}`, userData);
+    }
+    export const deleteUser = async (id) => {
+        return await backendAPI.delete(`/user/${id}`);
+    } 
+    export const editProfile = async (data) => {
+        return await backendAPI.patch(`/profiles/me`, data);
+    }
+    export const getRecommendedCourses = async (data) => {
+        return await backendAPI.get(`courses/recommended`, data);
+    }
+    export const getUserTags = async () => {
+        return await backendAPI.get(`/profiles/me/interests`);
+    }
+    export const getUserNotifications = async (userId, isRead) => {
+        return await backendAPI.get(`/notifications/${userId}`, {params: {isRead}});
+    }
+    export const getUnreadNotificationsCount = async (userId) => {
+        return await backendAPI.get(`/notifications/${userId}/count`);
+    }
+    export const sendNotification = async (notificationData) => {
+        if (notificationData.userIds.length === 1) {
+            notificationData.userId = notificationData.userIds[0];
+            notificationData.userIds = [];
+        }
+        else {
+            notificationData.userId = "00000000-0000-0000-0000-000000000000";
+        }
+        return await backendAPI.post(`/notifications/send`, notificationData);
+    }
+    export const markNotificationAsRead = async (notificationId) => {
+        return await backendAPI.put(`/notifications/${notificationId}/read`, {});
+    }
+    export const markAllNotificationsAsRead = async (userId) => {
+        return await backendAPI.put(`/notifications/read`, {userId});
+    }
+    export const updateUserTags = async (tags) => {
+        return await backendAPI.put(`/profiles/me/interests`, {tags});
+    }
+    export const getAllTags = async () => {
+        return await backendAPI.get(`/tags`);
+    }
+    export const createChallenge = async (challengeData) => {
+        return await backendAPI.post(`/challenges`, challengeData);
+    }
 
-export const setChallengeStatus = async (id, isCompleted) => {
-    return await backendAPI.patch(`/challenges/${id}/status`, { isCompleted });
-}
+    export const createChallengeExercise = async (challengeId, exerciseData) => {
+        return await backendAPI.post(`/challenges/${challengeId}/exercise`, exerciseData);
+    }
 
-export const submitExerciseSolution = async (exerciseId, code) => {
-    return await backendAPI.post(`/exercises/${exerciseId}/attempt`, {codeSubmission: code});
-}
-export const completeLesson = async (id) => {
-    return await backendAPI.post(`/lessons/${id}/complete`);
-}
-export const enrollInCourse = async (id) => {
-    return await backendAPI.post(`/courses/${id}/enroll`);
-}
+    export const deleteChallenge = async (challengeId) => {
+        return await backendAPI.delete(`/challenges/${challengeId}`);
+    }
 
-export const isUserEnrolledInCourse = async (courseId) => {
-    return await backendAPI.get(`/user/me/courses/${courseId}/is-enrolled`);
-}
+    export const getActiveChallenges = async () => {
+        return await backendAPI.get(`/challenges/active`);
+    }
+    export const getChallengeById = async (id) => {
+        return await backendAPI.get(`/challenges/${id}`);
+    }
+
+    export const getChallengeStatus = async (id) => {
+        return await backendAPI.get(`/challenges/${id}/status`);
+    }
+
+    export const setChallengeStatus = async (id, isCompleted) => {
+        return await backendAPI.patch(`/challenges/${id}/status`, { isCompleted });
+    }
+
+    export const submitExerciseSolution = async (exerciseId, code) => {
+        return await backendAPI.post(`/exercises/${exerciseId}/attempt`, {codeSubmission: code});
+    }
+    export const completeLesson = async (id) => {
+        return await backendAPI.post(`/lessons/${id}/complete`);
+    }
+    export const enrollInCourse = async (id) => {
+        return await backendAPI.post(`/courses/${id}/enroll`);
+    }
+
+    export const isUserEnrolledInCourse = async (courseId) => {
+        return await backendAPI.get(`/user/me/courses/${courseId}/is-enrolled`);
+    }
