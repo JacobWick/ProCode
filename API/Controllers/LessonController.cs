@@ -29,7 +29,7 @@ public class LessonsController : ControllerBase
     }
 
     [MapToApiVersion(1)]
-    [Authorize(Roles = Roles.Admin)]
+    //[Authorize(Roles = Roles.Admin)]
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {

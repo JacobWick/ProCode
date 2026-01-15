@@ -14,7 +14,7 @@ public static class CourseMapper
             Description = course.Description,
             CreatedOn = course.CreatedOn,
             CreatedBy = course.Creator?.Id ?? course.CreatorId,
-            CreatorUsername = course.Creator.UserName,
+            CreatorUsername = course.Creator?.UserName ?? string.Empty,
             Lessons = course.Lessons?.Select(l => l.Id).ToList() ?? new List<Guid>(),
             DifficultyLevel = course.DifficultyLevel,
             Rating = course.Rating,

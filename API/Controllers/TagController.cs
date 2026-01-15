@@ -20,7 +20,7 @@ namespace API.Controllers
         }
 
         [MapToApiVersion(1)]
-        [Authorize(Roles = Roles.Admin)]
+        //[Authorize(Roles = Roles.Admin)]
         [HttpGet]
         public async Task<IActionResult> GetAllTags([FromQuery] GetPaginatedTagsQuery query , CancellationToken cancellationToken)
         {

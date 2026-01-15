@@ -30,7 +30,7 @@ public class TestController : ControllerBase
     }
 
     [MapToApiVersion(1)]
-    [Authorize(Roles = Roles.Admin)]
+    //[Authorize(Roles = Roles.Admin)]
     [HttpGet()]
     public async Task<IActionResult> GetAll([FromQuery] GetAllTestsQuery request, CancellationToken cancellationToken)
     {
