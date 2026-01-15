@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Challenges.CommandHandlers
 {
-    public class CreateChallengeExerciseCommandHandler : IRequestHandler<CreateChallengeExerciseCommand, bool>
+    public class CreateChallengeExerciseCommandHandler : IRequestHandler<CreateChallengeExerciseCommand, Guid>
     {
         private readonly IRepository<Exercise> _exerciseRepo;
 
@@ -14,7 +14,7 @@ namespace Application.Challenges.CommandHandlers
              _exerciseRepo = exerciseRepo;
         }
 
-        public async Task<bool> Handle(CreateChallengeExerciseCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateChallengeExerciseCommand request, CancellationToken cancellationToken)
         {
             var exercise = new Exercise
             {
@@ -25,7 +25,7 @@ namespace Application.Challenges.CommandHandlers
 
             await _exerciseRepo.CreateAsync(exercise, cancellationToken);
 
-            return true;
+            return exercise.Id;
         }
     }
 }

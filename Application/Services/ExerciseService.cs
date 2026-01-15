@@ -49,6 +49,9 @@ namespace Application.Services
             if (response.ExitCode != 0)
                 return false;
 
+            if (string.IsNullOrEmpty(response.RunOutput))
+                return false;
+
             var output = JsonSerializer.Deserialize<Dictionary<string, int>>(response.RunOutput!);
             if (output == null)
                 return false;

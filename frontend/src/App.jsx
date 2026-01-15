@@ -18,6 +18,7 @@ import './index.css'
 import NotificationsPage from "./pages/Profile/NotificationsPage.jsx";
 import RoadmapPage from "./pages/Profile/RoadmapPage.jsx";
 import ChallengePage from "./pages/Learning/ChallengePage.jsx";
+import CreateChallengePage from "./pages/Admin/Create/CreateChallengePage.jsx";
 
 function App() {
     return (
@@ -41,7 +42,7 @@ function App() {
                 <Route path="/courses/recommended" element={<RoadmapPage/>}/>
                 <Route path="/notifications" element={<NotificationsPage />} />
                 <Route path="/challenges/:id" element={<ChallengePage />} />
-
+                <Route path="/challenges/create" element={<CreateChallengePage />} />
             </Routes>
     );
 }

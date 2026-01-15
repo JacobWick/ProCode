@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Application.Challenges.Commands
 {
-    public class CreateChallengeExerciseCommand : IRequest<bool>
+    public class CreateChallengeExerciseCommand : IRequest<Guid>
     {
         [JsonIgnore]
         public Guid ChallengeId { get; set; }

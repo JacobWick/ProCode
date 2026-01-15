@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Challenges.CommandHandlers
 {
-    public class CreateChallengeCommandHandler : IRequestHandler<CreateChallengeCommand, bool>
+    public class CreateChallengeCommandHandler : IRequestHandler<CreateChallengeCommand, Guid>
     {
         private readonly IRepository<Challenge> _challengeRepo;
         public CreateChallengeCommandHandler(IRepository<Challenge> challengeRepo)
@@ -13,7 +13,7 @@ namespace Application.Challenges.CommandHandlers
             _challengeRepo = challengeRepo;
         }
 
-        public async Task<bool> Handle(CreateChallengeCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateChallengeCommand request, CancellationToken cancellationToken)
         {
 
             var challenge = new Challenge
@@ -27,7 +27,7 @@ namespace Application.Challenges.CommandHandlers
 
             await _challengeRepo.CreateAsync(challenge, cancellationToken);
 
-            return true;
+            return challenge.Id;
         }
     }
 }

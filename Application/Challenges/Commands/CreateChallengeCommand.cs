@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Challenges.Commands
 {
-    public class CreateChallengeCommand : IRequest<bool>
+    public class CreateChallengeCommand : IRequest<Guid>
     {
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;

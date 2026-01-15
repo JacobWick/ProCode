@@ -1,7 +1,9 @@
 ﻿using Application.Challenges.Commands;
 using Application.Challenges.Query;
 using Asp.Versioning;
+using Domain.Constants;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -17,22 +19,25 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreateChallenge([FromBody] CreateChallengeCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
-            return result ? Ok() : BadRequest("Challenge completion failed");
+            return Ok(result);
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost("{id}/exercise")]
         public async Task<IActionResult> CreateExercise(Guid id, [FromBody] CreateChallengeExerciseCommand command, CancellationToken cancellationToken)
         {
             command.ChallengeId = id;
 
             var result = await _mediator.Send(command, cancellationToken);
-            return result ? Ok() : BadRequest("Exercise creation failed");
+            return Ok(result);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetChallengeById(Guid id, CancellationToken cancellationToken)
         {
@@ -40,6 +45,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateChallenge([FromBody] UpdateChallengeCommand command, CancellationToken cancellationToken)
         {
@@ -47,6 +53,7 @@ namespace API.Controllers
             return result ? Ok() : BadRequest("Challenge update failed");
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllChallenges([FromQuery] GetAllChallengesQuery query, CancellationToken cancellationToken)
         {
@@ -61,6 +68,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpGet("{id}/status")]
         public async Task<IActionResult> GetChallengeStatus(Guid id, CancellationToken cancellationToken)
         {
@@ -73,6 +81,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> SetChallengeStatus(Guid id, [FromBody] SetChallengeStatusCommand command, CancellationToken cancellationToken)
         {

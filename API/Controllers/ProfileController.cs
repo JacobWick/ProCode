@@ -2,6 +2,7 @@
 using Application.UserProfiles.Queries;
 using Application.Users.Commands;
 using Asp.Versioning;
+using Domain.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -66,6 +67,7 @@ namespace API.Controllers
         }
 
         [MapToApiVersion(1)]
+        [Authorize]
         [HttpPut("me/interests")]
         public async Task<IActionResult> UpdateInterests([FromBody] UpdateInterestsCommand command, CancellationToken cancellationToken)
         {
@@ -73,6 +75,8 @@ namespace API.Controllers
             return result ? Ok(result) : NotFound();
         }
 
+        [MapToApiVersion(1)]
+        [Authorize]
         [HttpGet("me/interests")]
         public async Task<IActionResult> GetInterests(CancellationToken cancellationToken)
         {

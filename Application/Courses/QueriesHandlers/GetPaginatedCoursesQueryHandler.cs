@@ -23,7 +23,7 @@ namespace Application.Courses.QueriesHandlers
                 request.PageSize, 
                 request.Search, 
                 request.SortBy, 
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken); 
 
             return courses;
         }

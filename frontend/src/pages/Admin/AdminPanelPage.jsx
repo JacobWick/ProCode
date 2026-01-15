@@ -146,6 +146,10 @@ export default function AdminPanelPage() {
         checkAdminAndFetchData();
     }, [toast]);
 
+    const onAddChallenge = () => {
+        navigate('/challenges/create');
+    }
+
     const handleDeleteClick = (item, type) => {
         setItemToDelete(item);
         setDeleteType(type);
@@ -338,6 +342,13 @@ export default function AdminPanelPage() {
                                 onClick={onNotificationOpen}
                             >
                                 Wyślij powiadomienie
+                            </Button>
+                            <Button
+                                leftIcon={<AddIcon />}
+                                colorScheme="purple"
+                                onClick={onAddChallenge}
+                            >
+                                Utwórz wyzwanie
                             </Button>
                         </HStack>
                         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>

@@ -1,7 +1,9 @@
 ﻿using Application.Notifications.Commands;
 using Application.Notifications.Queries;
 using Asp.Versioning;
+using Domain.Constants;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -15,28 +17,36 @@ public class NotificationController: ControllerBase
     {
         _mediator = mediator;
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateNotificationCommand command)
     {
         var result = await _mediator.Send(command);
         return Ok(result);
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPost("send")]
     public async Task<IActionResult> Send([FromBody] SendNotificationCommand command)
     {
         var result = await _mediator.Send(command);
         return Ok(result);
     }
+
     [MapToApiVersion(1)]
+    [Authorize]
     [HttpPut("read")]
     public async Task<IActionResult> MarkAllAsRead([FromBody] MarkAllNotificationsAsReadCommand command)
     {
         var result = await _mediator.Send(command);
         return Ok(result);
     }
+
     [MapToApiVersion(1)]
+    [Authorize]
     [HttpPut("{id}/read")]
     public async Task<IActionResult> MarkAsRead(Guid id, [FromBody] MarkNotificationAsReadCommand command)
     {
@@ -44,7 +54,9 @@ public class NotificationController: ControllerBase
         var result = await _mediator.Send(command);
         return Ok(result);
     }
+
     [MapToApiVersion(1)]
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAllByUser(Guid id, [FromQuery] bool isRead)
     {
@@ -56,7 +68,9 @@ public class NotificationController: ControllerBase
         var notifications = await _mediator.Send(query);
         return Ok(notifications);
     }
+
     [MapToApiVersion(1)]
+    [Authorize]
     [HttpGet("{id}/count")]
     public async Task<IActionResult> GetUnreadCount(Guid id)
     {

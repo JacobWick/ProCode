@@ -2,8 +2,10 @@
 using Application.SolutionExamples.Queries;
 using Application.Tests.Queries;
 using Asp.Versioning;
+using Domain.Constants;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -19,7 +21,9 @@ public class SolutionExampleController : ControllerBase
     {
         _mediator = mediator;
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPost()]
     public async Task<IActionResult> Create([FromBody] CreateSolutionExampleCommand command)
     {
@@ -28,20 +32,25 @@ public class SolutionExampleController : ControllerBase
     }
 
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpGet()]
     public async Task<IActionResult> GetAll([FromQuery] GetAllTestsQuery request, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(request, cancellationToken);
         return Ok(result);
     }
+
     [MapToApiVersion(1)]
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<ActionResult<SolutionExample>> GetById(Guid id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetSolutionExampleByIdQuery{ Id = id }, cancellationToken);
         return Ok(result);
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
@@ -52,7 +61,9 @@ public class SolutionExampleController : ControllerBase
         }
         return Ok(result);
     }
+
     [MapToApiVersion(1)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPatch("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSolutionExampleCommand command, CancellationToken cancellationToken)
     {
